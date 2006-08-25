@@ -5,8 +5,13 @@ type box =
       box_dir : reldir;
       box_connexions : reldir list;
     }
-type line = (box option) list
-type matrix = line list
+type line = box option list
+type ir_matrix = line list
+type matrix = box option array array
+type diagram =
+    {
+      diag_matrix : matrix;
+    }
 type dir = Left | Right | Up | Down
 
 let string_of_char = String.make 1
@@ -37,3 +42,7 @@ let rec reldir_of_dir = function
           | Down -> (x, y+1)
 
 let reldir_of_string s = reldir_of_dir (dirs_of_string s)
+
+let matrix_of_ir ir =
+  (* TODO: same length for every line *)
+  Array.map (Array.of_list) (Array.of_list ir)

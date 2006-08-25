@@ -2,16 +2,16 @@
     open Lang
 %}
 
-%token NEWCOL NEWLINE LBRACK RBRACK COMMA
+%token NEWCOL NEWLINE LBRACK RBRACK COMMA EOF
 %token <string> BOX STRING
 
 %start matrix
-%type <Lang.matrix> matrix
+%type <Lang.ir_matrix> matrix
 %%
 
 matrix:
     | line matrix { $1::$2 }
-    | { [] }
+    | EOF | { [] }
 ;
 
 line:

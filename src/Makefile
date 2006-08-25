@@ -4,4 +4,7 @@ OCAMLYACC=menhir
 
 all: nc
 
+test: all
+	./strid test.strid
+
 include OCamlMakefile
