@@ -22,16 +22,16 @@ line:
 ;
 
 box:
-    | BOX directions {
+    | BOX LBRACK directions RBRACK {
         {
             box_name = $1;
-            box_dir = List.hd $2;
-            box_connexions = List.tl $2;
+            box_dir = List.hd $3;
+            box_connexions = List.tl $3;
         }
     }
 ;
 
 directions:
-    | LBRACK STRING RBRACK directions { (reldir_of_string $2)::$4 }
-    | { [] }
+    | STRING COMMA directions { (reldir_of_string $1)::$3 }
+    | STRING { [reldir_of_string $1] }
 ;
