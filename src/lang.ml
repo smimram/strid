@@ -1,10 +1,20 @@
 type reldir = int * int
+(*
 type box =
     {
       box_name : string;
       box_dir : reldir;
       box_connexions : reldir list;
     }
+*)
+
+class box name dir connexions =
+object (self)
+  val name = name
+  val dir = dir
+  val connexions = connexions
+end
+
 type line = box option list
 type ir_matrix = line list
 type matrix = box option array array

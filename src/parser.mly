@@ -22,13 +22,7 @@ line:
 ;
 
 box:
-    | BOX LBRACK directions RBRACK {
-        {
-            box_name = $1;
-            box_dir = List.hd $3;
-            box_connexions = List.tl $3;
-        }
-    }
+    | BOX LBRACK directions RBRACK { new box $1 (List.hd $3) (List.tl $3) }
 ;
 
 directions:
