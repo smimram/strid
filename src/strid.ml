@@ -14,18 +14,21 @@ let _ =
     (fun s ->
        file_in := s
     )
-    "strid [options] file";
+    "strid - A string diagrams generator\nstrid [options] file";
   let sin =
-    let f = open_in !file_in in
-    let buf = String.create (in_channel_length f) in
-      Printf.printf "[II] Read %d bytes.\n" (input f buf 0 (in_channel_length f));
-      close_in f;
+    let fi = open_in !file_in in
+    let flen = in_channel_length fi in
+    let buf = String.create flen in
+      Lang.info (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
+      close_in fi;
       buf
   in
   let m = matrix_of_ir (Parser.matrix Lexer.token (Lexing.from_string sin)) in
-  let d =
-    {
-      diag_matrix = m;
-    }
-  in
-    ()
+  let pst = Lang.process_matrix m in
+  let fo = open_out !file_out in
+    output_string fo "\\documentclass{article}\n\\usepackage{pstricks}\n\\begin{document}\n";
+    output_string fo "\\begin{pspicture}(0,0)(10,10)\n";
+    output_string fo pst;
+    output_string fo "\\end{pspicture}\n";
+    output_string fo "\\end{document}\n";
+    close_out fo

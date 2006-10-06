@@ -11,7 +11,7 @@
 
 matrix:
     | line matrix { $1::$2 }
-    | EOF | { [] }
+    | EOF { [] }
 ;
 
 line:
@@ -22,7 +22,7 @@ line:
 ;
 
 box:
-    | BOX LBRACK directions RBRACK { new box $1 (List.hd $3) (List.tl $3) }
+    | BOX LBRACK directions RBRACK { new box $1 $3 }
 ;
 
 directions:

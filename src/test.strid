@@ -1,2 +1,7 @@
-&&&\\
-&&&\\
+&\arc[dl,dr]\\
+\\
+&\sym[ul,ur,dl,dr]\\
+\\
+&\mult[ul,ur,d]\\
+\\
+&&\mult[ul,uuur,d]\\
