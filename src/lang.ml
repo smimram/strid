@@ -82,9 +82,6 @@ let rec join_plines plines =
         cur#append h;
         find cur t
     | h::t when cur#src = h#dst ->
-        let a, b = cur#src in
-        let c, d = h#dst in
-        Printf.printf "src : %d, %d      dst : %d, %d\n%!" a b c d;
         cur#prepend h;
         find cur t
     | h::t when cur#dst = h#dst ->
@@ -96,10 +93,7 @@ let rec join_plines plines =
         cur#prepend h;
         find cur t
     | h::t ->
-        let a, b = cur#dst in
-        let c, d = cur#src in
-          Printf.printf "dst : %d, %d      src : %d, %d\n%!" a b c d;
-          h::(find cur t)
+        h::(find cur t)
   in
     match plines with
       | [] -> []
