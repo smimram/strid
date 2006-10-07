@@ -38,30 +38,22 @@ object (self)
 
   method rev =
     lines <- List.rev lines;
-    List.iter (fun l -> l#rev) lines
+    List.iter (fun l -> l#rev) lines;
+    self
 
-  method private sort_lines =
-    if self#dst < self#src then
-      (
-        lines <- List.rev lines;
-        List.iter (fun l -> l#rev) lines
-      )
-
-  method private append_line line =
+  method append_line line =
     lines <- lines@[line]
 
-  method private prepend_line line =
+  method prepend_line line =
     lines <- line::lines
 
   method append (pl:polyline) =
     assert (self#dst = pl#src);
-    List.iter self#append_line pl#lines;
-    self#sort_lines
+    List.iter self#append_line pl#lines
 
   method prepend (pl:polyline) =
     assert (self#src = pl#dst);
-    List.iter self#prepend_line (List.rev pl#lines);
-    self#sort_lines
+    List.iter self#prepend_line (List.rev pl#lines)
 
   method draw _ =
     if List.length lines = 1 then

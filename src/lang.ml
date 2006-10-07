@@ -3,38 +3,40 @@ let info = Printf.printf "[II] %s\n"
 let warning = Printf.printf "[WW] %s\n"
 
 let rd_add (x, y) (dx, dy) = (x+dx, y+dy)
+type opt = string * ((string * string) list)
 
-class box (kind:string) (connexions:Wire.reldir list) =
+class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
+  val options = options
+
   method kind = kind
 
   method connexion = Array.of_list connexions
 
   method get_plines (pos : Wire.dir) =
-    match self#kind with
-      | "mult" ->
-          let a = rd_add pos self#connexion.(0) in
-          let b = rd_add pos self#connexion.(1) in
-          let c = rd_add pos self#connexion.(2) in
-          let i = new Wire.polyline (new Wire.line pos c) in
-          let u = new Wire.polyline (new Wire.line a pos) in
-            u#append (new Wire.polyline (new Wire.line pos b));
-            i::u::[]
-      | "arc" ->
-          let a = rd_add pos self#connexion.(0) in
-          let b = rd_add pos self#connexion.(1) in
-          let u = new Wire.polyline (new Wire.line a pos) in
-            u#append (new Wire.polyline (new Wire.line pos b));
-            [u]
-      | "sym" ->
-          let c = Array.map (rd_add pos) self#connexion in
-          let p = new Wire.polyline (new Wire.line c.(0) pos) in
-          let q = new Wire.polyline (new Wire.line c.(1) pos) in
-            p#append (new Wire.polyline (new Wire.line pos c.(3)));
-            q#append (new Wire.polyline (new Wire.line pos c.(2)));
-            p::q::[]
-      | k ->
-          warning (Printf.sprintf "Don't know lines for %s box." k); []
+    let c = Array.map (rd_add pos) self#connexion in
+      match self#kind with
+        | "mult" ->
+            let i = new Wire.polyline (new Wire.line pos c.(2)) in
+            let u = new Wire.polyline (new Wire.line c.(0) pos) in
+              u#append_line (new Wire.line pos c.(1));
+              i::u::[]
+        | "arc" ->
+            let u = new Wire.polyline (new Wire.line c.(0) pos) in
+              u#append_line (new Wire.line pos c.(1));
+              [u]
+        | "sym" ->
+            let p = new Wire.polyline (new Wire.line c.(0) pos) in
+            let q = new Wire.polyline (new Wire.line c.(1) pos) in
+              p#append_line (new Wire.line pos c.(3));
+              q#append_line (new Wire.line pos c.(2));
+              p::q::[]
+        | "line" ->
+            (new Wire.polyline (new Wire.line pos c.(0)))::[]
+        | k ->
+            warning (Printf.sprintf "Don't know lines for %s box." k); []
+
+  method get_ellipses (pos : Wire.dir) = ()
 end
 
 type line = box option list
@@ -85,12 +87,10 @@ let rec join_plines plines =
         cur#prepend h;
         find cur t
     | h::t when cur#dst = h#dst ->
-        h#rev;
-        cur#append h;
+        cur#append (h#rev);
         find cur t
     | h::t when cur#src = h#src ->
-        h#rev;
-        cur#prepend h;
+        cur#prepend (h#rev);
         find cur t
     | h::t ->
         h::(find cur t)

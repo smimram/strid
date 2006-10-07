@@ -8,10 +8,13 @@ let space = ' ' | '\t' | '\r'
 rule token = parse
   | "&" { NEWCOL}
   | "\\\\" { NEWLINE }
-  | '\\'(['a'-'z']+ as name) { BOX name }
+  | '#'([^'#']* as tex)'#' { STRING tex }
   | '[' { LBRACK }
   | ']' { RBRACK }
+  | '(' { LPAR }
+  | ')' { RPAR }
   | ',' { COMMA }
+  | '=' { EQ }
   | (['a'-'z']+ as str) { STRING str }
   | (space|'\n')+ { token lexbuf }
   | eof { EOF }

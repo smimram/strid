@@ -2,8 +2,8 @@
     open Lang
 %}
 
-%token NEWCOL NEWLINE LBRACK RBRACK COMMA EOF
-%token <string> BOX STRING
+%token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF
+%token <string> STRING
 
 %start matrix
 %type <Lang.ir_matrix> matrix
@@ -22,10 +22,21 @@ line:
 ;
 
 box:
-    | BOX LBRACK directions RBRACK { new box $1 $3 }
+    | STRING LPAR directions RPAR options { new box $1 $3 $5 }
 ;
 
 directions:
     | STRING COMMA directions { (reldir_of_string $1)::$3 }
     | STRING { [reldir_of_string $1] }
+    | { [] }
+;
+
+options:
+    | LBRACK STRING option_val RBRACK options { ($2, $3)::$5 }
+    | { [] }
+;
+
+option_val:
+    | COMMA STRING EQ STRING option_val { ($2, $4)::$5 }
+    | { [] }
 ;

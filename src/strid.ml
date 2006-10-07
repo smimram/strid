@@ -19,7 +19,7 @@ let _ =
     let fi = open_in !file_in in
     let flen = in_channel_length fi in
     let buf = String.create flen in
-      Lang.info (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
+      Lang.debug (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
       close_in fi;
       buf
   in
