@@ -2,7 +2,10 @@ let debug = Printf.printf "[DD] %s\n"
 let info = Printf.printf "[II] %s\n"
 let warning = Printf.printf "[WW] %s\n"
 
-let rd_add (x, y) (dx, dy) = (x+dx, y+dy)
+let iffound f =
+  try f () with Not_found -> ()
+
+let rd_add (x, y) (dx, dy) = (x +. dx, y +. dy)
 type opt = string * ((string * string) list)
 
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
@@ -13,7 +16,7 @@ object (self)
 
   method connexion = Array.of_list connexions
 
-  method get_plines (pos : Wire.dir) =
+  method get_plines pos =
     let c = Array.map (rd_add pos) self#connexion in
       match self#kind with
         | "mult" ->
@@ -36,7 +39,20 @@ object (self)
         | k ->
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
-  method get_ellipses (pos : Wire.dir) = ()
+  method get_ellipses pos =
+    let ans = ref [] in
+      iffound (fun () -> let _ = List.assoc "l" options in ans := (new Wire.ellipse pos (0.5,0.3))::!ans);
+      !ans
+
+  method get_texts pos =
+    let ans = ref [] in
+      iffound
+        (fun () ->
+           let label = List.assoc "l" options in
+           let t = List.assoc "t" label in
+             ans := (new Wire.text pos t)::!ans
+        );
+      !ans
 end
 
 type line = box option list
@@ -61,20 +77,23 @@ let dirs_of_string s =
       )::!ret
     done; !ret
 
-let rec reldir_of_dir = function
-  | [] -> (0, 0)
-  | d::t ->
-      let (x, y) = reldir_of_dir t in
-        match d with
-          | Left -> (x-1, y)
-          | Right -> (x+1, y)
-          | Up -> (x, y+1)
-          | Down -> (x, y-1)
+let rec reldir_of_dir d =
+  let rec aux = function
+    | [] -> (0, 0)
+    | d::t ->
+        let (x, y) = aux t in
+          match d with
+            | Left -> (x-1, y)
+            | Right -> (x+1, y)
+            | Up -> (x, y+1)
+            | Down -> (x, y-1)
+  in
+  let x, y = aux d in
+    (float_of_int x), (float_of_int y)
 
 let reldir_of_string s = reldir_of_dir (dirs_of_string s)
 
 let matrix_of_ir ir =
-  (* TODO: same length for every line *)
   Array.map (Array.of_list) (Array.of_list ir)
 
 let rec join_plines plines =
@@ -102,19 +121,25 @@ let rec join_plines plines =
 let process_matrix m =
   let out = ref "" in
   let plines = ref [] in
+  let ellipses = ref [] in
+  let texts = ref [] in
   let add_box pos b =
     match b with
       | None -> ()
       | Some b ->
           debug (Printf.sprintf "New %s box." b#kind);
-          plines := !plines@b#get_plines pos
+          plines := !plines@b#get_plines pos;
+          ellipses := !ellipses@b#get_ellipses pos;
+          texts := !texts@b#get_texts pos;
   in
   let height = Array.length m - 1 in
     for i = 0 to height do
       for j = 0 to Array.length m.(i) - 1 do
-        add_box (j, height - i) m.(i).(j)
+        add_box (float_of_int j, float_of_int (height - i)) m.(i).(j)
       done
     done;
     plines := join_plines !plines;
     List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw Wire.Pstricks)) !plines;
+    List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw Wire.Pstricks)) !ellipses;
+    List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw Wire.Pstricks)) !texts;
     !out

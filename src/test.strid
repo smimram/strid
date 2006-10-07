@@ -1,7 +1,7 @@
 &arc(dl,dr)\\
 \\
-&sym(ul,ur,dl,dr)\\
+&sym(ul,ur,dl,dr)[l,t=#$\gamma$#]\\
 \\
 &mult(ul,ur,d)\\
 \\
-&&mult(ul,uuur,d)[l,v=#\mu#]\\
+&&mult(ul,uuur,d)[l,t=#$\mu$#]\\

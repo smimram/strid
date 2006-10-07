@@ -1,5 +1,5 @@
-type reldir = int * int
-type dir = int * int
+type reldir = float * float
+type dir = float * float
 
 type output_kind = Pstricks
 
@@ -60,13 +60,40 @@ object (self)
       (
         let xs, ys = (List.hd lines)#src in
         let xe, ye = (List.hd lines)#dst in
-          Printf.sprintf "\\psline[showpoints=true](%d,%d)(%d,%d)" xs ys xe ye
+          Printf.sprintf "\\psline[showpoints=true](%.2f,%.2f)(%.2f,%.2f)" xs ys xe ye
       )
     else
       (
         let fl = (List.hd lines)#src in
-        let s = ref (Printf.sprintf "\\%s[showpoints=true](%d,%d)" (if self#src = self#dst then "psccurve" else "pscurve") (fst fl) (snd fl)) in
-          List.iter (fun l -> let x, y = l#dst in s := !s ^ Printf.sprintf "(%d,%d)" x y) lines;
+        let s = ref (Printf.sprintf "\\%s[showpoints=true](%.2f,%.2f)" (if self#src = self#dst then "psccurve" else "pscurve") (fst fl) (snd fl)) in
+          List.iter (fun l -> let x, y = l#dst in s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) lines;
           !s
       )
+end
+
+class ellipse pos r =
+object (self)
+  inherit wire
+
+  val position = pos
+
+  val radius = r
+
+  method draw _ =
+    let x, y = position in
+    let xr, yr = radius in
+      Printf.sprintf "\\psellipse[fillstyle=solid](%.2f,%.2f)(%.2f,%.2f)" x y xr yr
+end
+
+class text pos t =
+object (self)
+  inherit wire
+
+  val position = pos
+
+  val text = t
+
+  method draw _ =
+    let x, y = position in
+      Printf.sprintf "\\rput(%.2f,%.2f){%s}" x y text
 end
