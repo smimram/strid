@@ -16,6 +16,13 @@ object (self)
 
   val mutable dst = dst
 
+  val mutable attrs = ([]:(string * string) list)
+
+  method add_attr name value =
+    attrs <- (name, value)::attrs
+
+  method get_attrs = attrs
+
   method src = src
 
   method dst = dst
@@ -52,13 +59,19 @@ object (self)
   method prepend_line line =
     lines <- line::lines
 
+  (** Append a polyline at the end. *)
   method append (pl:polyline) =
     assert (self#dst = pl#src);
     List.iter self#append_line pl#lines
 
+  (** Put a polyline before. *)
   method prepend (pl:polyline) =
     assert (self#src = pl#dst);
     List.iter self#prepend_line (List.rev pl#lines)
+
+  (*(** Lines don't have all the same attributes. *)
+  method private non_uniform =
+    let ans = ref true in *)
 
   method draw _ =
     if List.length lines = 1 then
