@@ -1,6 +1,8 @@
 type reldir = float * float
 type dir = float * float
 
+let showpoints = ref false
+
 type output_kind = Pstricks
 
 class virtual wire =
@@ -23,6 +25,9 @@ object (self)
       src <- dst;
       dst <- tmp
 end
+
+let sp () =
+  if !showpoints then "[showpoints=true]" else ""
 
 class polyline line =
 object (self)
@@ -60,13 +65,23 @@ object (self)
       (
         let xs, ys = (List.hd lines)#src in
         let xe, ye = (List.hd lines)#dst in
-          Printf.sprintf "\\psline[showpoints=true](%.2f,%.2f)(%.2f,%.2f)" xs ys xe ye
+          Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) xs ys xe ye
       )
     else
       (
-        let fl = (List.hd lines)#src in
-        let s = ref (Printf.sprintf "\\%s[showpoints=true](%.2f,%.2f)" (if self#src = self#dst then "psccurve" else "pscurve") (fst fl) (snd fl)) in
-          List.iter (fun l -> let x, y = l#dst in s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) lines;
+        let x, y = (List.hd lines)#src in
+        let s = ref (Printf.sprintf "\\%s%s(%.2f,%.2f)" (if self#src = self#dst then "psccurve" else "pscurve") (sp ()) x y) in
+        let coords = List.map (fun l -> l#dst) lines in
+        let coords =
+          (* Remove duplicate coordinates. *)
+          let rec uniq lx ly = function
+            | (x,y)::t when x = lx && y = ly -> uniq lx ly t
+            | (x,y)::t -> (x,y)::(uniq x y t)
+            | [] -> []
+          in
+            uniq x y coords
+        in
+          List.iter (fun (x, y) -> s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) coords;
           !s
       )
 end

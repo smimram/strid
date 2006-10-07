@@ -26,9 +26,13 @@ box:
 ;
 
 directions:
-    | STRING COMMA directions { (reldir_of_string $1)::$3 }
-    | STRING { [reldir_of_string $1] }
-    | { [] }
+    | dir COMMA directions { $1::$3 }
+    | dir { [$1] }
+;
+
+dir:
+    | STRING { reldir_of_string $1 }
+    | { reldir_of_string "" }
 ;
 
 options:

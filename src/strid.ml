@@ -27,8 +27,6 @@ let _ =
   let pst = Lang.process_matrix m in
   let fo = open_out !file_out in
     output_string fo "\\documentclass{article}\n\\usepackage{pstricks}\n\\begin{document}\n";
-    output_string fo "\\begin{pspicture}(0,0)(10,10)\n";
     output_string fo pst;
-    output_string fo "\\end{pspicture}\n";
     output_string fo "\\end{document}\n";
     close_out fo

@@ -35,7 +35,9 @@ object (self)
               q#append_line (new Wire.line pos c.(2));
               p::q::[]
         | "line" ->
-            (new Wire.polyline (new Wire.line pos c.(0)))::[]
+            let l = new Wire.polyline (new Wire.line c.(0) pos) in
+              l#append_line (new Wire.line pos c.(1));
+              l::[]
         | k ->
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
@@ -133,13 +135,18 @@ let process_matrix m =
           texts := !texts@b#get_texts pos;
   in
   let height = Array.length m - 1 in
+  let width = ref 0 in
     for i = 0 to height do
-      for j = 0 to Array.length m.(i) - 1 do
-        add_box (float_of_int j, float_of_int (height - i)) m.(i).(j)
-      done
+      let w = Array.length m.(i) - 1 in
+        if w > !width then width := w;
+        for j = 0 to w do
+          add_box (float_of_int j, float_of_int (height - i)) m.(i).(j)
+        done
     done;
+    out := (Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height);
     plines := join_plines !plines;
     List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw Wire.Pstricks)) !plines;
     List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw Wire.Pstricks)) !ellipses;
     List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw Wire.Pstricks)) !texts;
+    out := !out ^ "\\end{pspicture}\n";
     !out
