@@ -1,8 +1,8 @@
-&arc(dl,dr)\\
-&&&&arc(dl,dr)[l,t=#$\eta$#]\\
-&sym(ul,ur,dl,dr)[l,t=#$\gamma$#]&&&&line(,ddd)\\
-\\
+&arc(dl,dr)&&&arc(dl,ddr)[l,t=#$\eta$#]\\
+&\\
+&sym(ul,ur,dl,dr)[l,t=#$\gamma$#]\\
+&&&&braid(uul,ur,dl,ddr)\\
 &mult(ul,ur,)\\
-&&mult(ul,uuur,d)[l,t=#$\mu$#]\\
+&&mult(ul,ur,d)[l,t=#$\mu$#]\\
 &&&&&line(,u)\\
 &&&&arc(ull,ur)\\

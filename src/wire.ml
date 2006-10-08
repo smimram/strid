@@ -8,10 +8,22 @@ type output_kind = Pstricks
 class virtual wire =
 object (self)
   method virtual draw : output_kind -> string
+
+  val mutable dependencies = ([]:wire list)
+
+  (* Specify that another wire should be drawn before. *)
+  method add_dep d =
+    dependencies <- d::dependencies
+
+  method get_deps = dependencies
 end
 
 class line (src:dir) (dst:dir) =
 object (self)
+  inherit wire
+
+  method draw _ = failwith "Lines can't be drawn."
+
   val mutable src = src
 
   val mutable dst = dst
@@ -69,11 +81,25 @@ object (self)
     assert (self#src = pl#dst);
     List.iter self#prepend_line (List.rev pl#lines)
 
-  (*(** Lines don't have all the same attributes. *)
-  method private non_uniform =
-    let ans = ref true in *)
+  (** Split into contiguous lines with same attributes. *)
+  method private split_attrs =
+    let rec aux la pl = function
+      (* TODO: we want a less precise equality here *)
+      | h::t when h#get_attrs = la ->
+          pl#append_line h;
+          aux la pl t
+      | h::t -> pl::(aux h#get_attrs (new polyline h) t)
+      | [] -> [pl]
+    in
+      match lines with
+        | h::t -> aux h#get_attrs (new polyline h) t
+        | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
 
-  method draw _ =
+  method draw outkind =
+    (* let pls = self#split_attrs in
+      Printf.printf "[DD] Split len: %d\n%!" (List.length pls);
+      if List.length pls = 1 then
+     ( (* The polyline is uniform. *) *)
     if List.length lines = 1 then
       (
         let xs, ys = (List.hd lines)#src in
@@ -97,6 +123,9 @@ object (self)
           List.iter (fun (x, y) -> s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) coords;
           !s
       )
+      (* )
+      else
+        "\\pscustom{" ^ (List.fold_left (fun s pl -> s ^ pl#draw outkind ^ "\n") "" pls) ^ "}\n" *)
 end
 
 class ellipse pos r =

@@ -34,6 +34,32 @@ object (self)
               p#append_line (new Wire.line pos c.(3));
               q#append_line (new Wire.line pos c.(2));
               p::q::[]
+        | "braid" ->
+            (* let pl1 = new Wire.line c.(0) pos in
+            let pl2 = new Wire.line pos c.(3) in
+            let ql1 = new Wire.line c.(1) pos in
+            let ql2 = new Wire.line pos c.(2) in
+            let p = new Wire.polyline pl1 in
+            let q = new Wire.polyline ql1 in
+              p#append_line pl2;
+              q#append_line ql2;
+              (* q should be over *)
+              ql1#add_attr "vwidth" "yes"; ql2#add_attr "vwidth" "yes";
+              List.iter (fun (ql, pl) -> ql#add_dep (pl :> Wire.wire)) [ql1,pl1;ql1,pl2;ql2,pl1;ql2,pl2];
+              p::q::[] *)
+            let pd = 0.2 in (* diff around the center *)
+            let px, py = pos in
+            let pxs, pys = c.(0) in
+            let pxt, pyt = c.(3) in
+            let pdx = (pxt -. pxs) /. (abs_float (pxt -. pxs)) in
+            let pdy = (pyt -. pys) /. (abs_float (pyt -. pys)) in
+            let ppt = px -. pdx *. pd, py -. pdy *. pd in
+            let pps = px +. pdx *. pd, py +. pdy *. pd in
+            let p1 = new Wire.polyline (new Wire.line c.(0) ppt) in
+            let p2 = new Wire.polyline (new Wire.line pps c.(3)) in
+            let q = new Wire.polyline (new Wire.line c.(1) pos) in
+              q#append_line (new Wire.line pos c.(2));
+              p1::p2::q::[]
         | "line" ->
             let l = new Wire.polyline (new Wire.line c.(0) pos) in
               l#append_line (new Wire.line pos c.(1));
