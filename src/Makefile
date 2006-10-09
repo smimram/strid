@@ -5,7 +5,7 @@ OCAMLYACC=menhir
 all: nc
 
 test: all
-	./strid test.strid
+	./strid --full-tex test.strid
 	latex out.tex
 	dvips out.dvi
 	cat out.tex

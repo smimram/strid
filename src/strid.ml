@@ -2,6 +2,7 @@ open Lang
 
 let file_in = ref ""
 let file_out = ref "out.tex"
+let full_tex = ref false
 
 let get_pos d i j =
   (i*10, j*10)
@@ -9,6 +10,7 @@ let get_pos d i j =
 let _ =
   Arg.parse
     [
+      "--full-tex", Arg.Set full_tex, "Full LaTeX file";
       "-o", Arg.Set_string file_out, "Output file"
     ]
     (fun s ->
@@ -26,7 +28,9 @@ let _ =
   let m = matrix_of_ir (Parser.matrix Lexer.token (Lexing.from_string sin)) in
   let pst = Lang.process_matrix m in
   let fo = open_out !file_out in
-    output_string fo "\\documentclass{article}\n\\usepackage{pstricks}\n\\begin{document}\n";
+    if !full_tex then
+      output_string fo "\\documentclass{article}\n\\usepackage{pstricks}\n\\begin{document}\n";
     output_string fo pst;
-    output_string fo "\\end{document}\n";
+    if !full_tex then
+      output_string fo "\\end{document}\n";
     close_out fo
