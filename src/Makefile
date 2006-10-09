@@ -1,6 +1,7 @@
 SOURCES=wire.ml lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
 OCAMLYACC=menhir
+LIBS=str
 
 all: nc
 

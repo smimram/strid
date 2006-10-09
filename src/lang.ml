@@ -8,6 +8,13 @@ let iffound f =
 let rd_add (x, y) (dx, dy) = (x +. dx, y +. dy)
 type opt = string * ((string * string) list)
 
+let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
+
+let get_dir (xs, ys) (xt, yt) =
+  let dx = if xs = xt then 0. else (xt -. xs) /. (abs_float (xt -. xs)) in
+  let dy = if ys = yt then 0. else (yt -. ys) /. (abs_float (yt -. ys)) in
+    dx, dy
+
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
   val options = options
@@ -51,19 +58,33 @@ object (self)
             let px, py = pos in
             let pxs, pys = c.(0) in
             let pxt, pyt = c.(3) in
-            let pdx = (pxt -. pxs) /. (abs_float (pxt -. pxs)) in
-            let pdy = (pyt -. pys) /. (abs_float (pyt -. pys)) in
+            let pdx, pdy = get_dir c.(0) c.(3) in
+            (* let pdx = (pxt -. pxs) /. (abs_float (pxt -. pxs)) in
+            let pdy = (pyt -. pys) /. (abs_float (pyt -. pys)) in *)
             let ppt = px -. pdx *. pd, py -. pdy *. pd in
             let pps = px +. pdx *. pd, py +. pdy *. pd in
             let p1 = new Wire.polyline (new Wire.line c.(0) ppt) in
             let p2 = new Wire.polyline (new Wire.line pps c.(3)) in
             let q = new Wire.polyline (new Wire.line c.(1) pos) in
               q#append_line (new Wire.line pos c.(2));
+            (* let q = new Wire.polyline (new Wire.line c.(1) c.(2)) in *)
               p1::p2::q::[]
         | "line" ->
             let l = new Wire.polyline (new Wire.line c.(0) pos) in
               l#append_line (new Wire.line pos c.(1));
               l::[]
+        | k when Str.string_match re_box k 0 ->
+            let i = int_of_string (Str.matched_group 1 k) in
+            let o = int_of_string (Str.matched_group 2 k) in
+            let px, py = pos in
+            let ans = ref [] in
+              for n = 0 to i - 1 do
+                ans := (new Wire.polyline (new Wire.line c.(n) (px +. (float_of_int n) *. epsilon_float, py)))::!ans
+              done;
+              for n = i to i + o - 1 do
+                ans := (new Wire.polyline (new Wire.line (px +. (float_of_int n) *. epsilon_float, py) c.(n)))::!ans
+              done;
+              !ans
         | k ->
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
