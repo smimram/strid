@@ -1,3 +1,5 @@
+open Common
+
 let debug = Printf.printf "[DD] %s\n"
 let info = Printf.printf "[II] %s\n"
 let warning = Printf.printf "[WW] %s\n"
@@ -56,8 +58,6 @@ object (self)
               p::q::[] *)
             let pd = 0.2 in (* diff around the center *)
             let px, py = pos in
-            let pxs, pys = c.(0) in
-            let pxt, pyt = c.(3) in
             let pdx, pdy = get_dir c.(0) c.(3) in
             (* let pdx = (pxt -. pxs) /. (abs_float (pxt -. pxs)) in
             let pdy = (pyt -. pys) /. (abs_float (pyt -. pys)) in *)
@@ -73,6 +73,7 @@ object (self)
             let l = new Wire.polyline (new Wire.line c.(0) pos) in
               l#append_line (new Wire.line pos c.(1));
               l::[]
+        | "text" -> []
         | k when Str.string_match re_box k 0 ->
             let i = int_of_string (Str.matched_group 1 k) in
             let o = int_of_string (Str.matched_group 2 k) in
@@ -89,19 +90,36 @@ object (self)
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
   method get_ellipses pos =
-    let ans = ref [] in
-      iffound (fun () -> let _ = List.assoc "l" options in ans := (new Wire.ellipse pos (0.5,0.3))::!ans);
-      !ans
+    match self#kind with
+      | "text" -> []
+      | _ ->
+          deffound []
+            (fun () ->
+               let _ = List.assoc "l" options in (* label *)
+               let e = new Wire.ellipse pos (0.5,0.3) in
+                 [e]
+            )
 
   method get_texts pos =
-    let ans = ref [] in
-      iffound
-        (fun () ->
-           let label = List.assoc "l" options in
-           let t = List.assoc "t" label in
-             ans := (new Wire.text pos t)::!ans
-        );
-      !ans
+    let c = Array.map (rd_add pos) self#connexion in
+      match self#kind with
+        | "text" ->
+            deffound [] (fun () ->
+                           let label = List.assoc "l" options in (* value *)
+                           let t = List.assoc "t" label in (* text *)
+                           let px, py = pos in
+                           let pxs, pys = c.(0) in
+                           let pxt, pyt = c.(1) in
+                           let p = px +. (pxt -. pxs) /. 2., py +. (pyt -. pys) /. 2. in
+                             [new Wire.text p t]
+            )
+        | _ ->
+            deffound []
+              (fun () ->
+                 let label = List.assoc "l" options in (* label *)
+                 let t = List.assoc "t" label in (* text *)
+                   [new Wire.text pos t]
+              )
 end
 
 type line = box option list

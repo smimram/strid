@@ -1,4 +1,3 @@
-
 &&&arc(dl,dddrr)[l,t=#$\lambda$#]\\
 &&\\
 &2box3(uuu,ur,ddddd,ddr,drr)[l,t=#$m$#]\\
@@ -6,3 +5,4 @@
 &&&braid(l,u,d,r)&&braid(l,u,d,r)&line(,ddd)\\
 \\
 &&&&mult(ul,ur,d)[l,t=#$m$#]\\
+&&&&text(,d)[l,t=#$x$#]\\
