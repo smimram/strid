@@ -6,6 +6,7 @@
 let space = ' ' | '\t' | '\r'
 
 rule token = parse
+  | "%"_* { token lexbuf }
   | "&" { NEWCOL}
   | "\\\\" { NEWLINE }
   | '#'([^'#']* as tex)'#' { STRING tex }

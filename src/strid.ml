@@ -26,7 +26,7 @@ let _ =
       buf
   in
   let m = matrix_of_ir (Parser.matrix Lexer.token (Lexing.from_string sin)) in
-  let pst = Lang.process_matrix m in
+  let pst = Lang.process_matrix Wire.Pstricks_spline m in
   let fo = open_out !file_out in
     if !full_tex then
       output_string fo "\\documentclass{article}\n\\usepackage{pstricks}\n\\begin{document}\n";

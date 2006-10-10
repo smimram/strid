@@ -3,7 +3,7 @@ type dir = float * float
 
 let showpoints = ref false
 
-type output_kind = Pstricks
+type output_kind = Pstricks | Pstricks_spline
 
 class virtual wire =
 object (self)
@@ -96,36 +96,42 @@ object (self)
         | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
 
   method draw outkind =
-    (* let pls = self#split_attrs in
-      Printf.printf "[DD] Split len: %d\n%!" (List.length pls);
-      if List.length pls = 1 then
-     ( (* The polyline is uniform. *) *)
-    if List.length lines = 1 then
-      (
-        let xs, ys = (List.hd lines)#src in
-        let xe, ye = (List.hd lines)#dst in
-          Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) xs ys xe ye
-      )
-    else
-      (
-        let x, y = (List.hd lines)#src in
-        let s = ref (Printf.sprintf "\\%s%s(%.2f,%.2f)" (if self#src = self#dst then "psccurve" else "pscurve") (sp ()) x y) in
-        let coords = List.map (fun l -> l#dst) lines in
-        let coords =
-          (* Remove duplicate coordinates. *)
-          let rec uniq lx ly = function
-            | (x,y)::t when x = lx && y = ly -> uniq lx ly t
-            | (x,y)::t -> (x,y)::(uniq x y t)
-            | [] -> []
-          in
-            uniq x y coords
-        in
-          List.iter (fun (x, y) -> s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) coords;
-          !s
-      )
-      (* )
-      else
-        "\\pscustom{" ^ (List.fold_left (fun s pl -> s ^ pl#draw outkind ^ "\n") "" pls) ^ "}\n" *)
+    match outkind with
+      | Pstricks_spline ->
+          let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+          let z, spl = Spline.compute 0.8 20 points in
+            Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (x, y) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
+      | Pstricks ->
+          (* let pls = self#split_attrs in
+           Printf.printf "[DD] Split len: %d\n%!" (List.length pls);
+           if List.length pls = 1 then
+           ( (* The polyline is uniform. *) *)
+          if List.length lines = 1 then
+            (
+              let xs, ys = (List.hd lines)#src in
+              let xe, ye = (List.hd lines)#dst in
+                Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) xs ys xe ye
+            )
+          else
+            (
+              let x, y = (List.hd lines)#src in
+              let s = ref (Printf.sprintf "\\%s%s(%.2f,%.2f)" (if self#src = self#dst then "psccurve" else "pscurve") (sp ()) x y) in
+              let coords = List.map (fun l -> l#dst) lines in
+              let coords =
+                (* Remove duplicate coordinates. *)
+                let rec uniq lx ly = function
+                  | (x,y)::t when x = lx && y = ly -> uniq lx ly t
+                  | (x,y)::t -> (x,y)::(uniq x y t)
+                  | [] -> []
+                in
+                  uniq x y coords
+              in
+                List.iter (fun (x, y) -> s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) coords;
+                !s
+            )
+(* )
+ else
+ "\\pscustom{" ^ (List.fold_left (fun s pl -> s ^ pl#draw outkind ^ "\n") "" pls) ^ "}\n" *)
 end
 
 class ellipse pos r =

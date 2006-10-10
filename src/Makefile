@@ -12,4 +12,8 @@ test: all
 	cat out.tex
 	gv out.ps
 
+%.ps: %.tex
+	latex $<
+	dvips `basename $< .tex`.dvi
+
 include OCamlMakefile

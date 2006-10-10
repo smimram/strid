@@ -3,7 +3,7 @@
 %}
 
 %token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF
-%token <string> STRING
+%token <string> STRING COMMENT
 
 %start matrix
 %type <Lang.ir_matrix> matrix

@@ -185,7 +185,7 @@ let rec join_plines plines =
       | [] -> []
       | h::t -> let tl = find h (join_plines t) in h::tl
 
-let process_matrix m =
+let process_matrix kind m =
   let out = ref "" in
   let plines = ref [] in
   let ellipses = ref [] in
@@ -210,8 +210,8 @@ let process_matrix m =
     done;
     out := (Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height);
     plines := join_plines !plines;
-    List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw Wire.Pstricks)) !plines;
-    List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw Wire.Pstricks)) !ellipses;
-    List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw Wire.Pstricks)) !texts;
+    List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw kind)) !plines;
+    List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw kind)) !ellipses;
+    List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw kind)) !texts;
     out := !out ^ "\\end{pspicture}\n";
     !out
