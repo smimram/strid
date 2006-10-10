@@ -1,4 +1,4 @@
-SOURCES=common.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
+SOURCES=common.ml spline.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
 OCAMLYACC=menhir
 LIBS=str
