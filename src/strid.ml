@@ -1,7 +1,7 @@
 open Lang
 
 let file_in = ref ""
-let file_out = ref "out.tex"
+let file_out = ref "strid.tex"
 let full_tex = ref false
 
 let get_pos d i j =
