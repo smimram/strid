@@ -99,8 +99,8 @@ object (self)
     match outkind with
       | Pstricks_spline ->
           let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-          let z, spl = Spline.compute 0.8 20 points in
-            Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (x, y) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
+          let spl = Spline.compute 20 points in
+            Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (t,(x, y)) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
       | Pstricks ->
           (* let pls = self#split_attrs in
            Printf.printf "[DD] Split len: %d\n%!" (List.length pls);

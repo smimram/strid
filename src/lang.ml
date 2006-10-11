@@ -4,6 +4,11 @@ let debug = Printf.printf "[DD] %s\n"
 let info = Printf.printf "[II] %s\n"
 let warning = Printf.printf "[WW] %s\n"
 
+let ellipse_X_ray = ref 0.5
+let ellipse_Y_ray = ref 0.3
+let circle_ray = ref (!ellipse_Y_ray)
+let pi = 4.*. (atan 1.)
+
 let iffound f =
   try f () with Not_found -> ()
 
@@ -16,6 +21,17 @@ let get_dir (xs, ys) (xt, yt) =
   let dx = if xs = xt then 0. else (xt -. xs) /. (abs_float (xt -. xs)) in
   let dy = if ys = yt then 0. else (yt -. ys) /. (abs_float (yt -. ys)) in
     dx, dy
+
+let circle_position pos index number dir =
+  if (dir = "up")
+  then
+    let (px,py) = pos in
+      (px +. !circle_ray *. cos(pi*.(1.-.float_of_int(index)/. float_of_int(number+1))),
+      py +. !circle_ray *. sin(pi*.(1.-.float_of_int(index)/. float_of_int(number+1))))
+  else
+    let (px,py) = pos in
+      (px +. !circle_ray *. cos(pi*.(-1.+.float_of_int(index)/. float_of_int(number+1))),
+      py +. !circle_ray *. sin(pi*.(-1.+.float_of_int(index)/. float_of_int(number+1))))
 
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
@@ -80,10 +96,25 @@ object (self)
             let px, py = pos in
             let ans = ref [] in
               for n = 0 to i - 1 do
-                ans := (new Wire.polyline (new Wire.line c.(n) (px +. (float_of_int n) *. epsilon_float, py)))::!ans
+                let polyL =
+                  (new Wire.polyline
+                     (new Wire.line  c.(n)
+                        (circle_position pos (n+1) i "up"))) in
+                  polyL#append_line
+                    (new Wire.line (circle_position pos (n+1) i "up")
+                       (px +. (float_of_int n) *. epsilon_float, py));
+                  ans := polyL ::!ans
               done;
               for n = i to i + o - 1 do
-                ans := (new Wire.polyline (new Wire.line (px +. (float_of_int n) *. epsilon_float, py) c.(n)))::!ans
+                let polyL =
+                  (new Wire.polyline
+                     (new Wire.line
+                        (px +. (float_of_int n) *. epsilon_float, py)
+                        (circle_position pos (n-i+1) o "down")))
+                in
+                  polyL#append_line
+                    (new Wire.line (circle_position pos (n-i+1) o "down") c.(n));
+                  ans :=  polyL ::!ans
               done;
               !ans
         | k ->
@@ -96,7 +127,7 @@ object (self)
           deffound []
             (fun () ->
                let _ = List.assoc "l" options in (* label *)
-               let e = new Wire.ellipse pos (0.5,0.3) in
+               let e = new Wire.ellipse pos (! ellipse_X_ray,! ellipse_Y_ray) in
                  [e]
             )
 

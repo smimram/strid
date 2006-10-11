@@ -1,8 +1,10 @@
-&&&arc(dl,dddrr)[l,t=#$\lambda$#]\\
+&&&&arc(dll,dddr)[l,t=#$\lambda$#]\\
 &&\\
-&2box3(uuu,ur,ddddd,ddr,drr)\\
+& 2box3(uuu,ur,ddddddd,dr,drr)[l,t=#$m$#] \\
 \\
-&&&braid(l,u,d,r)&&\\%braid(l,u,d,r)&line(,ddd)\\
+&&&braid(ul,u,ddd,rd)&&&\\
 \\
-&&&&mult(ul,ur,d)[l,t=#$m$#]\\
-&&&&text(,d)[l,t=#$x$#]\\
+&&&&&braid(ul,uuu,d,rrdd)&&\\
+&&&&&&&\\
+&&&& 2box1(ul,ur,d)[l,t=#$m$#] &&&line(,d)\\
+&&&&text(,d)[l,t=#$id$#]\\
