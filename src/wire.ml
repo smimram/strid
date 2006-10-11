@@ -1,3 +1,5 @@
+open Common
+
 type reldir = float * float
 type dir = float * float
 
@@ -99,6 +101,7 @@ object (self)
     match outkind with
       | Pstricks_spline ->
           let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+          let points = remove_consecutive_dups points in
           let spl = Spline.compute 20 points in
             Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (t,(x, y)) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
       | Pstricks ->

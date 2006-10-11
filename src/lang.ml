@@ -107,7 +107,7 @@ object (self)
           deffound []
             (fun () ->
                let _ = List.assoc "l" options in (* label *)
-               let e = new Wire.ellipse pos (! ellipse_X_ray,! ellipse_Y_ray) in
+               let e = new Wire.ellipse pos (!ellipse_X_ray, !ellipse_Y_ray) in
                  [e]
             )
 

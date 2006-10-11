@@ -7,3 +7,9 @@ let length p1 p2 =
   let x1, y1 = p1 in
   let x2, y2 = p2 in
     sqrt((x2-.x1)*.(x2-.x1) +. (y2-.y1)*.(y2-.y1))
+
+(* Remove duplicate coordinates. *)
+let rec remove_consecutive_dups = function
+  | p::q::t when p = q -> remove_consecutive_dups (q::t)
+  | p::q::t -> p::(remove_consecutive_dups (q::t))
+  | l -> l
