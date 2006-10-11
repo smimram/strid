@@ -22,9 +22,8 @@ let get_dir (xs, ys) (xt, yt) =
   let dy = if ys = yt then 0. else (yt -. ys) /. (abs_float (yt -. ys)) in
     dx, dy
 
-let circle_position pos index number dir =
-  if (dir = "up")
-  then
+let circle_position pos index number up =
+  if up then
     let (px,py) = pos in
       (px +. !circle_ray *. cos(pi*.(1.-.float_of_int(index)/. float_of_int(number+1))),
       py +. !circle_ray *. sin(pi*.(1.-.float_of_int(index)/. float_of_int(number+1))))
@@ -99,9 +98,9 @@ object (self)
                 let polyL =
                   (new Wire.polyline
                      (new Wire.line  c.(n)
-                        (circle_position pos (n+1) i "up"))) in
+                        (circle_position pos (n+1) i true))) in
                   polyL#append_line
-                    (new Wire.line (circle_position pos (n+1) i "up")
+                    (new Wire.line (circle_position pos (n+1) i true)
                        (px +. (float_of_int n) *. epsilon_float, py));
                   ans := polyL ::!ans
               done;
@@ -110,10 +109,10 @@ object (self)
                   (new Wire.polyline
                      (new Wire.line
                         (px +. (float_of_int n) *. epsilon_float, py)
-                        (circle_position pos (n-i+1) o "down")))
+                        (circle_position pos (n-i+1) o false)))
                 in
                   polyL#append_line
-                    (new Wire.line (circle_position pos (n-i+1) o "down") c.(n));
+                    (new Wire.line (circle_position pos (n-i+1) o false) c.(n));
                   ans :=  polyL ::!ans
               done;
               !ans
