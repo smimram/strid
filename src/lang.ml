@@ -54,23 +54,9 @@ object (self)
             let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
               p::q::[]
         | "braid" ->
-            (* let pl1 = new Wire.line c.(0) pos in
-            let pl2 = new Wire.line pos c.(3) in
-            let ql1 = new Wire.line c.(1) pos in
-            let ql2 = new Wire.line pos c.(2) in
-            let p = new Wire.polyline pl1 in
-            let q = new Wire.polyline ql1 in
-              p#append_line pl2;
-              q#append_line ql2;
-              (* q should be over *)
-              ql1#add_attr "vwidth" "yes"; ql2#add_attr "vwidth" "yes";
-              List.iter (fun (ql, pl) -> ql#add_dep (pl :> Wire.wire)) [ql1,pl1;ql1,pl2;ql2,pl1;ql2,pl2];
-              p::q::[] *)
             let pd = 0.2 in (* diff around the center *)
             let px, py = pos in
             let pdx, pdy = get_dir c.(0) c.(3) in
-            (* let pdx = (pxt -. pxs) /. (abs_float (pxt -. pxs)) in
-            let pdy = (pyt -. pys) /. (abs_float (pyt -. pys)) in *)
             let ppt = px -. pdx *. pd, py -. pdy *. pd in
             let pps = px +. pdx *. pd, py +. pdy *. pd in
             let p1 = Wire.new_polyline (c.(0)::ppt::[]) in
