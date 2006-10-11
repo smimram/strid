@@ -22,15 +22,13 @@ let get_dir (xs, ys) (xt, yt) =
   let dy = if ys = yt then 0. else (yt -. ys) /. (abs_float (yt -. ys)) in
     dx, dy
 
-let circle_position pos index number up =
-  if up then
-    let (px,py) = pos in
-      (px +. !circle_ray *. cos(pi*.(1.-.float_of_int(index)/. float_of_int(number+1))),
-      py +. !circle_ray *. sin(pi*.(1.-.float_of_int(index)/. float_of_int(number+1))))
-  else
-    let (px,py) = pos in
-      (px +. !circle_ray *. cos(pi*.(-1.+.float_of_int(index)/. float_of_int(number+1))),
-      py +. !circle_ray *. sin(pi*.(-1.+.float_of_int(index)/. float_of_int(number+1))))
+let circle_position debut fin =
+  let (px,py) = debut in
+  let (qx,qy) = fin in
+  let dir = (qx-.px,qy-.py) in
+  let (dx,dy) = dir in
+  let norm = sqrt(dx*.dx +. dy*.dy) in
+    (px +. dx/.norm *. !circle_ray , py +. dy/.norm *. !circle_ray)
 
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
@@ -44,9 +42,10 @@ object (self)
     let c = Array.map (rd_add pos) self#connexion in
       match self#kind with
         | "mult" ->
-            let i = new Wire.polyline (new Wire.line pos c.(2)) in
+            let i = new Wire.polyline (new Wire.line pos (circle_position pos c.(2))) in
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
               u#append_line (new Wire.line pos c.(1));
+              i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));
               i::u::[]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
@@ -98,21 +97,21 @@ object (self)
                 let polyL =
                   (new Wire.polyline
                      (new Wire.line  c.(n)
-                        (circle_position pos (n+1) i true))) in
+                        (circle_position pos c.(n)))) in
                   polyL#append_line
-                    (new Wire.line (circle_position pos (n+1) i true)
+                    (new Wire.line (circle_position pos c.(n))
                        (px +. (float_of_int n) *. epsilon_float, py));
                   ans := polyL ::!ans
               done;
               for n = i to i + o - 1 do
                 let polyL =
                   (new Wire.polyline
-                     (new Wire.line
+                      (new Wire.line
                         (px +. (float_of_int n) *. epsilon_float, py)
-                        (circle_position pos (n-i+1) o false)))
+                        (circle_position pos c.(n))))
                 in
                   polyL#append_line
-                    (new Wire.line (circle_position pos (n-i+1) o false) c.(n));
+                    (new Wire.line (circle_position pos c.(n)) c.(n));
                   ans :=  polyL ::!ans
               done;
               !ans

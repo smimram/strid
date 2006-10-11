@@ -11,7 +11,7 @@ test: all
 	latex strid.tex
 	dvips strid.dvi
 	cat strid.tex
-	gv strid.ps
+	#gv strid.ps
 
 %.tex: %.strid
 	./strid $< -o $@
