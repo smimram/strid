@@ -42,20 +42,16 @@ object (self)
     let c = Array.map (rd_add pos) self#connexion in
       match self#kind with
         | "mult" ->
-            let i = new Wire.polyline (new Wire.line pos (circle_position pos c.(2))) in
-            let u = new Wire.polyline (new Wire.line c.(0) pos) in
-              u#append_line (new Wire.line pos c.(1));
-              i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));
+            let i = Wire.new_polyline (pos::(circle_position pos c.(2))::c.(2)::[]) in
+            let u = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
               i::u::[]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
               u#append_line (new Wire.line pos c.(1));
               [u]
         | "sym" ->
-            let p = new Wire.polyline (new Wire.line c.(0) pos) in
-            let q = new Wire.polyline (new Wire.line c.(1) pos) in
-              p#append_line (new Wire.line pos c.(3));
-              q#append_line (new Wire.line pos c.(2));
+            let p = Wire.new_polyline (c.(0)::pos::c.(3)::[]) in
+            let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
               p::q::[]
         | "braid" ->
             (* let pl1 = new Wire.line c.(0) pos in
@@ -77,15 +73,12 @@ object (self)
             let pdy = (pyt -. pys) /. (abs_float (pyt -. pys)) in *)
             let ppt = px -. pdx *. pd, py -. pdy *. pd in
             let pps = px +. pdx *. pd, py +. pdy *. pd in
-            let p1 = new Wire.polyline (new Wire.line c.(0) ppt) in
-            let p2 = new Wire.polyline (new Wire.line pps c.(3)) in
-            let q = new Wire.polyline (new Wire.line c.(1) pos) in
-              q#append_line (new Wire.line pos c.(2));
-            (* let q = new Wire.polyline (new Wire.line c.(1) c.(2)) in *)
+            let p1 = Wire.new_polyline (c.(0)::ppt::[]) in
+            let p2 = Wire.new_polyline (pps::c.(3)::[]) in
+            let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
               p1::p2::q::[]
         | "line" ->
-            let l = new Wire.polyline (new Wire.line c.(0) pos) in
-              l#append_line (new Wire.line pos c.(1));
+            let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
               l::[]
         | "text" -> []
         | k when Str.string_match re_box k 0 ->
@@ -94,25 +87,14 @@ object (self)
             let px, py = pos in
             let ans = ref [] in
               for n = 0 to i - 1 do
-                let polyL =
-                  (new Wire.polyline
-                     (new Wire.line  c.(n)
-                        (circle_position pos c.(n)))) in
-                  polyL#append_line
-                    (new Wire.line (circle_position pos c.(n))
-                       (px +. (float_of_int n) *. epsilon_float, py));
-                  ans := polyL ::!ans
+                let pl = Wire.new_polyline (c.(n)::(circle_position pos c.(n))::(px +. (float_of_int n) *. epsilon_float, py)::[])
+                in
+                  ans := pl ::!ans
               done;
               for n = i to i + o - 1 do
-                let polyL =
-                  (new Wire.polyline
-                      (new Wire.line
-                        (px +. (float_of_int n) *. epsilon_float, py)
-                        (circle_position pos c.(n))))
+                let pl = Wire.new_polyline ((px +. (float_of_int n) *. epsilon_float, py)::(circle_position pos c.(n))::c.(n)::[])
                 in
-                  polyL#append_line
-                    (new Wire.line (circle_position pos c.(n)) c.(n));
-                  ans :=  polyL ::!ans
+                  ans := pl ::!ans
               done;
               !ans
         | k ->

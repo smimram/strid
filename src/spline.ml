@@ -1,11 +1,7 @@
+open Common
+
 (** Interpolation type. *)
 let interpolation_type = Gsl_interp.CSPLINE
-
-(** Norm of the vector p1 p2. *)
-let length p1 p2 =
-  let x1, y1 = p1 in
-  let x2, y2 = p2 in
-    sqrt((x2-.x1)*.(x2-.x1) +. (y2-.y1)*.(y2-.y1))
 
 (** Compute the interpolation. *)
 let rec interpolation_rec steps point_list courbe=

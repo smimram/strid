@@ -134,6 +134,19 @@ object (self)
  "\\pscustom{" ^ (List.fold_left (fun s pl -> s ^ pl#draw outkind ^ "\n") "" pls) ^ "}\n" *)
 end
 
+(** Create a new polyline, given a list of points. *)
+let new_polyline l =
+  let rec aux pl = function
+    | p::q::t ->
+        pl#append_line (new line p q);
+        aux pl (q::t);
+        pl
+    | _ -> pl
+  in
+    match l with
+      | p::q::t -> aux (new polyline (new line p q)) (q::t)
+      | _ -> failwith "Trying to create an empty polyline."
+
 class ellipse pos r =
 object (self)
   inherit wire
