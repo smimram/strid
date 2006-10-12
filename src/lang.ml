@@ -6,7 +6,7 @@ let warning = Printf.printf "[WW] %s\n"
 
 let ellipse_X_ray = ref 0.5
 let ellipse_Y_ray = ref 0.3
-let circle_ray = ref 0.2
+let circle_ray = ref 0.3
 let pi = 4.*. (atan 1.)
 
 let iffound f =
