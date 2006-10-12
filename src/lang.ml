@@ -73,12 +73,12 @@ object (self)
             let px, py = pos in
             let ans = ref [] in
               for n = 0 to i - 1 do
-                let pl = Wire.new_polyline (c.(n)::(circle_position pos c.(n))::(px +. (float_of_int n) *. epsilon_float, py)::[])
+                let pl = Wire.new_polyline (c.(n)::(*(circle_position pos c.(n))::*)(px +. (float_of_int n) *. epsilon_float, py)::[])
                 in
                   ans := pl ::!ans
               done;
               for n = i to i + o - 1 do
-                let pl = Wire.new_polyline ((px +. (float_of_int n) *. epsilon_float, py)::(circle_position pos c.(n))::c.(n)::[])
+                let pl = Wire.new_polyline ((px +. (float_of_int n) *. epsilon_float, py)::(*(circle_position pos c.(n))::*)c.(n)::[])
                 in
                   ans := pl ::!ans
               done;
