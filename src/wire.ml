@@ -100,10 +100,17 @@ object (self)
   method draw outkind =
     match outkind with
       | Pstricks_spline ->
-          let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-          let points = remove_consecutive_dups points in
-          let spl = Spline.compute 20 points in
-            Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (t,(x, y)) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
+          (
+            let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+            let points = remove_consecutive_dups points in
+              match points with
+                | (x1,y1)::(x2,y2)::[] ->
+                    Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                | _::[] | [] -> failwith "Drawing empty line."
+                | points ->
+                    let spl = Spline.compute 20 points in
+                      Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (t,(x, y)) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
+          )
       | Pstricks ->
           (* let pls = self#split_attrs in
            Printf.printf "[DD] Split len: %d\n%!" (List.length pls);
