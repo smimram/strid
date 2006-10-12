@@ -51,7 +51,8 @@ object (self)
         | "braid" ->
             let p1 = Wire.new_polyline (c.(0)::(circle_position pos c.(0))::[]) in
             let p2 = Wire.new_polyline ((circle_position pos c.(3))::c.(3)::[]) in
-            let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
+            (* let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in *)
+            let q = Wire.new_polyline (c.(1)::(circle_position pos c.(1))::(circle_position pos c.(2))::c.(2)::[]) in
               p1::p2::q::[]
         | "line" ->
             let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
