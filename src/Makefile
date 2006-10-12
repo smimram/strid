@@ -8,13 +8,12 @@ all: nc
 
 test: all
 	./strid --full-tex test.strid
-	latex strid.tex
-	dvips strid.dvi
-	cat strid.tex
-	#gv strid.ps
+	latex test.tex
+	dvips test.dvi
+	cat test.tex
 
 %.tex: %.strid
-	./strid $< -o $@
+	./strid $<
 
 %.ps: %.tex
 	latex $<
