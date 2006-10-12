@@ -17,14 +17,16 @@ type opt = string * ((string * string) list)
 
 let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
 
+(*
 let get_dir (xs, ys) (xt, yt) =
   let dx = if xs = xt then 0. else (xt -. xs) /. (abs_float (xt -. xs)) in
   let dy = if ys = yt then 0. else (yt -. ys) /. (abs_float (yt -. ys)) in
     dx, dy
+*)
 
-let circle_position debut fin =
-  let (px,py) = debut in
-  let (qx,qy) = fin in
+let circle_position center point =
+  let (px,py) = center in
+  let (qx,qy) = point in
   let dir = (qx-.px,qy-.py) in
   let (dx,dy) = dir in
   let norm = sqrt(dx*.dx +. dy*.dy) in
@@ -54,13 +56,8 @@ object (self)
             let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
               p::q::[]
         | "braid" ->
-            let pd = 0.2 in (* diff around the center *)
-            let px, py = pos in
-            let pdx, pdy = get_dir c.(0) c.(3) in
-            let ppt = px -. pdx *. pd, py -. pdy *. pd in
-            let pps = px +. pdx *. pd, py +. pdy *. pd in
-            let p1 = Wire.new_polyline (c.(0)::ppt::[]) in
-            let p2 = Wire.new_polyline (pps::c.(3)::[]) in
+            let p1 = Wire.new_polyline (c.(0)::(circle_position pos c.(0))::[]) in
+            let p2 = Wire.new_polyline ((circle_position pos c.(3))::c.(3)::[]) in
             let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
               p1::p2::q::[]
         | "line" ->
