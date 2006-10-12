@@ -50,10 +50,14 @@ object (self)
               p::q::[]
         | "braid" ->
             let p1 = Wire.new_polyline (c.(0)::(circle_position pos c.(0))::[]) in
+            let l = new Wire.line (circle_position pos c.(0)) (circle_position pos c.(3)) in
             let p2 = Wire.new_polyline ((circle_position pos c.(3))::c.(3)::[]) in
             (* let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in *)
             let q = Wire.new_polyline (c.(1)::(circle_position pos c.(1))::(circle_position pos c.(2))::c.(2)::[]) in
-              p1::p2::q::[]
+              l#add_attr "opacity" "0";
+              p1#append_line l;
+              p1#append p2;
+              p1::q::[]
         | "line" ->
             let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
               l::[]

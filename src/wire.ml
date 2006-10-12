@@ -35,6 +35,9 @@ object (self)
   method add_attr name value =
     attrs <- (name, value)::attrs
 
+  method get_attr name =
+    List.assoc name attrs
+
   method get_attrs = attrs
 
   method src = src
@@ -97,10 +100,12 @@ object (self)
         | h::t -> aux h#get_attrs (new polyline h) t
         | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
 
+  (** Get the code for drawing the polyline. *)
   method draw outkind =
     match outkind with
       | Pstricks_spline ->
           (
+            let resolution = ref 20 in (* number of generated points between two lines *)
             let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
             let points = remove_consecutive_dups points in
               match points with
@@ -108,8 +113,31 @@ object (self)
                     Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
                 | _::[] | [] -> failwith "Drawing empty line."
                 | points ->
-                    let spl = Spline.compute 20 points in
-                      Printf.sprintf "\\psline%s" (sp ()) ^ List.fold_left (fun s (t,(x, y)) -> s ^ Printf.sprintf "(%.2f,%.2f)" x y) "" spl
+                    let spl = Spline.compute !resolution points in
+                    let spl = List.map snd spl in
+                    let spl = queue_of_list spl in
+                    let lines = queue_of_list lines in
+                    let plast = ref (Queue.pop spl) in
+                    let ans = ref "" in
+                      while Queue.length spl <> 0 do
+                        let l = Queue.pop lines in
+                          if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
+                            (
+                              ans := !ans ^ (Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ())) (fst !plast) (snd !plast);
+                              for i = 0 to !resolution - 1 do
+                                plast := Queue.pop spl;
+                                ans := !ans ^ (Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast))
+                              done;
+                              ans := !ans ^ "\n"
+                            )
+                          else
+                            (
+                              for i = 0 to !resolution - 1 do
+                                plast := Queue.pop spl
+                              done
+                            )
+                      done;
+                      !ans
           )
       | Pstricks ->
           (* let pls = self#split_attrs in

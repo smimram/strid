@@ -13,3 +13,8 @@ let rec remove_consecutive_dups = function
   | p::q::t when p = q -> remove_consecutive_dups (q::t)
   | p::q::t -> p::(remove_consecutive_dups (q::t))
   | l -> l
+
+let queue_of_list l =
+  let ans = Queue.create () in
+    List.iter (fun x -> Queue.push x ans) l;
+    ans

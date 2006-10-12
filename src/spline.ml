@@ -4,7 +4,7 @@ open Common
 let interpolation_type = Gsl_interp.CSPLINE
 
 (** Compute the interpolation. *)
-let rec interpolation_rec steps point_list courbe=
+let rec interpolation_rec steps point_list courbe =
   match point_list with
     | [] -> []
     | h1::q ->
@@ -23,7 +23,7 @@ let rec interpolation_rec steps point_list courbe=
                   !partial_list@interpolation_rec steps q courbe
 
 (** Compute the interpolation. *)
-let interpolation steps point_list = 
+let interpolation steps point_list =
   let fst_array = Array.of_list (List.map fst point_list) in
   let snd_array = Array.of_list (List.map snd point_list) in
   let courbe = Gsl_interp.make_interp interpolation_type fst_array snd_array  in 
