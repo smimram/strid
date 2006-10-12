@@ -106,6 +106,7 @@ object (self)
       | Pstricks_spline ->
           (
             let resolution = ref 20 in (* number of generated points between two lines *)
+              (* Remove trivial lines. *)
             let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
             let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
             (* let points = remove_consecutive_dups points in *)
