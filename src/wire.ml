@@ -116,6 +116,7 @@ object (self)
                     let spl = Spline.compute !resolution points in
                     let spl = List.map snd spl in
                     let spl = queue_of_list spl in
+                    let lines = List.fold_left (fun ans l -> if l#src = l#dst then ans else l::ans) [] lines in
                     let lines = queue_of_list lines in
                     let plast = ref (Queue.pop spl) in
                     let ans = ref "" in
