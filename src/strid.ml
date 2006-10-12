@@ -1,7 +1,8 @@
 open Lang
 
+let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref ""
-let file_out = ref "strid.tex"
+let file_out = ref ""
 let full_tex = ref false
 let out_kind = ref "pstricks_splines"
 
@@ -18,7 +19,9 @@ let _ =
       "-t", Arg.Set_string out_kind, "Output type"
     ]
     (fun s ->
-       file_in := s
+       file_in := s;
+       if !file_out = "" && Str.string_match re_file_in !file_in 0 then
+         file_out := (Str.matched_group 1 !file_in) ^ ".tex"
     )
     usage;
   if !file_in = "" then
