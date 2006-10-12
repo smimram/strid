@@ -106,8 +106,9 @@ object (self)
       | Pstricks_spline ->
           (
             let resolution = ref 20 in (* number of generated points between two lines *)
+            let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
             let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-            let points = remove_consecutive_dups points in
+            (* let points = remove_consecutive_dups points in *)
               match points with
                 | (x1,y1)::(x2,y2)::[] ->
                     Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
@@ -116,7 +117,6 @@ object (self)
                     let spl = Spline.compute !resolution points in
                     let spl = List.map snd spl in
                     let spl = queue_of_list spl in
-                    let lines = List.fold_left (fun ans l -> if l#src = l#dst then ans else l::ans) [] lines in
                     let lines = queue_of_list lines in
                     let plast = ref (Queue.pop spl) in
                     let ans = ref "" in

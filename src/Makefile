@@ -13,7 +13,7 @@ test: all
 	cat test.tex
 
 %.tex: %.strid
-	./strid $<
+	./strid --full-tex $<
 
 %.ps: %.tex
 	latex $<
