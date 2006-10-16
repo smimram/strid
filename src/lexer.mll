@@ -16,6 +16,6 @@ rule token = parse
   | ')' { RPAR }
   | ',' { COMMA }
   | '=' { EQ }
-  | (['a'-'z''0'-'9']+ as str) { STRING str }
+  | (['a'-'z''0'-'9''.']+ as str) { STRING str }
   | (space|'\n')+ { token lexbuf }
   | eof { EOF }
