@@ -6,5 +6,5 @@
 \\
 &&&&&braid(ul,uuu,d,rrdd)&&\\
 &&&&&&&\\
-&&&& mult(ul,ur,d)[l,t=#$m$#,w=2] &&&line(,d)\\
+&&&&mult(ul,ur,d)[l,t=#$m$#,w=2] &&&line(,d)\\
 &&&&text(,d)[l,t=#$id$#]\\

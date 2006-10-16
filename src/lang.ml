@@ -3,6 +3,7 @@ open Common
 let debug = Printf.printf "[DD] %s\n"
 let info = Printf.printf "[II] %s\n"
 let warning = Printf.printf "[WW] %s\n"
+let error e = Printf.printf "[EE] %s\n" e; exit 1
 
 let ellipse_X_ray = ref 0.5
 let ellipse_Y_ray = ref 0.3
