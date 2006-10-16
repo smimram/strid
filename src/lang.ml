@@ -29,6 +29,9 @@ class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
   val options = options
 
+  method get_attr name subname =
+    List.assoc subname (List.assoc name options)
+
   method kind = kind
 
   method connexion = Array.of_list connexions
@@ -88,7 +91,9 @@ object (self)
           deffound []
             (fun () ->
                let _ = List.assoc "l" options in (* label *)
-               let e = new Wire.ellipse pos (!ellipse_X_ray, !ellipse_Y_ray) in
+               let xray = deffound !ellipse_X_ray (fun () -> float_of_string (self#get_attr "l" "w")) in
+               let yray = deffound !ellipse_Y_ray (fun () -> float_of_string (self#get_attr "l" "h")) in
+               let e = new Wire.ellipse pos (xray, yray) in
                  [e]
             )
 
@@ -108,8 +113,7 @@ object (self)
         | _ ->
             deffound []
               (fun () ->
-                 let label = List.assoc "l" options in (* label *)
-                 let t = List.assoc "t" label in (* text *)
+                 let t = self#get_attr "l" (* label *) "t" (* text *) in
                    [new Wire.text pos t]
               )
 end
