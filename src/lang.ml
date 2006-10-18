@@ -205,10 +205,20 @@ let process_matrix kind m =
           add_box (float_of_int j, float_of_int (height - i)) m.(i).(j)
         done
     done;
-    out := (Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height);
+    out :=
+    (match kind with
+       | Wire.Tikz -> "\\begin{tikzpicture}\n"
+       | _ -> Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height
+    );
     plines := join_plines !plines;
     List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw kind)) !plines;
     List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw kind)) !ellipses;
     List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw kind)) !texts;
-    out := !out ^ "\\end{pspicture}\n";
+    out := !out ^
+    (match kind with
+       | Wire.Tikz ->
+       "\\end{tikzpicture}\n"
+       | _ ->
+           "\\end{pspicture}\n"
+    );
     !out

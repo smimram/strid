@@ -33,6 +33,7 @@ let _ =
     match !out_kind with
       | "pstricks" -> Wire.Pstricks
       | "pstricks_splines" -> Wire.Pstricks_spline
+      | "tikz" -> Wire.Tikz
       | _ ->
           Printf.eprintf "Unknown output type: %s\n%!" !out_kind;
           exit 2
@@ -49,7 +50,18 @@ let _ =
   let pst = Lang.process_matrix out_kind m in
   let fo = open_out !file_out in
     if !full_tex then
-      output_string fo "\\documentclass{article}\n\\usepackage{pstricks}\n\\begin{document}\n";
+      (
+        output_string fo "\\documentclass{article}\n";
+        output_string fo
+          (match out_kind with
+             | Wire.Tikz ->
+                 "\\usepackage{tikz}\n"
+             | Wire.Pstricks
+             | Wire.Pstricks_spline ->
+                 "\\usepackage{pstricks}\n"
+          );
+        output_string fo "\\begin{document}\n";
+      );
     output_string fo pst;
     if !full_tex then
       output_string fo "\\end{document}\n";

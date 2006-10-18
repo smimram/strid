@@ -5,7 +5,7 @@ type dir = float * float
 
 let showpoints = ref false
 
-type output_kind = Pstricks | Pstricks_spline
+type output_kind = Pstricks | Pstricks_spline | Tikz
 
 class virtual wire =
 object (self)
@@ -103,6 +103,7 @@ object (self)
   (** Get the code for drawing the polyline. *)
   method draw outkind =
     match outkind with
+      | Tikz
       | Pstricks_spline ->
           (
             let resolution = ref 20 in (* number of generated points between two lines *)
@@ -112,7 +113,12 @@ object (self)
             (* let points = remove_consecutive_dups points in *)
               match points with
                 | (x1,y1)::(x2,y2)::[] ->
-                    Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                      (match outkind with
+                         | Tikz ->
+                             Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
+                         | _ ->
+                             Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                      )
                 | _::[] | [] -> failwith "Drawing empty line."
                 | points ->
                     let spl = Spline.compute !resolution points in
@@ -125,11 +131,28 @@ object (self)
                         let l = Queue.pop lines in
                           if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
                             (
-                              ans := !ans ^ (Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ())) (fst !plast) (snd !plast);
+                              ans := !ans ^
+                              (match outkind with
+                                 | Tikz ->
+                                     Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                 | _ ->
+                                     Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
+                              );
                               for i = 0 to !resolution - 1 do
                                 plast := Queue.pop spl;
-                                ans := !ans ^ (Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast))
+                                ans := !ans ^
+                                (match outkind with
+                                   | Tikz ->
+                                       Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                   | _ ->
+                                       Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
+                                )
                               done;
+                              (match outkind with
+                                 | Tikz ->
+                                     ans := !ans ^ ";"
+                                 | _ -> ()
+                              );
                               ans := !ans ^ "\n"
                             )
                           else
@@ -195,10 +218,14 @@ object (self)
 
   val radius = r
 
-  method draw _ =
+  method draw outkind =
     let x, y = position in
     let xr, yr = radius in
-      Printf.sprintf "\\psellipse[fillstyle=solid](%.2f,%.2f)(%.2f,%.2f)" x y xr yr
+      match outkind with
+        | Tikz ->
+            Printf.sprintf "\\filldraw[fill=white] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" x y xr yr
+        | _ ->
+            Printf.sprintf "\\psellipse[fillstyle=solid](%.2f,%.2f)(%.2f,%.2f);" x y xr yr
 end
 
 class text pos t =
@@ -209,7 +236,11 @@ object (self)
 
   val text = t
 
-  method draw _ =
+  method draw outkind =
     let x, y = position in
-      Printf.sprintf "\\rput(%.2f,%.2f){%s}" x y text
+      match outkind with
+        | Tikz ->
+            Printf.sprintf "\\draw (%.2f,%.2f) node{%s};" x y text
+        | _ ->
+            Printf.sprintf "\\rput(%.2f,%.2f){%s}" x y text
 end

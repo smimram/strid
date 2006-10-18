@@ -12,6 +12,12 @@ test: all
 	dvips test.dvi
 	cat test.tex
 
+tikz: all
+	./strid --full-tex -t tikz test.strid
+	latex test.tex
+	dvips test.dvi
+	cat test.tex
+
 %.tex: %.strid
 	./strid --full-tex $<
 
