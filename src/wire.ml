@@ -226,7 +226,7 @@ object (self)
         | Tikz ->
             Printf.sprintf "\\filldraw[fill=white] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" x y xr yr
         | _ ->
-            Printf.sprintf "\\psellipse[fillstyle=solid](%.2f,%.2f)(%.2f,%.2f);" x y xr yr
+            Printf.sprintf "\\psellipse[fillstyle=solid](%.2f,%.2f)(%.2f,%.2f)" x y xr yr
 end
 
 class text pos t =
