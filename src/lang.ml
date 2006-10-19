@@ -136,23 +136,6 @@ type dir = Left | Right | Up | Down
 
 let string_of_char = String.make 1
 
-(*
-let dirs_of_string s =
-  let ret = ref [] in
-    for i = 0 to (String.length s) - 1
-    do
-      ret :=
-      (
-        match s.[i] with
-          | 'l' -> Left
-          | 'r' -> Right
-          | 'u' -> Up
-          | 'd' -> Down
-          | _ -> failwith ("Invalid direction " ^ (string_of_char s.[i]))
-      )::!ret
-    done; !ret
-*)
-
 let re_dir = Str.regexp "\\([0-9\\.]*\\)\\([lrud]\\)"
 
 let reldir_of_string s =
@@ -174,24 +157,6 @@ let reldir_of_string s =
       done;
       !xans, !yans
     with Not_found -> !xans, !yans
-
-                               (*
-let rec reldir_of_dir d =
-  let rec aux = function
-    | [] -> (0, 0)
-    | d::t ->
-        let (x, y) = aux t in
-          match d with
-            | Left -> (x-1, y)
-            | Right -> (x+1, y)
-            | Up -> (x, y+1)
-            | Down -> (x, y-1)
-  in
-  let x, y = aux d in
-    (float_of_int x), (float_of_int y)
-
-let reldir_of_string s = reldir_of_dir (dirs_of_string s)
-                                *)
 
 let matrix_of_ir ir =
   Array.map (Array.of_list) (Array.of_list ir)

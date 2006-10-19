@@ -6,10 +6,13 @@
 let space = ' ' | '\t' | '\r'
 
 rule token = parse
+  | "matrix" { MATRIX }
   | "%"_* { token lexbuf }
   | "&" { NEWCOL}
   | "\\\\" { NEWLINE }
   | '#'([^'#']* as tex)'#' { STRING tex }
+  | '{' { LACC }
+  | '}' { RACC }
   | '[' { LBRACK }
   | ']' { RBRACK }
   | '(' { LPAR }

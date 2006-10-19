@@ -5,7 +5,8 @@
         Lang.error ("Parse error: " ^ s)
 %}
 
-%token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF
+%token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF LACC RACC
+%token MATRIX
 %token <string> STRING
 
 %start matrix
@@ -13,8 +14,12 @@
 %%
 
 matrix:
-    | line matrix { $1::$2 }
-    | EOF { [] }
+    | MATRIX LACC matrix_lines RACC EOF { $3 }
+;
+
+matrix_lines:
+    | line matrix_lines { $1::$2 }
+    | { [] }
 ;
 
 line:
