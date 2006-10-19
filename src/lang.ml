@@ -26,6 +26,12 @@ let circle_position center point =
   let norm = sqrt(dx*.dx +. dy*.dy) in
     (px +. dx/.norm *. !circle_ray , py +. dy/.norm *. !circle_ray)
 
+let middle p q =
+  let xs, ys = p in
+  let xt, yt = q in
+    (xt -. xs) /. 2. , (yt -. ys) /. 2.
+
+
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
   val options = options
@@ -65,6 +71,8 @@ object (self)
         | "line" ->
             let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
               l::[]
+        | "unit" ->
+            [Wire.new_polyline (pos::c.(1)::[])]
         | "text" -> []
         | k when Str.string_match re_box k 0 ->
             let i = int_of_string (Str.matched_group 1 k) in
@@ -88,6 +96,8 @@ object (self)
   method get_ellipses pos =
     match self#kind with
       | "text" -> []
+      | "unit" ->
+          [new Wire.ellipse pos (0.2, 0.2)]
       | _ ->
           deffound []
             (fun () ->
