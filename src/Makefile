@@ -4,7 +4,7 @@ OCAMLYACC=menhir
 LIBS=str
 PACKS=gsl
 
-all: bc
+all: dc
 
 test: all
 	./strid --full-tex test.strid

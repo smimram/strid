@@ -109,46 +109,47 @@ object (self)
             let resolution = ref 20 in (* number of generated points between two lines *)
               (* Remove trivial lines. *)
             let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
-            let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-            (* let points = remove_consecutive_dups points in *)
-              match points with
-                | (x1,y1)::(x2,y2)::[] ->
-                      (match outkind with
-                         | Tikz ->
-                             Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
-                         | _ ->
-                             Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
-                      )
-                | _::[] | [] -> failwith "Drawing empty line."
-                | points ->
-                    let spl = Spline.compute !resolution points in
-                    let spl = List.map snd spl in
-                    let spl = queue_of_list spl in
-                    let lines = queue_of_list lines in
-                    let plast = ref (Queue.pop spl) in
-                    let ans = ref "" in
-                      while Queue.length spl <> 0 do
-                        let l = Queue.pop lines in
-                          if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
-                            (
-                              ans := !ans ^
-                              (match outkind with
-                                 | Tikz ->
-                                     Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
-                                 | _ ->
-                                     Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
-                              );
-                              for i = 0 to !resolution - 1 do
-                                plast := Queue.pop spl;
-                                ans := !ans ^
-                                (match outkind with
-                                   | Tikz ->
-                                       Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
-                                   | _ ->
-                                       Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
-                                )
-                              done;
-                              (match outkind with
+              if lines = [] then "" else
+                let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+                  (* let points = remove_consecutive_dups points in *)
+                  match points with
+                    | (x1,y1)::(x2,y2)::[] ->
+                        (match outkind with
+                           | Tikz ->
+                               Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
+                           | _ ->
+                               Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                        )
+                    | _::[] | [] -> failwith "Drawing empty line."
+                    | points ->
+                        let spl = Spline.compute !resolution points in
+                        let spl = List.map snd spl in
+                        let spl = queue_of_list spl in
+                        let lines = queue_of_list lines in
+                        let plast = ref (Queue.pop spl) in
+                        let ans = ref "" in
+                          while Queue.length spl <> 0 do
+                            let l = Queue.pop lines in
+                              if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
+                                (
+                                  ans := !ans ^
+                                  (match outkind with
+                                     | Tikz ->
+                                         Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                     | _ ->
+                                         Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
+                                  );
+                                  for i = 0 to !resolution - 1 do
+                                    plast := Queue.pop spl;
+                                    ans := !ans ^
+                                    (match outkind with
+                                       | Tikz ->
+                                           Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                       | _ ->
+                                           Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
+                                    )
+                                  done;
+                                  (match outkind with
                                  | Tikz ->
                                      ans := !ans ^ ";"
                                  | _ -> ()
