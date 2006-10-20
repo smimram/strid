@@ -18,6 +18,12 @@ object (self)
     dependencies <- d::dependencies
 
   method get_deps = dependencies
+
+  val mutable border_width = (None:float option)
+
+  method set_border_width w = border_width <- Some w
+
+  method get_border_width = border_width
 end
 
 class line (src:dir) (dst:dir) =
@@ -122,7 +128,7 @@ object (self)
                         )
                     | _::[] | [] -> failwith "Drawing empty line."
                     | points ->
-                        let spl = Spline.compute !resolution points in
+                        let spl = Spline.compute ~periodic:(List.hd points = list_last points) !resolution points in
                         let spl = List.map snd spl in
                         let spl = queue_of_list spl in
                         let lines = queue_of_list lines in
@@ -226,7 +232,12 @@ object (self)
         | Tikz ->
             Printf.sprintf "\\filldraw[fill=white] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" x y xr yr
         | _ ->
-            Printf.sprintf "\\psellipse[fillstyle=solid](%.2f,%.2f)(%.2f,%.2f)" x y xr yr
+            let bw =
+              match self#get_border_width with
+                | None -> ""
+                | Some w -> Printf.sprintf ",linewidth=%.2f" w
+            in
+              Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)" bw x y xr yr
 end
 
 class text pos t =

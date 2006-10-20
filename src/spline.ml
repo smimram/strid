@@ -23,11 +23,14 @@ let rec interpolation_rec steps point_list courbe =
                   !partial_list@interpolation_rec steps q courbe
 
 (** Compute the interpolation. *)
-let interpolation steps point_list =
+let interpolation periodic steps point_list =
   let fst_array = Array.of_list (List.map fst point_list) in
   let snd_array = Array.of_list (List.map snd point_list) in
-  let courbe = Gsl_interp.make_interp interpolation_type fst_array snd_array  in 
-    interpolation_rec steps point_list courbe 
+  let courbe = Gsl_interp.make_interp
+                 (if periodic then Gsl_interp.CSPLINE_PERIODIC else Gsl_interp.CSPLINE)
+                 fst_array snd_array
+  in
+    interpolation_rec steps point_list courbe
 
 (** Split the coordinates in (time,x) / (time,y). *)
 let rec split_function_rec proj coordinates t =
@@ -40,7 +43,7 @@ let rec split_function_rec proj coordinates t =
 
 (** Compute the interpolation given an initial z coefficient, a number of steps and the
   * points. *)
-let compute steps points =
-  let interpolation_x = interpolation steps (split_function_rec fst points 0.) in
-  let interpolation_y = interpolation steps (split_function_rec snd points 0.) in
+let compute ?(periodic = false) steps points =
+  let interpolation_x = interpolation periodic steps (split_function_rec fst points 0.) in
+  let interpolation_y = interpolation periodic steps (split_function_rec snd points 0.) in
     List.map2 (fun x y -> (fst x,(snd x,snd y))) interpolation_x interpolation_y

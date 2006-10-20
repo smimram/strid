@@ -2,6 +2,8 @@
 let deffound v f =
   try f () with Not_found -> v
 
+let iffound = deffound ()
+
 (** Norm of the vector p1 p2. *)
 let length p1 p2 =
   let x1, y1 = p1 in
@@ -18,3 +20,8 @@ let queue_of_list l =
   let ans = Queue.create () in
     List.iter (fun x -> Queue.push x ans) l;
     ans
+
+let rec list_last = function
+  | [] -> raise Not_found
+  | [x] -> x
+  | _::t -> list_last t
