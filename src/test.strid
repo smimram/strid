@@ -1,3 +1,4 @@
+matrix {
 &&&&arc(dll,dddr)[l,t=#$\lambda$#]\\
 &&\\
 &2box3(uuu,ur,7d,dr,drr)[l,t=#$m$#] \\
@@ -6,5 +7,6 @@
 \\
 &&&&&braid(ul,uuu,d,rrdd)&&\\
 &&&&&&&\\
-&&&&mult(ul,ur,d)[l,t=#$m$#,w=2] &&&line(,d)\\
+&&&&mult(ul,ur,d)[l,t=#$m$#,w=2,b=0] &&&line(,d)\\
 &&&&text(,d)[l,t=#$id$#]\\
+}
