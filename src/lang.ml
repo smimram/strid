@@ -105,7 +105,7 @@ object (self)
                let xray = deffound !ellipse_X_ray (fun () -> float_of_string (self#get_attr "l" "w")) in
                let yray = deffound !ellipse_Y_ray (fun () -> float_of_string (self#get_attr "l" "h")) in
                let e = new Wire.ellipse pos (xray, yray) in
-                 iffound (fun () -> e#set_border_width (float_of_string (self#get_attr "l" "b")));
+                 iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
                  [e]
             )
 

@@ -19,11 +19,15 @@ object (self)
 
   method get_deps = dependencies
 
-  val mutable border_width = (None:float option)
+  val mutable attrs = ([]:(string * string) list)
 
-  method set_border_width w = border_width <- Some w
+  method add_attr name value =
+    attrs <- (name, value)::attrs
 
-  method get_border_width = border_width
+  method get_attr name =
+    List.assoc name attrs
+
+  method get_attrs = attrs
 end
 
 class line (src:dir) (dst:dir) =
@@ -35,16 +39,6 @@ object (self)
   val mutable src = src
 
   val mutable dst = dst
-
-  val mutable attrs = ([]:(string * string) list)
-
-  method add_attr name value =
-    attrs <- (name, value)::attrs
-
-  method get_attr name =
-    List.assoc name attrs
-
-  method get_attrs = attrs
 
   method src = src
 
@@ -233,9 +227,14 @@ object (self)
             Printf.sprintf "\\filldraw[fill=white] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" x y xr yr
         | _ ->
             let bw =
-              match self#get_border_width with
-                | None -> ""
-                | Some w -> Printf.sprintf ",linewidth=%.2f" w
+              deffound ""
+                (fun () ->
+                   let bw = self#get_attr "border width" in
+                     if bw = "0" then
+                       ",linestyle=none"
+                     else
+                       ",linewidth=" ^ bw
+                )
             in
               Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)" bw x y xr yr
 end
