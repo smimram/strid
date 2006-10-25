@@ -5,8 +5,8 @@ let info = Printf.printf "[II] %s\n"
 let warning = Printf.printf "[WW] %s\n"
 let error e = Printf.printf "[EE] %s\n" e; exit 1
 
-let ellipse_X_ray = ref 0.5
-let ellipse_Y_ray = ref 0.3
+let ellipse_X_ray = ref 1.2
+let ellipse_Y_ray = ref 0.7
 let circle_ray = ref 0.3
 let pi = 4.*. (atan 1.)
 
@@ -24,13 +24,36 @@ let circle_position center point =
   let dir = (qx-.px,qy-.py) in
   let (dx,dy) = dir in
   let norm = sqrt(dx*.dx +. dy*.dy) in
-    (px +. dx/.norm *. !circle_ray , py +. dy/.norm *. !circle_ray)
+    (px +. 0.1*.dx/.norm *. !circle_ray , py +. 0.1*.dy/.norm *. !circle_ray)
 
+let orthogonal center point = 
+  let (px,py) = center in
+  let (qx,qy) = point in
+  let dir = (qx-.px,qy-.py) in
+  let (dx,dy) = dir in
+    (dy,-.dx)
+
+let ortho_point center point dir dir2 =
+  let (cx,cy) = center in
+  let (px,py) = dir in
+  let (dx,dy) = orthogonal center point in
+  let (qx,qy) = dir2 in
+  let (dx,dy) = 
+    begin
+      if ((dx = 0.) && (dy = 0.)) 
+      then (qx-.px,qy-.py)
+      else (dx,dy);
+    end;
+  in
+  let sens = (px-.cx)*.dx+.(py-.cy)*.dy in
+    if sens = 0. then center
+    else let sign = sens/.(abs_float sens) in 
+      circle_position center (cx +. sign *. dx, cy +. sign *. dy)
+      
 let middle p q =
   let xs, ys = p in
   let xt, yt = q in
     (xt -. xs) /. 2. , (yt -. ys) /. 2.
-
 
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
@@ -48,7 +71,8 @@ object (self)
       match self#kind with
         | "mult" ->
             let i = Wire.new_polyline (pos::(*(circle_position pos c.(2))::*)c.(2)::[]) in
-            let u = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
+            let u = Wire.new_polyline (c.(0)::(ortho_point pos c.(2) c.(0) c.(1))::pos::(ortho_point pos c.(2) c.(1) c.(0))::c.(1)::[]) in
+	      (*i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));*)
               i::u::[]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
@@ -69,8 +93,8 @@ object (self)
               p1#append p2;
               p1::q::[]
         | "line" ->
-            let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
-              l::[]
+	    let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
+	      l::[]
         | "unit" ->
             [Wire.new_polyline (pos::c.(1)::[])]
         | "text" -> []
