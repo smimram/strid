@@ -6,6 +6,8 @@
 let space = ' ' | '\t' | '\r'
 
 rule token = parse
+  | "let" { LET }
+  | "include" { INCLUDE }
   | "matrix" { MATRIX }
   | "%"_* { token lexbuf }
   | "&" { NEWCOL}

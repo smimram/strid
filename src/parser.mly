@@ -6,12 +6,16 @@
 %}
 
 %token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF LACC RACC
-%token MATRIX
+%token LET MATRIX INCLUDE
 %token <string> STRING
 
-%start matrix
-%type <Lang.ir_matrix> matrix
+%start defs
+%type <((string * string) list) * Lang.ir_matrix> defs
 %%
+
+defs:
+    | LET STRING EQ STRING defs { let env, mat = $5 in ($2,$4)::env, mat }
+    | matrix { [], $1 }
 
 matrix:
     | MATRIX LACC matrix_lines RACC EOF { $3 }

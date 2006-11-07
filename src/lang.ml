@@ -1,9 +1,9 @@
 open Common
 
-let debug = Printf.printf "[DD] %s\n"
-let info = Printf.printf "[II] %s\n"
-let warning = Printf.printf "[WW] %s\n"
-let error e = Printf.printf "[EE] %s\n" e; exit 1
+let debug = Printf.printf "[DD] %s\n%!"
+let info = Printf.printf "[II] %s\n%!"
+let warning = Printf.printf "[WW] %s\n%!"
+let error e = Printf.printf "[EE] %s\n%!" e; exit 1
 
 let ellipse_X_ray = ref 1.2
 let ellipse_Y_ray = ref 0.7
@@ -49,7 +49,7 @@ let ortho_point center point dir dir2 =
     if sens = 0. then center
     else let sign = sens/.(abs_float sens) in 
       circle_position center (cx +. sign *. dx, cy +. sign *. dy)
-      
+
 let middle p q =
   let xs, ys = p in
   let xt, yt = q in
@@ -58,6 +58,11 @@ let middle p q =
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
   val options = options
+
+  val mutable env = []
+
+  method set_env (e:(string * string) list) =
+    env <- e
 
   method get_attr name subname =
     List.assoc subname (List.assoc name options)
@@ -72,7 +77,7 @@ object (self)
         | "mult" ->
             let i = Wire.new_polyline (pos::(*(circle_position pos c.(2))::*)c.(2)::[]) in
             let u = Wire.new_polyline (c.(0)::(ortho_point pos c.(2) c.(0) c.(1))::pos::(ortho_point pos c.(2) c.(1) c.(0))::c.(1)::[]) in
-	      (*i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));*)
+              (*i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));*)
               i::u::[]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
@@ -93,8 +98,8 @@ object (self)
               p1#append p2;
               p1::q::[]
         | "line" ->
-	    let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
-	      l::[]
+            let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
+              l::[]
         | "unit" ->
             [Wire.new_polyline (pos::c.(1)::[])]
         | "text" -> []
@@ -183,8 +188,8 @@ let reldir_of_string s =
       !xans, !yans
     with Not_found -> !xans, !yans
 
-let matrix_of_ir ir =
-  Array.map (Array.of_list) (Array.of_list ir)
+let matrix_of_ir env ir =
+  Array.map (fun l -> (List.iter (fun b -> match b with None -> () | Some b -> b#set_env env) l); Array.of_list l) (Array.of_list ir)
 
 let rec join_plines plines =
   let rec find cur = function
