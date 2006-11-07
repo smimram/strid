@@ -48,7 +48,7 @@ let _ =
   in
   let env, ir = Parser.defs Lexer.token (Lexing.from_string sin) in
   let m = matrix_of_ir env ir in
-  let pst = Lang.process_matrix out_kind m in
+  let pst = Lang.process_matrix out_kind env m in
   let fo = open_out !file_out in
     if !full_tex then
       (

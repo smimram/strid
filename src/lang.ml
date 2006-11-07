@@ -213,7 +213,7 @@ let rec join_plines plines =
       | [] -> []
       | h::t -> let tl = find h (join_plines t) in h::tl
 
-let process_matrix kind m =
+let process_matrix kind env m =
   let out = ref "" in
   let plines = ref [] in
   let ellipses = ref [] in
