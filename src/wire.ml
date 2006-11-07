@@ -224,7 +224,17 @@ object (self)
     let xr, yr = radius in
       match outkind with
         | Tikz ->
-            Printf.sprintf "\\filldraw[fill=white] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" x y xr yr
+            let bw =
+              deffound ""
+                (fun () ->
+                   let bw = self#get_attr "border width" in
+                     if bw = "0" then
+                       ",white"
+                     else
+                       ",line width = " ^ bw ^ "pt"
+                )
+            in
+              Printf.sprintf " \\filldraw[fill=white%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" bw x y xr yr
         | _ ->
             let bw =
               deffound ""
