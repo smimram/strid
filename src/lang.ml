@@ -238,7 +238,9 @@ let process_matrix kind env m =
     done;
     out :=
     (match kind with
-       | Wire.Tikz -> "\\begin{tikzpicture}\n"
+       | Wire.Tikz ->
+           (* "\\begin{tikzpicture}\n" *)
+           Printf.sprintf "\\useasboundingbox (0,0) rectangle (%d,%d);\n" (!width + 1) height
        | _ -> Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height
     );
     plines := join_plines !plines;
@@ -248,7 +250,7 @@ let process_matrix kind env m =
     out := !out ^
     (match kind with
        | Wire.Tikz ->
-       "\\end{tikzpicture}\n"
+       "" (* "\\end{tikzpicture}\n" *)
        | _ ->
            "\\end{pspicture}\n"
     );
