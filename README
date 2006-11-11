@@ -1,0 +1,10 @@
+strid - A string diagrams generator
+===================================
+
+Installation
+------------
+To build strid you need:
+- ocaml (http://caml.inria.fr)
+- findlib (http://www.ocaml-programming.de/programming/findlib.html)
+- menhir (http://cristal.inria.fr/~fpottier/menhir/)
+- ocamlgsl (http://oandrieu.nerim.net/ocaml/gsl/)
