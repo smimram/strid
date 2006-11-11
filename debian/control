@@ -7,6 +7,6 @@ Standards-Version: 3.7.2
 
 Package: strid
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}
 Description: a string diagrams generator
  strid is a string diagrams generators for inclusion into LaTeX files.

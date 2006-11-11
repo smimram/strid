@@ -18,9 +18,10 @@ dist:
 	rm -rf $(PROG)-$(VERSION)
 
 deb: dist
-	mkdir deb
-	cp strid-$(VERSION) deb/
-	cd deb/; tar zxvf strid-$(VERSION)
+	rm -rf deb
+	mkdir -p deb
+	cp strid-$(VERSION).tar.gz deb/strid_$(VERSION).orig.tar.gz
+	cd deb/; tar zxvf strid_$(VERSION).orig.tar.gz
 	cp -r debian deb/strid-$(VERSION)
 	rm -rf deb/strid-$(VERSION)/.svn
 	cd deb/strid-$(VERSION); debuild
