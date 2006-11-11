@@ -9,7 +9,7 @@ clean:
 	rm -f $(STRIDTEX) stridman.pdf
 
 %.tex: %.strid
-	$(STRID) -t tikz $<
+	$(STRID) -t tikz --scale 0.6 $<
 
 %.pdf: %.tex
 	pdflatex $<
