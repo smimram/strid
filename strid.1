@@ -1,0 +1,32 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.TH STRID 1 "November 11, 2006"
+.SH NAME
+strid \- a string diagrams generator
+.SH SYNOPSIS
+.B strid
+.RI [ options ] " file"
+.SH DESCRIPTION
+.B strid
+is a string diagrams generator for inclusion into LaTeX documents.
+.SH OPTIONS
+.TP
+.B \-\-help
+Show summary of options.
+.TP
+.B \-\-full\-tex
+Generate a full LaTeX file (with headers, etc.) instead of a file meant to be included.
+.TP
+.BI \-o\  file
+Specfiy output file.
+.TP
+.BI \-t\  type
+Specify output type. For now the supported types are
+.BR tikz \ and
+.BR pstricks .
+.TP
+.B \-v, \-\-version
+Show version of program.
+.SH SEE ALSO
+.BR latex (1).
+.SH AUTHOR
+strid was written by Samuel Mimram.

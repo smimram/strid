@@ -1,0 +1,12 @@
+Source: strid
+Section: devel
+Priority: extra
+Maintainer: Samuel Mimram <smimram@debian.org>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.7.2
+
+Package: strid
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: a string diagrams generator
+ strid is a string diagrams generators for inclusion into LaTeX files.
