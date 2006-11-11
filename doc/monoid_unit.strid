@@ -1,0 +1,3 @@
+matrix {
+&&unit(l,r)&text(,r)[l,t=#$M$#]\\
+}

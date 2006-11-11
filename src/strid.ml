@@ -4,7 +4,7 @@ let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref ""
 let file_out = ref ""
 let full_tex = ref false
-let out_kind = ref "pstricks_splines"
+let out_kind = ref "tikz"
 
 let get_pos d i j =
   (i*10, j*10)
