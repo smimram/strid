@@ -17,4 +17,12 @@ dist:
 	tar zcvf $(PROG)-$(VERSION).tar.gz $(PROG)-$(VERSION)
 	rm -rf $(PROG)-$(VERSION)
 
+deb: dist
+	mkdir deb
+	cp strid-$(VERSION) deb/
+	cd deb/; tar zxvf strid-$(VERSION)
+	cp -r debian deb/strid-$(VERSION)
+	rm -rf deb/strid-$(VERSION)/.svn
+	cd deb/strid-$(VERSION); debuild
+
 .PHONY: dist
