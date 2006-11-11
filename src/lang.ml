@@ -239,8 +239,13 @@ let process_matrix kind env m =
     out :=
     (match kind with
        | Wire.Tikz ->
-           (if !Env.no_tex_environment then "" else "\\begin{tikzpicture}\n") ^
-           (Printf.sprintf "\\useasboundingbox (0,0) rectangle (%d,%d);\n" (!width + 1) height)
+           (if !Env.no_tex_environment then
+              ""
+            else
+              "\\begin{tikzpicture}"
+              ^ (if !Env.scaling_factor = 1. then "" else Printf.sprintf "[scale=%.02f]" !Env.scaling_factor)
+              ^ "\n")
+           ^ (Printf.sprintf "\\useasboundingbox (0,0) rectangle (%d,%d);\n" (!width + 1) height)
        | _ -> Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height
     );
     plines := join_plines !plines;

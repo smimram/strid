@@ -17,6 +17,7 @@ let _ =
       "--full-tex", Arg.Set full_tex, "Full LaTeX file";
       "--no-tex-environment", Arg.Set Env.no_tex_environment, "Don't output LaTeX environment";
       "-o", Arg.Set_string file_out, "Output file";
+      "--scale", Arg.Set_float Env.scaling_factor, "Scale the output";
       "-t", Arg.Set_string out_kind, "Output type"
     ]
     (fun s ->

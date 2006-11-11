@@ -5,14 +5,15 @@
 \usepackage{amsmath}
 \usepackage{tikz}
 
-\newcommand{\example}[1]{\begin{center}\fbox{\begin{minipage}{10cm}#1\end{minipage}}\end{center}}
+\newcommand{\strid}{\textsl{strid}}
+\newcommand{\example}[1]{\begin{center}\fbox{\begin{minipage}{11cm}#1\end{minipage}}\end{center}}
 
 \title{strid -- A string diagrams generator}
 \author{Samuel Mimram}
 \begin{document}
 \maketitle
 
-\texttt{strid} is a string diagrams generator for inclusion into \LaTeX{} files.
+\strid{} is a string diagrams generator for inclusion into \LaTeX{} files.
 
 \section{A first example}
 \example{
@@ -26,13 +27,33 @@ and
 \]
 such that the equalities
 \[
-\input{monoid_mult_assoc_l.tex}
+\input{monoid_assoc_l.tex}
 \quad=\quad
-\input{monoid_mult_assoc_r.tex}
+\input{monoid_assoc_r.tex}
 \]
 and
 \[
+\input{monoid_neutral_l.tex}
+\quad=\quad
+\input{monoid_neutral.tex}
+\quad=\quad
+\input{monoid_neutral_r.tex}
 \]
 hold.
 }
+
+Let's have a look at how we typeset the left member of the associativity equation:
+\[
+\input{monoid_assoc_l.tex}
+\]
+The \strid{} code for this figure is
+\begin{verbatim}
+matrix {
+text(,r)[l,t=#$M$#]\\
+text(,r)[l,t=#$M$#]&&&mult(ull,dl,r)&text(l,)[l,t=#$M$#]\\
+&&mult(ul,dl,)\\
+text(,r)[l,t=#$M$#]\\
+}
+\end{verbatim}
+Despite it's apparent complexity, this code is very simple! Like every \strid{} diagram, this code starts with ``\verb+matrix {+'' and ends with ``\verb+}+''. Between those lines comes the actual description of the diagram. It is structured as a matrix whose colums are separated by ``\verb+&+'' and whose lines are separated by ``\verb+\\+''.
 \end{document}

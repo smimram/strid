@@ -1,0 +1,5 @@
+matrix {
+text(,r)[l,t=#$M$#]\\
+&&&mult(ull,dl,r)&text(l,)[l,t=#$M$#]\\
+&unit(,r)\\
+}
