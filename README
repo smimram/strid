@@ -8,3 +8,8 @@ To build strid you need:
 - findlib (http://www.ocaml-programming.de/programming/findlib.html)
 - menhir (http://cristal.inria.fr/~fpottier/menhir/)
 - ocamlgsl (http://oandrieu.nerim.net/ocaml/gsl/)
+
+Licence
+-------
+This program is distributed under the GNU GPL licence. See the COPYING file for
+the full text of the licence.
