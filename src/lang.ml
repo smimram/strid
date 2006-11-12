@@ -27,7 +27,7 @@ let error e = Printf.printf "[EE] %s\n%!" e; exit 1
 
 let ellipse_X_ray = ref 1.2
 let ellipse_Y_ray = ref 0.7
-let circle_ray = ref 0.3
+let circle_ray = ref 1.2
 let pi = 4.*. (atan 1.)
 
 let iffound f =
@@ -58,16 +58,16 @@ let ortho_point center point dir dir2 =
   let (px,py) = dir in
   let (dx,dy) = orthogonal center point in
   let (qx,qy) = dir2 in
-  let (dx,dy) = 
+  let (dx,dy) =
     begin
-      if ((dx = 0.) && (dy = 0.)) 
+      if ((dx = 0.) && (dy = 0.))
       then (qx-.px,qy-.py)
       else (dx,dy);
     end;
   in
   let sens = (px-.cx)*.dx+.(py-.cy)*.dy in
     if sens = 0. then center
-    else let sign = sens/.(abs_float sens) in 
+    else let sign = sens/.(abs_float sens) in
       circle_position center (cx +. sign *. dx, cy +. sign *. dy)
 
 let middle p q =

@@ -1,0 +1,7 @@
+matrix {
+text(,d)[l,t=#1#]&&text(,d)[l,t=#2#]\\
+\\
+&braid(ul,ur,dl,dr)\\
+\\
+text(,u)[l,t=#3#]&&text(,u)[l,t=#4#]\\
+}
