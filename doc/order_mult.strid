@@ -1,5 +1,7 @@
 matrix {
-text(,r)[l,t=#$1$#]\\
-&&mult(ul,dl,r)&text(,r)[l,t=#$3$#]\\
-text(,r)[l,t=#$2$#]\\
+text(,d)[l,t=#$1$#]&&text(,d)[l,t=#$2$#]\\
+\\
+&mult(ul,ur,d)\\
+\\
+&text(,u)[l,t=#$3$#]\\
 }

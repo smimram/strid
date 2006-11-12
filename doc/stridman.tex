@@ -1,4 +1,4 @@
-\documentclass{book}
+\documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{aeguill}
@@ -12,10 +12,12 @@
 \author{Samuel Mimram}
 \begin{document}
 \maketitle
+\tableofcontents
+\newpage
 
 \strid{} is a string diagrams generator for inclusion into \LaTeX{} files.
 
-\chapter{A first example}
+\section{A first example}
 \example{
 Suppose that $(\mathcal{C},\otimes,I)$ is a strict monoidal category. A \emph{monoid} in $\mathcal{C}$ is an object $M$ of $\mathcal{C}$ together with two maps $\mu:M\otimes M\to M$, called \emph{multiplication}, and $\eta:I\to M$, called \emph{unit}, respectively drawn as
 \[
@@ -88,5 +90,23 @@ This generates a file \verb+strid monoid_assoc_l.tex+ which can be used in a \La
 \input{strid monoid_assoc_l.tex}
 \end{document}
 \end{verbatim}
+
+\section{The operators}
+\subsection{Line: \texttt{line}}
+\[
+\input{order_line.tex}
+\]
+\subsection{Multiplication: \texttt{mult}}
+\[
+\input{order_mult.tex}
+\]
+\subsection{Symmetry: \texttt{sym}}
+\[
+\input{order_sym.tex}
+\]
+\subsection{Braiding: \texttt{braid}}
+\[
+\input{order_braid.tex}
+\]
 
 \end{document}
