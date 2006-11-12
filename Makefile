@@ -29,4 +29,4 @@ deb: dist
 	rm -rf deb/strid-$(VERSION)/.svn
 	cd deb/strid-$(VERSION); debuild
 
-.PHONY: dist
+.PHONY: dist doc
