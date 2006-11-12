@@ -11,6 +11,9 @@ install: all
 	mkdir -p $(DESTDIR)/usr/share/man/man1
 	cp strid.1 $(DESTDIR)/usr/share/man/man1
 
+doc:
+	make -C doc
+
 dist:
 	mkdir $(PROG)-$(VERSION)
 	cp -r --parents $(DISTFILES) $(PROG)-$(VERSION)
