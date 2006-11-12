@@ -84,20 +84,8 @@ let _ =
                  "\\usepackage{pstricks}\n"
           );
         output_string fo "\\begin{document}\n";
-        output_string fo
-          (match out_kind with
-             | Wire.Tikz -> "\\begin{tikzpicture}\n"
-             | _ -> ""
-          );
       );
     output_string fo pst;
     if !full_tex then
-      (
-        output_string fo
-          (match out_kind with
-             | Wire.Tikz -> "\\end{tikzpicture}\n"
-             | _ -> ""
-          );
-        output_string fo "\\end{document}\n"
-      );
+      output_string fo "\\end{document}\n";
     close_out fo

@@ -1,0 +1,5 @@
+matrix {
+text(,r)[l,t=#$1$#]\\
+&&mult(ul,dl,r)&text(,r)[l,t=#$3$#]\\
+text(,r)[l,t=#$2$#]\\
+}

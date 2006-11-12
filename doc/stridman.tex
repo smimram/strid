@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass{book}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{aeguill}
@@ -15,7 +15,7 @@
 
 \strid{} is a string diagrams generator for inclusion into \LaTeX{} files.
 
-\section{A first example}
+\chapter{A first example}
 \example{
 Suppose that $(\mathcal{C},\otimes,I)$ is a strict monoidal category. A \emph{monoid} in $\mathcal{C}$ is an object $M$ of $\mathcal{C}$ together with two maps $\mu:M\otimes M\to M$, called \emph{multiplication}, and $\eta:I\to M$, called \emph{unit}, respectively drawn as
 \[
@@ -55,5 +55,38 @@ text(,r)[l,t=#$M$#]&&&mult(ull,dl,r)&text(l,)[l,t=#$M$#]\\
 text(,r)[l,t=#$M$#]\\
 }
 \end{verbatim}
+
 Despite it's apparent complexity, this code is very simple! Like every \strid{} diagram, this code starts with ``\verb+matrix {+'' and ends with ``\verb+}+''. Between those lines comes the actual description of the diagram. It is structured as a matrix whose colums are separated by ``\verb+&+'' and whose lines are separated by ``\verb+\\+''.
+
+The rightmost multiplication is typeset by
+\begin{center}
+\verb+mult(ull,dl,r)+
+\end{center}
+Here, ``\verb+mult+'' is the kind of the operator (a multiplication-shaped one) and its arguments specify that it should be linked to the relative positions $(-2,1)$ (\verb+ull+ means up-left-left), $(-1,-1)$ (\verb+dl+ means down-left) and $(1,0)$. The orders in which the links should be specified is indicated on the figure below:
+\[
+\input{order_mult.tex}
+\]
+As for other operators, links are specified inputs first and then outputs.
+
+The labels are specified similarly by instructions like
+\begin{center}
+\verb+text(,r)[l,t=#$M$#]+
+\end{center}
+This create a ``\verb+text+'' operator from here to the relative position $(1,0)$. The brackets ``\verb+[l,t=#$M$#]+'' are here to specify optional parameters related to this operator. The ``\verb+l+'' indicates that we are going to add a label and the ``\verb+t=#$M$#+'' means that the label's text should be ``\verb+$M$+''. The text between \verb+#+ is quoted uninterpreted.
+
+Suppose that we have put the text of this figure in a file named \verb+monoid_assoc_l.strid+. Compiling this file can be simply done by typing
+\begin{center}
+\verb+strid monoid_assoc_l.strid+
+\end{center}
+This generates a file \verb+strid monoid_assoc_l.tex+ which can be used in a \LaTeX{} file like:
+\begin{verbatim}
+\documentclass{article}
+
+\usepackage{tikz}
+
+\begin{document}
+\input{strid monoid_assoc_l.tex}
+\end{document}
+\end{verbatim}
+
 \end{document}
