@@ -27,7 +27,7 @@ let error e = Printf.printf "[EE] %s\n%!" e; exit 1
 
 let ellipse_X_ray = ref 1.2
 let ellipse_Y_ray = ref 0.7
-let circle_ray = ref 1.2
+let circle_ray = ref 1.5
 let pi = 4.*. (atan 1.)
 
 let iffound f =

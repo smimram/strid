@@ -15,7 +15,7 @@
 \tableofcontents
 \newpage
 
-\strid{} is a string diagrams generator for inclusion into \LaTeX{} files.
+\strid{} is a string diagrams generator for inclusion into \LaTeX{} files. It is still in very $\alpha$ stage but already quite useable. Feel free to drop me a line at \verb+samuel.mimram@pps.jussieu.fr+ if you have some comments, bug reports or feature requests about it.
 
 \section{A first example}
 \example{
@@ -89,6 +89,20 @@ This generates a file \verb+strid monoid_assoc_l.tex+ which can be used in a \La
 \begin{document}
 \input{strid monoid_assoc_l.tex}
 \end{document}
+\end{verbatim}
+
+\section{The language of matrices}
+Labels can be added to operators. For example the diagram
+\[
+\input{mult_label.tex}
+\]
+can be typeset by
+\begin{verbatim}
+matrix {
+\\
+&mult(ul,ur,d)[l,t=#$\mu$#]\\
+\\
+}
 \end{verbatim}
 
 \section{The operators}
