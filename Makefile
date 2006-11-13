@@ -11,7 +11,7 @@ install: all
 	mkdir -p $(DESTDIR)/usr/share/man/man1
 	cp strid.1 $(DESTDIR)/usr/share/man/man1
 
-doc:
+doc: all
 	make -C doc
 
 dist:
