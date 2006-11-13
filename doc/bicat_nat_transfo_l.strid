@@ -1,0 +1,33 @@
+matrix {
+\\
+&text(,u)[l,t=#\tiny{$\circ$}#]&& text(,u)[l,t=#\tiny{$\HomCata{\laxfunctorg\A}{\laxfunctorg\C} \times \theta_\A$}#]
+&& text(,u)[l,t=#\tiny{$\laxfunctorg$}#] && text(,u)[l,t=#\tiny{$\circ$}#]&\\
+
+&line(u,)&&line(u,)&&line(u,)&&line(,u)& \\
+&&&&&&2box3(ul,ur,0.5dl,d0.5l,d0.5r)[l,t=#\tiny{$\laxfunctordeuxg$}#]&&\\
+&&&&braid(2ul,0.5ur,0.5dl,1.5d0.5r)&&&&\\
+&&sym(3ul,0.5ur,2dl,dr)[l,t=#\tiny{$\alpha$}#]&&&&braid(u0.5l,u0.5r,2dl,2dr)&&\\
+\\
+&&&&3box3(ul,1.5u0.5r,r,dl,2d,dr)[l,t=#\tiny{$\HomCata{\laxfunctorg\B}{\laxfunctorg\C} \times \theta$}#,w=1.8,h=0.8]&&&&\\
+\\
+&&sym(2ul,ur,2dl,dr)[l,t=#\tiny{$\alpha^{-1}$}#]&&&&braid(2ur,ul,dr,dl)&&\\
+\\
+&&&&3box3(ul,2u,ur,dl,d,drr)[l,t=#\tiny{$\theta \times \HomCata{\laxfunctor\A}{\laxfunctor\B$}}#,w=1.8,h=0.8]&&&&\\
+\\
+&&sym(2ul,ur,dll,dr)[l,t=#\tiny{$\alpha$}#] && &&&&\\
+line(,2d)&&&&line(2u,2d)&&line(2u,d)&&line(4ul,2d)\\
+&&line(,ur)&&&&&&
+\\
+&&
+text(,u)[l,t=#\tiny{$\HomCata{\laxfunctor\C}{\laxfunctorg\C} \times \circ$}#]
+&& &&
+text(,u)[l,t=#\tiny{$\laxfunctor \times \HomCata{\laxfunctor\A}{\laxfunctor\B}$}#]
+&& \\
+text(,u)[l,t=#\tiny{$\circ$}#]
+&& &&
+text(,u)[l,t=#\tiny{$\theta_\C \times \HomCata{\laxfunctor\B}{\laxfunctor\C}
+\times \HomCata{\laxfunctor\A}{\laxfunctor\B}$}#]
+&& &&
+text(,u)[l,t=#\tiny{$\qquad \HomCata{\B}{\C} \times \laxfunctor$}#]
+\\
+}

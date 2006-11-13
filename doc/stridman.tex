@@ -2,7 +2,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{aeguill}
+\usepackage{hyperref}
+\usepackage{verbatim}
 \usepackage{amsmath}
+\usepackage{amsfonts}
 \usepackage{tikz}
 
 \newcommand{\strid}{\textsl{strid}}
@@ -18,6 +21,7 @@
 \strid{} is a string diagrams generator for inclusion into \LaTeX{} files. It is still in very $\alpha$ stage but already quite useable. Feel free to drop me a line at \verb+samuel.mimram@pps.jussieu.fr+ if you have some comments, bug reports or feature requests about it.
 
 \section{A first example}
+%\begin{figure}[ht!]
 \example{
 Suppose that $(\mathcal{C},\otimes,I)$ is a strict monoidal category. A \emph{monoid} in $\mathcal{C}$ is an object $M$ of $\mathcal{C}$ together with two maps $\mu:M\otimes M\to M$, called \emph{multiplication}, and $\eta:I\to M$, called \emph{unit}, respectively drawn as
 \[
@@ -43,20 +47,15 @@ and
 \]
 hold.
 }
+%\caption{Definition of monoid objects.}
+%\end{figure}
 
 Let's have a look at how we typeset the left member of the associativity equation:
 \[
 \input{monoid_assoc_l.tex}
 \]
 The \strid{} code for this figure is
-\begin{verbatim}
-matrix {
-text(,r)[l,t=#$M$#]\\
-text(,r)[l,t=#$M$#]&&&mult(ull,dl,r)&text(l,)[l,t=#$M$#]\\
-&&mult(ul,dl,)\\
-text(,r)[l,t=#$M$#]\\
-}
-\end{verbatim}
+\verbatiminput{monoid_assoc_l.strid}
 
 Despite it's apparent complexity, this code is very simple! Like every \strid{} diagram, this code starts with ``\verb+matrix {+'' and ends with ``\verb+}+''. Between those lines comes the actual description of the diagram. It is structured as a matrix whose colums are separated by ``\verb+&+'' and whose lines are separated by ``\verb+\\+''.
 
@@ -92,18 +91,19 @@ This generates a file \verb+strid monoid_assoc_l.tex+ which can be used in a \La
 \end{verbatim}
 
 \section{The language of matrices}
+\subsection{Labels}
 Labels can be added to operators. For example the diagram
 \[
 \input{mult_label.tex}
 \]
 can be typeset by
-\begin{verbatim}
-matrix {
-\\
-&mult(ul,ur,d)[l,t=#$\mu$#]\\
-\\
-}
-\end{verbatim}
+\verbatiminput{mult_label.strid}
+If you don't like the size of the ellipse surrounding the label, this can of course be changed. For example,
+\[
+\input{mult_small_label.tex}
+\]
+can be typeset by
+\verbatiminput{mult_small_label.strid}
 
 \section{The operators}
 \subsection{Line: \texttt{line}}
@@ -126,5 +126,25 @@ matrix {
 \[
 \input{order_nboxm.tex}
 \]
+
+\section{Examples}
+\newcommand{\HomCata}[2]{[#1,#2]}
+\newcommand{\A}{\mathbb{A}}
+\newcommand{\B}{\mathbb{B}}
+\newcommand{\C}{\mathbb{C}}
+\newcommand{\laxfunctor}{\mathcal{F}}
+\newcommand{\laxfunctordeux}{\mathcal{F}_2}
+\newcommand{\laxfunctorg}{\mathcal{G}}
+\newcommand{\laxfunctordeuxg}{\mathcal{G}_2}
+Naturality condition for natural transformations between two lax functors between bicategories:
+\[
+\input{bicat_nat_transfo_l.tex}
+\quad=\quad
+\input{bicat_nat_transfo_r.tex}
+\]
+The code for the left-hand side of the equation is
+\verbatiminput{bicat_nat_transfo_l.strid}
+and the code for the right-hand side is
+\verbatiminput{bicat_nat_transfo_r.strid}
 
 \end{document}

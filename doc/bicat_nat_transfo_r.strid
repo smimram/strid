@@ -1,0 +1,34 @@
+matrix {
+\\
+&text(,u)[l,t=#\tiny{$\circ$}#]&& text(,u)[l,t=#\tiny{$\HomCata{\laxfunctorg\A}{\laxfunctorg\C} \times \theta_\A$}#] 
+&& text(,u)[l,t=#\tiny{$\laxfunctorg$}#] && text(,u)[l,t=#\tiny{$\circ$}#]&\\
+
+
+&line(u,d)&&line(u,d)&&line(u,d)&&line(u,4d)& \\
+\\
+\\
+&&&3box3(2u2l,2u,2u2r,4d2l,3d0.5l,dr)[l,t=#$\theta$#]&&&&&\\
+\\
+\\
+&&&&&&2box3(2u2l,2ur,dl,d,dr)[l,t=#$\laxfunctordeux$#]&&\\
+\\
+\\
+&&&braid(3u0.5l,2u2r,d0.5l,d0.5r)&&&&&\\
+\\
+\\
+line(5ur,dd)&&line(2u0.5r,d)&&line(2u0.5l,dd)&&line(5u,d)&&line(5ul,dd)\\
+\\
+
+&&
+text(,u)[l,t=#\tiny{$\HomCata{\laxfunctor\C}{\laxfunctorg\C} \times \circ$}#]
+&& &&
+text(,u)[l,t=#\tiny{$\laxfunctor \times \HomCata{\laxfunctor\A}{\laxfunctor\B}$}#]
+&& \\
+text(,u)[l,t=#\tiny{$\circ$}#]
+&& &&
+text(,u)[l,t=#\tiny{$\theta_\C \times \HomCata{\laxfunctor\B}{\laxfunctor\C}
+\times \HomCata{\laxfunctor\A}{\laxfunctor\B}$}#]
+&& &&
+text(,u)[l,t=#\tiny{$\qquad \HomCata{\B}{\C} \times \laxfunctor$}#]
+\\
+}
