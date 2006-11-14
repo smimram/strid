@@ -25,7 +25,7 @@ type dir = float * float
 
 let showpoints = ref false
 
-type output_kind = Pstricks | Pstricks_spline | Tikz
+type output_kind = Pstricks | Tikz
 
 class virtual wire =
 object (self)
@@ -124,7 +124,7 @@ object (self)
   method draw outkind =
     match outkind with
       | Tikz
-      | Pstricks_spline ->
+      | Pstricks ->
           (
             let resolution = ref 20 in (* number of generated points between two lines *)
               (* Remove trivial lines. *)
@@ -185,37 +185,6 @@ object (self)
                       done;
                       !ans
           )
-      | Pstricks ->
-          (* let pls = self#split_attrs in
-           Printf.printf "[DD] Split len: %d\n%!" (List.length pls);
-           if List.length pls = 1 then
-           ( (* The polyline is uniform. *) *)
-          if List.length lines = 1 then
-            (
-              let xs, ys = (List.hd lines)#src in
-              let xe, ye = (List.hd lines)#dst in
-                Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) xs ys xe ye
-            )
-          else
-            (
-              let x, y = (List.hd lines)#src in
-              let s = ref (Printf.sprintf "\\%s%s(%.2f,%.2f)" (if self#src = self#dst then "psccurve" else "pscurve") (sp ()) x y) in
-              let coords = List.map (fun l -> l#dst) lines in
-              let coords =
-                (* Remove duplicate coordinates. *)
-                let rec uniq lx ly = function
-                  | (x,y)::t when x = lx && y = ly -> uniq lx ly t
-                  | (x,y)::t -> (x,y)::(uniq x y t)
-                  | [] -> []
-                in
-                  uniq x y coords
-              in
-                List.iter (fun (x, y) -> s := !s ^ Printf.sprintf "(%.2f,%.2f)" x y) coords;
-                !s
-            )
-(* )
- else
- "\\pscustom{" ^ (List.fold_left (fun s pl -> s ^ pl#draw outkind ^ "\n") "" pls) ^ "}\n" *)
 end
 
 (** Create a new polyline, given a list of points. *)

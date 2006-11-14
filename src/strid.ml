@@ -54,7 +54,6 @@ let _ =
   let out_kind =
     match !out_kind with
       | "pstricks" -> Wire.Pstricks
-      | "pstricks_splines" -> Wire.Pstricks_spline
       | "tikz" -> Wire.Tikz
       | _ ->
           Printf.eprintf "Unknown output type: %s\n%!" !out_kind;
@@ -79,8 +78,7 @@ let _ =
           (match out_kind with
              | Wire.Tikz ->
                  "\\usepackage{tikz}\n"
-             | Wire.Pstricks
-             | Wire.Pstricks_spline ->
+             | Wire.Pstricks ->
                  "\\usepackage{pstricks}\n"
           );
         output_string fo "\\begin{document}\n";
