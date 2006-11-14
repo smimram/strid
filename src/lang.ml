@@ -67,9 +67,13 @@ let ortho_point center point dir dir2 =
   in
   let sens = (px-.cx)*.dx+.(py-.cy)*.dy in
     if sens = 0. then center
-    else let sign = sens/.(abs_float sens) in
-      circle_position center (cx +. sign *. dx, cy +. sign *. dy)
-
+    else 
+      let sign = sens/.(abs_float sens) in
+      let scale = (*(1./.3.)*)0.15*.sqrt(dx*.dx+.dy*.dy) in 
+	let (decalage_x,decalage_y) = (cx-.px,cy-.py) in
+	  circle_position center (cx +. sign *. dx -. scale*.decalage_x,
+				  cy +. sign *. dy -. scale*.decalage_y)
+	    
 let middle p q =
   let xs, ys = p in
   let xt, yt = q in
