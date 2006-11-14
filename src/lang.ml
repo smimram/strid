@@ -150,7 +150,7 @@ object (self)
     match self#kind with
       | "text" -> []
       | "unit" ->
-          [new Wire.ellipse pos (0.2, 0.2)]
+          [new Wire.ellipse pos (0.14, 0.14)]
       | _ ->
           deffound []
             (fun () ->
