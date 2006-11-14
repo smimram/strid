@@ -8,11 +8,12 @@
 \usepackage{amsfonts}
 \usepackage{tikz}
 
+
 \newcommand{\strid}{\textsl{strid}}
 \newcommand{\example}[1]{\begin{center}\fbox{\begin{minipage}{11cm}#1\end{minipage}}\end{center}}
 
 \title{strid -- A string diagrams generator}
-\author{Samuel Mimram}
+\author{Samuel Mimram\and Nicolas Tabareau}
 \begin{document}
 \maketitle
 \tableofcontents
@@ -128,23 +129,26 @@ can be typeset by
 \]
 
 \section{Examples}
-\newcommand{\HomCata}[2]{[#1,#2]}
 \newcommand{\A}{\mathbb{A}}
 \newcommand{\B}{\mathbb{B}}
 \newcommand{\C}{\mathbb{C}}
-\newcommand{\laxfunctor}{\mathcal{F}}
-\newcommand{\laxfunctordeux}{\mathcal{F}_2}
-\newcommand{\laxfunctorg}{\mathcal{G}}
-\newcommand{\laxfunctordeuxg}{\mathcal{G}_2}
 Naturality condition for natural transformations between two lax functors between bicategories:
-\[
-\input{bicat_nat_transfo_l.tex}
-\quad=\quad
-\input{bicat_nat_transfo_r.tex}
-\]
+
+\begin{center}
+\begin{tabular}{ccc}
+{\scriptsize $\input{bicat_nat_transfo_l.tex}$}
+&
+\hspace{0mm}
+\raisebox{28mm}{$=$}
+\hspace{8mm}
+&
+{\scriptsize $\input{bicat_nat_transfo_r.tex}$}
+\end{tabular}
+\end{center}
+
 The code for the left-hand side of the equation is
-\verbatiminput{bicat_nat_transfo_l.strid}
+{\scriptsize \verbatiminput{bicat_nat_transfo_l.strid}}
 and the code for the right-hand side is
-\verbatiminput{bicat_nat_transfo_r.strid}
+{\scriptsize \verbatiminput{bicat_nat_transfo_r.strid}}
 
 \end{document}

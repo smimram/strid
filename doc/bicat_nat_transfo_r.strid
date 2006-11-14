@@ -1,7 +1,7 @@
 matrix {
 \\
-&text(,u)[l,t=#\tiny{$\circ$}#]&& text(,u)[l,t=#\tiny{$\HomCata{\laxfunctorg\A}{\laxfunctorg\C} \times \theta_\A$}#] 
-&& text(,u)[l,t=#\tiny{$\laxfunctorg$}#] && text(,u)[l,t=#\tiny{$\circ$}#]&\\
+&text(,u)[l,t=#$\circ$#]&& text(,u)[l,t=#$[\![\mathcal{G}\A,\mathcal{G}\C]\!] \times \theta_\A$#] 
+&& text(,u)[l,t=#$\mathcal{G}$#] && text(,u)[l,t=#$\circ$#]&\\
 
 
 &line(u,d)&&line(u,d)&&line(u,d)&&line(u,4d)& \\
@@ -10,7 +10,7 @@ matrix {
 &&&3box3(2u2l,2u,2u2r,4d2l,3d0.5l,dr)[l,t=#$\theta$#]&&&&&\\
 \\
 \\
-&&&&&&2box3(2u2l,2ur,dl,d,dr)[l,t=#$\laxfunctordeux$#]&&\\
+&&&&&&2box3(2u2l,2ur,dl,d,dr)[l,t=#$\tilde{\mathcal{F}}_2$#]&&\\
 \\
 \\
 &&&braid(3u0.5l,2u2r,d0.5l,d0.5r)&&&&&\\
@@ -20,15 +20,15 @@ line(5ur,dd)&&line(2u0.5r,d)&&line(2u0.5l,dd)&&line(5u,d)&&line(5ul,dd)\\
 \\
 
 &&
-text(,u)[l,t=#\tiny{$\HomCata{\laxfunctor\C}{\laxfunctorg\C} \times \circ$}#]
+text(,u)[l,t=#$[\![\mathcal{F}\C,\mathcal{G}\C]\!] \times \circ$#]
 && &&
-text(,u)[l,t=#\tiny{$\laxfunctor \times \HomCata{\laxfunctor\A}{\laxfunctor\B}$}#]
+text(,u)[l,t=#$\mathcal{F} \times [\![\mathcal{F}\A,\mathcal{F}\B]\!]$#]
 && \\
-text(,u)[l,t=#\tiny{$\circ$}#]
+text(,u)[l,t=#$\circ$#]
 && &&
-text(,u)[l,t=#\tiny{$\theta_\C \times \HomCata{\laxfunctor\B}{\laxfunctor\C}
-\times \HomCata{\laxfunctor\A}{\laxfunctor\B}$}#]
+text(,u)[l,t=#$\theta_\C \times [\![\mathcal{F}\B,\mathcal{F}\C]\!]
+\times [\![\mathcal{F}\A,\mathcal{F}\B]\!]$#]
 && &&
-text(,u)[l,t=#\tiny{$\qquad \HomCata{\B}{\C} \times \laxfunctor$}#]
+text(,u)[l,t=#$\qquad [\![\B,\C]\!] \times \mathcal{F}$#]
 \\
 }
