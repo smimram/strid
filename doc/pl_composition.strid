@@ -1,0 +1,9 @@
+matrix {
+\\
+region(ddddddrrrrrr)\\
+&&&mult(dl,dr,uu)[l,t=#$f$#]\\
+\\
+&&mult(ddddl,dr,u)[l,t=#$g$#]\\
+\\
+&&&&mult(ul,uuu,dd)[l,t=#$\mu$#]\\
+}

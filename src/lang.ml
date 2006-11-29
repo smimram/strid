@@ -127,6 +127,7 @@ object (self)
         | "unit" ->
             [Wire.new_polyline (pos::c.(1)::[])]
         | "text" -> []
+        | "region" -> []
         | k when Str.string_match re_box k 0 ->
             let i = int_of_string (Str.matched_group 1 k) in
             let o = int_of_string (Str.matched_group 2 k) in
@@ -147,20 +148,23 @@ object (self)
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
   method get_ellipses pos =
-    match self#kind with
-      | "text" -> []
-      | "unit" ->
-          [new Wire.ellipse pos (0.14, 0.14)]
-      | _ ->
-          deffound []
-            (fun () ->
-               let _ = List.assoc "l" options in (* label *)
-               let xray = deffound !ellipse_X_ray (fun () -> float_of_string (self#get_attr "l" "w")) in
-               let yray = deffound !ellipse_Y_ray (fun () -> float_of_string (self#get_attr "l" "h")) in
-               let e = new Wire.ellipse pos (xray, yray) in
-                 iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
-                 [e]
-            )
+    let c = Array.map (rd_add pos) self#connexion in
+      match self#kind with
+        | "text" -> []
+        | "region" ->
+            [new Wire.rectangle pos c.(0)]
+        | "unit" ->
+            [new Wire.ellipse pos (0.14, 0.14)]
+        | _ ->
+            deffound []
+              (fun () ->
+                 let _ = List.assoc "l" options in (* label *)
+                 let xray = deffound !ellipse_X_ray (fun () -> float_of_string (self#get_attr "l" "w")) in
+                 let yray = deffound !ellipse_Y_ray (fun () -> float_of_string (self#get_attr "l" "h")) in
+                 let e = new Wire.ellipse pos (xray, yray) in
+                   iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
+                   [e]
+              )
 
   method get_texts pos =
     let c = Array.map (rd_add pos) self#connexion in

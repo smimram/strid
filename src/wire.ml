@@ -223,8 +223,8 @@ object (self)
                        ",line width = " ^ bw ^ "pt"
                 )
             in
-              Printf.sprintf " \\filldraw[fill=white%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" bw x y xr yr
-        | _ ->
+              Printf.sprintf "\\filldraw[fill=white%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" bw x y xr yr
+        | Pstricks ->
             let bw =
               deffound ""
                 (fun () ->
@@ -236,6 +236,23 @@ object (self)
                 )
             in
               Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)" bw x y xr yr
+end
+
+class rectangle p1 p2 =
+object (self)
+  inherit wire
+
+  val corner1 = p1
+
+  val corner2 = p2
+
+  method draw outkind =
+    let x1, y1 = corner1 in
+    let x2, y2 = corner2 in
+      match outkind with
+        | Tikz ->
+            Printf.sprintf "\\draw[dashed] (%.2f,%.2f) rectangle (%.2f,%.2f);" x1 y1 x2 y2
+        | Pstricks -> assert (false)
 end
 
 class text pos t =
@@ -251,6 +268,6 @@ object (self)
       match outkind with
         | Tikz ->
             Printf.sprintf "\\draw (%.2f,%.2f) node{%s};" x y text
-        | _ ->
+        | Pstricks ->
             Printf.sprintf "\\rput(%.2f,%.2f){%s}" x y text
 end
