@@ -4,7 +4,15 @@ Copyright (C) 2006 Samuel Mimram and Nicolas Tabareau.
 
 Installation
 ------------
-To build strid you only need OCaml (http://caml.inria.fr).
+To build strid you only need OCaml (http://caml.inria.fr). Simply type
+
+        make
+
+in the directory where the sources are extracted to compile strid. And then
+
+        make install
+
+to install it on you system.
 
 Licence
 -------
