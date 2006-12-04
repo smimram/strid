@@ -1,7 +1,5 @@
 matrix {
-text(,d)[l,t=#$1$#]\\
-\\
 unit(d)\\
-text(,d)[l,t=#$2$#]\\
+text(,d)[l,t=#$1$#]\\
 \\
 }
