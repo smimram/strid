@@ -10,7 +10,7 @@ clean:
 	rm -f *.log *.aux
 	rm -f $(STRIDTEX)
 
-distclean:
+distclean: clean
 	rm -f stridman.pdf
 
 %.tex: %.strid

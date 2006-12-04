@@ -48,6 +48,17 @@ let _ =
          file_out := (Str.matched_group 1 !file_in) ^ ".tex"
     )
     usage;
+  if !dump_conf then
+    (
+      Conf.save Conf.fname;
+      Common.info (Printf.sprintf "Configuration file saved in %s." Conf.fname);
+      exit 0
+    );
+  if Conf.exists Conf.fname then
+    (
+      Conf.read Conf.fname;
+      Common.info (Printf.sprintf "Read configuration file %s." Conf.fname)
+    );
   if !file_in = "" then
     (
       Printf.eprintf "%s\n%!" usage;
@@ -65,7 +76,7 @@ let _ =
     let fi = open_in !file_in in
     let flen = in_channel_length fi in
     let buf = String.create flen in
-      Lang.debug (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
+      Common.debug (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
       close_in fi;
       buf
   in
@@ -88,4 +99,5 @@ let _ =
     output_string fo pst;
     if !full_tex then
       output_string fo "\\end{document}\n";
-    close_out fo
+    close_out fo;
+    Common.info (Printf.sprintf "Successfully generated %s." !file_out)

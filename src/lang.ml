@@ -20,14 +20,6 @@
 
 open Common
 
-let debug = Printf.printf "[DD] %s\n%!"
-let info = Printf.printf "[II] %s\n%!"
-let warning = Printf.printf "[WW] %s\n%!"
-let error e = Printf.printf "[EE] %s\n%!" e; exit 1
-
-let ellipse_X_ray = ref 1.0
-let ellipse_Y_ray = ref 0.5
-let circle_ray = ref 2.
 let pi = 4.*. (atan 1.)
 
 let iffound f =
@@ -44,7 +36,8 @@ let circle_position center point =
   let dir = (qx-.px,qy-.py) in
   let (dx,dy) = dir in
   let norm = sqrt(dx*.dx +. dy*.dy) in
-    (px +. 0.1*.dx/.norm *. !circle_ray , py +. 0.1*.dy/.norm *. !circle_ray)
+  let cr = Conf.get_float "small_circle_ray" in
+    (px +. 0.1*.dx/.norm *. cr, py +. 0.1*.dy/.norm *. cr)
 
 let orthogonal center point =
   let (px,py) = center in
@@ -165,8 +158,8 @@ object (self)
             deffound []
               (fun () ->
                  let _ = List.assoc "l" options in (* label *)
-                 let xray = deffound !ellipse_X_ray (fun () -> float_of_string (self#get_attr "l" "w")) in
-                 let yray = deffound !ellipse_Y_ray (fun () -> float_of_string (self#get_attr "l" "h")) in
+                 let xray = deffound (Conf.get_float "label_width") (fun () -> float_of_string (self#get_attr "l" "w")) in
+                 let yray = deffound (Conf.get_float "label_height") (fun () -> float_of_string (self#get_attr "l" "h")) in
                  let e = new Wire.ellipse pos (xray, yray) in
                    iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
                    [e]

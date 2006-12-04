@@ -18,6 +18,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *)
 
+let debug = Printf.printf "[DD] %s\n%!"
+let info = Printf.printf "[II] %s\n%!"
+let warning = Printf.printf "[WW] %s\n%!"
+let error e = Printf.printf "[EE] %s\n%!" e; exit 1
+
 (** Do [f], returning a default value if [Not_found] is raised. *)
 let deffound v f =
   try f () with Not_found -> v
