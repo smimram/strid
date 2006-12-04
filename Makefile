@@ -9,6 +9,10 @@ clean:
 	make -C src $@
 	make -C doc $@
 
+distclean:
+	make -C src $@
+	make -C doc $@
+
 install: all
 	mkdir -p $(DESTDIR)/usr/bin
 	cp src/strid $(DESTDIR)/usr/bin

@@ -6,7 +6,10 @@ all: $(STRIDTEX) stridman.pdf
 
 clean:
 	rm -f *.log *.aux
-	rm -f $(STRIDTEX) stridman.pdf
+	rm -f $(STRIDTEX)
+
+distclean:
+	rm -f stridman.pdf
 
 %.tex: %.strid
 	$(STRID) -t tikz --scale 0.6 $<
