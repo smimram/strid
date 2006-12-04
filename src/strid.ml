@@ -24,6 +24,7 @@ let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref ""
 let file_out = ref ""
 let full_tex = ref false
+let dump_conf = ref false
 let out_kind = ref "tikz"
 
 let get_pos d i j =
@@ -34,6 +35,7 @@ let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 let _ =
   Arg.parse
     [
+      "--dump-conf", Arg.Set dump_conf, ("Dump configuration file in " ^ Conf.fname);
       "--full-tex", Arg.Set full_tex, "Full LaTeX file";
       "--no-tex-environment", Arg.Set Env.no_tex_environment, "Don't output LaTeX environment";
       "-o", Arg.Set_string file_out, "Output file";

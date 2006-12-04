@@ -1,4 +1,4 @@
-SOURCES=env.ml common.ml cubic_spline.ml spline.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
+SOURCES=conf.ml env.ml common.ml cubic_spline.ml spline.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
 OCAMLYACC=ocamlyacc
 #INCDIRS=+gsl
