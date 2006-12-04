@@ -13,3 +13,4 @@ clean:
 
 %.pdf: %.tex
 	pdflatex $<
+	pdflatex $<

@@ -6,7 +6,7 @@ Installation
 ------------
 To build strid you need:
 - ocaml (http://caml.inria.fr)
-- ocamlgsl (http://oandrieu.nerim.net/ocaml/gsl/)
+(* - ocamlgsl (http://oandrieu.nerim.net/ocaml/gsl/) *)
 
 Licence
 -------
