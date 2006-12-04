@@ -7,6 +7,7 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{tikz}
+%\usepackage{fullpage}
 
 
 \newcommand{\strid}{\textsl{strid}}
@@ -137,10 +138,21 @@ is typeset by
 \]
 
 \section{Examples}
+\subsection{Yang-Baxter equality for braids}
+\[
+\input{yang_baxter_l.tex}
+\qquad\raisebox{3.2em}{=}\qquad
+\input{yang_baxter_r.tex}
+\]
+Left member is typeset by
+\verbatiminput{yang_baxter_l.strid}
+and right member by
+\verbatiminput{yang_baxter_r.strid}
+
 \newcommand{\A}{\mathbb{A}}
 \newcommand{\B}{\mathbb{B}}
 \newcommand{\C}{\mathbb{C}}
-Naturality condition for natural transformations between two lax functors between bicategories:
+\subsection{Naturality condition for natural transformations between two lax functors between bicategories}
 
 \begin{center}
 \begin{tabular}{ccc}

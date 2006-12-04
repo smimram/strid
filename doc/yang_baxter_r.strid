@@ -1,0 +1,7 @@
+matrix {
+\\
+&&&&braid(u4l,dl,u4r,dr)\\
+\\
+&&braid(ull,dll,ur,drr)&&&&braid(ul,dll,urr,drr)&&\\
+\\
+}

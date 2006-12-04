@@ -4,6 +4,8 @@ STRIDTEX=$(STRIDFILES:.strid=.tex)
 
 all: $(STRIDTEX) stridman.pdf
 
+stridman.pdf: $(STRIDTEX)
+
 clean:
 	rm -f *.log *.aux
 	rm -f $(STRIDTEX)
