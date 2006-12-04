@@ -38,12 +38,12 @@ let make_interp x y periodic =
   else
     (x,y,spline x y)
 
+(*
+ * Given the arrays xa and ya, which tabulate a function (with the xa_i's in order),
+ * and given the array y2a, which is the output from spline above, and given a value of
+ * x, this routine returns a cubic-spline interpolated value y.
+ *)
 let eval (xa, ya, y2a) x =
-  (*
-    Given the arrays xa[1..n] and ya[1..n], which tabulate a function (with the xai's in order),
-    and given the array y2a[1..n], which is the output from spline above, and given a value of
-    x, this routine returns a cubic-spline interpolated value y.
-  *)
   let klo = ref 0 in
   let khi = ref ((Array.length xa) - 1) in
   let k = ref 0 in
@@ -54,7 +54,7 @@ let eval (xa, ya, y2a) x =
       else
         klo := !k
     done;
-    (* klo and khi now bracket the input value of x.*)
+    (* klo and khi now bracket the input value of x. *)
     let h = xa.(!khi)-.xa.(!klo) in
     let a = (xa.(!khi)-.x)/.h in
     let b = (x-.xa.(!klo))/.h in
