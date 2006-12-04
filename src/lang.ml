@@ -46,7 +46,7 @@ let circle_position center point =
   let norm = sqrt(dx*.dx +. dy*.dy) in
     (px +. 0.1*.dx/.norm *. !circle_ray , py +. 0.1*.dy/.norm *. !circle_ray)
 
-let orthogonal center point = 
+let orthogonal center point =
   let (px,py) = center in
   let (qx,qy) = point in
   let dir = (qx-.px,qy-.py) in
@@ -90,6 +90,12 @@ object (self)
 
   method get_attr name subname =
     List.assoc subname (List.assoc name options)
+
+  method has_attr name =
+    try
+      ignore (List.assoc name options); true
+    with
+      | Not_found -> false
 
   method kind = kind
 
@@ -153,7 +159,7 @@ object (self)
         | "text" -> []
         | "region" ->
             [new Wire.rectangle pos c.(0)]
-        | "unit" ->
+        | "unit" when not (self#has_attr "l") ->
             [new Wire.ellipse pos (0.14, 0.14)]
         | _ ->
             deffound []

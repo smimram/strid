@@ -1,5 +1,5 @@
 matrix {
 \\
-&mult(ur,dr,l)&&mult(ul,dl,r)&\\
+unit(r)[l,t=#$\eta$#]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
 \\
 }
