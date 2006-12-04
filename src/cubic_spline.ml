@@ -1,4 +1,30 @@
-let loop_step = 11
+(*
+ * Copyright (C) 2006 Samuel Mimram
+ *
+ * This file is part of strid.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *)
+
+(**
+  * Cubic splines interpolation.
+  *
+  * @authors Samuel Mimram and Nicolas Tabareau
+  *)
+
+let iterations_nb = 11
 
 (**
   * Given arrays x and y containing a tabulated function, i.e. y_i = f(x_i), with
@@ -26,10 +52,10 @@ let spline x y =
 
 let spline_periodic x y =
   let n = (Array.length x) - 1 in
-  let big_x = Array.init (loop_step * n) (fun i -> x.(i mod n) +. x.(n) *. (float_of_int (i / n))) in
-  let big_y = Array.init (loop_step * n) (fun i -> y.(i mod n)) in
+  let big_x = Array.init (iterations_nb * n) (fun i -> x.(i mod n) +. x.(n) *. (float_of_int (i / n))) in
+  let big_y = Array.init (iterations_nb * n) (fun i -> y.(i mod n)) in
   let y2 = spline big_x big_y in
-  let y2 = Array.sub y2 ((loop_step/2)*n) (n + 1) in
+  let y2 = Array.sub y2 ((iterations_nb/2)*n) (n + 1) in
     y2
 
 let make_interp x y periodic =
