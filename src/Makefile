@@ -1,8 +1,8 @@
 SOURCES=env.ml common.ml spline.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
-OCAMLYACC=menhir
-LIBS=str
-PACKS=gsl
+OCAMLYACC=ocamlyacc
+INCDIRS=+gsl
+LIBS=str bigarray gsl
 
 all: dc
 
