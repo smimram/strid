@@ -4,9 +4,7 @@ Copyright (C) 2006 Samuel Mimram and Nicolas Tabareau.
 
 Installation
 ------------
-To build strid you need:
-- ocaml (http://caml.inria.fr)
-(* - ocamlgsl (http://oandrieu.nerim.net/ocaml/gsl/) *)
+To build strid you only need OCaml (http://caml.inria.fr).
 
 Licence
 -------
