@@ -125,7 +125,7 @@ object (self)
             let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
               l::[]
         | "unit" ->
-            [Wire.new_polyline (pos::c.(1)::[])]
+            [Wire.new_polyline (pos::c.(0)::[])]
         | "text" -> []
         | "region" -> []
         | k when Str.string_match re_box k 0 ->
