@@ -1,5 +1,5 @@
 PROG = strid
-DISTFILES = COPYING README Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mll src/*.mly doc/stridman.tex doc/Makefile doc/*.strid
+DISTFILES = COPYING README Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mll src/*.mly doc/stridman.tex doc/stridman.pdf doc/Makefile doc/*.strid
 VERSION = 0.1.0
 
 all:
@@ -22,7 +22,7 @@ install: all
 doc: all
 	make -C doc
 
-dist:
+dist: doc
 	mkdir $(PROG)-$(VERSION)
 	cp -r --parents $(DISTFILES) $(PROG)-$(VERSION)
 	tar zcvf $(PROG)-$(VERSION).tar.gz $(PROG)-$(VERSION)
