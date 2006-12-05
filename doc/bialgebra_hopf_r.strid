@@ -1,0 +1,9 @@
+matrix{
+\\
+&mult(urr,dr,l)&&&&mult(ull,dl,r)&\\
+\\
+&&&sym(ul,dl,ur,dr)\\
+\\
+&mult(ur,drr,l)&&&&mult(ul,dll,r)&\\
+\\
+}
