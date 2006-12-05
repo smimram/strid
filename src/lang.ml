@@ -28,6 +28,28 @@ let iffound f =
 let rd_add (x, y) (dx, dy) = (x +. dx, y +. dy)
 type opt = string * ((string * string) list)
 
+let re_dir = Str.regexp "\\([0-9\\.]*\\)\\([lrud]\\)"
+
+let reldir_of_string s =
+  let xans, yans = ref 0., ref 0. in
+  let i = ref 0 in
+    try
+      while true do
+        let m = Str.search_forward re_dir s !i in
+        let n = Str.matched_group 1 s in
+        let n = if n = "" then 1. else float_of_string n in
+        let d = Str.matched_group 2 s in
+          i := m + (String.length (Str.matched_string s));
+          match d with
+            | "l" -> xans := !xans -. n
+            | "r" -> xans := !xans +. n
+            | "u" -> yans := !yans +. n
+            | "d" -> yans := !yans -. n
+            | _ -> failwith ("Invalid direction " ^ (Str.matched_string s))
+      done;
+      !xans, !yans
+    with Not_found -> !xans, !yans
+
 let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
 
 let circle_position center point =
@@ -67,6 +89,18 @@ let ortho_point center point dir dir2 =
         circle_position center (cx +. sign *. dx -. scale*.decalage_x,
                                 cy +. sign *. dy -. scale*.decalage_y)
 
+let triangle_points pos dir height =
+  let px, py = pos in
+  let dx, dy = dir in
+  let ox, oy = Vect.orthogonal dir in
+  let r = height /. 3. in
+  let rr = 2. *. r in
+  let up = px+.rr*.dx, py+.rr*.dy in
+  let a = height *. 2. /. (sqrt 3.) in
+  let left = px-.r*.dx+.a/.2.*.ox, py-.r*.dy+.a/.2.*.oy in
+  let right = px-.r*.dx-.a/.2.*.ox, py-.r*.dy-.a/.2.*.oy in
+    [up; left; right; up]
+
 let middle p q =
   let xs, ys = p in
   let xt, yt = q in
@@ -83,6 +117,9 @@ object (self)
 
   method get_attr name subname =
     List.assoc subname (List.assoc name options)
+
+  method get_attr_float name subname =
+    float_of_string (self#get_attr name subname)
 
   method has_attr name =
     try
@@ -158,11 +195,21 @@ object (self)
             deffound []
               (fun () ->
                  let _ = List.assoc "l" options in (* label *)
-                 let xray = deffound (Conf.get_float "label_width") (fun () -> float_of_string (self#get_attr "l" "w")) in
-                 let yray = deffound (Conf.get_float "label_height") (fun () -> float_of_string (self#get_attr "l" "h")) in
-                 let e = new Wire.ellipse pos (xray, yray) in
-                   iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
-                   [e]
+                 let shape = deffound "ellipse" (fun () -> self#get_attr "l" "s") in
+                   match shape with
+                     | "triangle" ->
+                         let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
+                         let dir = deffound "u" (fun () -> self#get_attr "l" "d") in (* direction *)
+                         let dir = Vect.normalize (reldir_of_string dir) in
+                           [new Wire.polygon (triangle_points pos dir height)]
+                     | "ellipse" ->
+                         let xray = deffound (Conf.get_float "label_width") (fun () -> self#get_attr_float "l" "w") in
+                         let yray = deffound (Conf.get_float "label_height") (fun () -> self#get_attr_float "l" "h") in
+                         let e = new Wire.ellipse pos (xray, yray) in
+                           iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
+                           [e]
+                     | _ ->
+                         warning (Printf.sprintf "Unknown label kind: %s." kind); []
               )
 
   method get_texts pos =
@@ -190,30 +237,6 @@ type line = box option list
 type ir_matrix = line list
 type matrix = box option array array
 type dir = Left | Right | Up | Down
-
-let string_of_char = String.make 1
-
-let re_dir = Str.regexp "\\([0-9\\.]*\\)\\([lrud]\\)"
-
-let reldir_of_string s =
-  let xans, yans = ref 0., ref 0. in
-  let i = ref 0 in
-    try
-      while true do
-        let m = Str.search_forward re_dir s !i in
-        let n = Str.matched_group 1 s in
-        let n = if n = "" then 1. else float_of_string n in
-        let d = Str.matched_group 2 s in
-          i := m + (String.length (Str.matched_string s));
-          match d with
-            | "l" -> xans := !xans -. n
-            | "r" -> xans := !xans +. n
-            | "u" -> yans := !yans +. n
-            | "d" -> yans := !yans -. n
-            | _ -> failwith ("Invalid direction " ^ (Str.matched_string s))
-      done;
-      !xans, !yans
-    with Not_found -> !xans, !yans
 
 let matrix_of_ir env ir =
   Array.map (fun l -> (List.iter (fun b -> match b with None -> () | Some b -> b#set_env env) l); Array.of_list l) (Array.of_list ir)

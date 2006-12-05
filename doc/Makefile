@@ -18,4 +18,3 @@ distclean: clean
 
 %.pdf: %.tex
 	pdflatex $<
-	pdflatex $<

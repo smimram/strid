@@ -1,4 +1,4 @@
-SOURCES=common.ml conf.ml env.ml cubic_spline.ml spline.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
+SOURCES=common.ml vect.ml conf.ml env.ml cubic_spline.ml spline.ml wire.ml lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
 OCAMLYACC=ocamlyacc
 #INCDIRS=+gsl
@@ -8,7 +8,7 @@ all: dc
 
 test: all
 	./strid --full-tex test.strid
-	pdflatex test.tex > /dev/null
+	pdflatex test.tex #> /dev/null
 #	cat test.tex
 
 tikz: all

@@ -142,7 +142,8 @@ object (self)
                         )
                     | _::[] | [] -> failwith "Drawing empty line."
                     | points ->
-                        let spl = Spline.compute ~periodic:(List.hd points = list_last points) !resolution points in
+                        let periodic = List.hd points = list_last points in
+                        let spl = Spline.compute ~periodic !resolution points in
                         let spl = List.map snd spl in
                         let spl = queue_of_list spl in
                         let lines = queue_of_list lines in
@@ -164,6 +165,7 @@ object (self)
                                     ans := !ans ^
                                     (match outkind with
                                        | Tikz ->
+                                           (* TODO: use "-- cycle" when periodic *)
                                            Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
                                        | _ ->
                                            Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
@@ -252,7 +254,22 @@ object (self)
       match outkind with
         | Tikz ->
             Printf.sprintf "\\draw[dashed] (%.2f,%.2f) rectangle (%.2f,%.2f);" x1 y1 x2 y2
-        | Pstricks -> assert (false)
+        | Pstricks -> assert false
+end
+
+class polygon pp =
+object (self)
+  inherit wire
+
+  val points = pp
+
+  method draw outkind =
+    match outkind with
+      | Tikz ->
+          let x1, y1 = List.hd points in
+            (* TODO: use -- cycle *)
+            Printf.sprintf "\\filldraw[fill=white] (%.2f, %.2f) %s;" x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
+      | Pstricks -> assert false
 end
 
 class text pos t =

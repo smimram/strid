@@ -20,7 +20,12 @@
 
 let fname = "strid.conf"
 
-let default_conf = ["label_width", "0.8"; "label_height", "0.5"; "small_circle_ray", "2.0"]
+let default_conf = [
+  "label_width", "0.8";
+  "label_height", "0.5";
+  "label_triangle_height", "1.5";
+  "small_circle_ray", "2.0"
+]
 
 let conf = Hashtbl.create 100
 
@@ -54,7 +59,7 @@ let exists fname =
   with
     | _ -> false
 
-let re_conf = Str.regexp "^\\([^ =]+\\)[ ]*=[ ]*\\([^ =]+\\)"
+let re_conf = Str.regexp "^\\([^ =]+\\)[ ]*=[ ]*\\([^=]+\\)"
 
 let read fname =
   let ic = open_in fname in
