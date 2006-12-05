@@ -85,14 +85,21 @@ let _ =
       try
         Parser.defs Lexer.token lexbuf
       with
+        | Failure "lexing: empty token" ->
+            let pos = (Lexing.lexeme_end_p lexbuf) in
+              Common.error
+                (Printf.sprintf "Lexing error at line %d, character %d."
+                   pos.Lexing.pos_lnum
+                   (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+                )
         | Parsing.Parse_error ->
             let pos = (Lexing.lexeme_end_p lexbuf) in
-            Common.error
-              (Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
-                 (Lexing.lexeme lexbuf)
-                 pos.Lexing.pos_lnum
-                 (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
-              )
+              Common.error
+                (Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
+                   (Lexing.lexeme lexbuf)
+                   pos.Lexing.pos_lnum
+                   (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+                )
   in
   let m = matrix_of_ir env ir in
   let pst = Lang.process_matrix out_kind env m in
