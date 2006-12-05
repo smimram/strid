@@ -183,7 +183,7 @@ object (self)
         | k ->
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
-  method get_ellipses pos =
+  method get_label_decorations pos =
     let c = Array.map (rd_add pos) self#connexion in
       match self#kind with
         | "text" -> []
@@ -268,7 +268,7 @@ let rec join_plines plines =
 let process_matrix kind env m =
   let out = ref "" in
   let plines = ref [] in
-  let ellipses = ref [] in
+  let ldeco = ref [] in
   let texts = ref [] in
   let add_box pos b =
     match b with
@@ -276,7 +276,7 @@ let process_matrix kind env m =
       | Some b ->
           debug (Printf.sprintf "New %s box." b#kind);
           plines := !plines@b#get_plines pos;
-          ellipses := !ellipses@b#get_ellipses pos;
+          ldeco := !ldeco@b#get_label_decorations pos;
           texts := !texts@b#get_texts pos;
   in
   let height = Array.length m - 1 in
@@ -302,7 +302,7 @@ let process_matrix kind env m =
     );
     plines := join_plines !plines;
     List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw kind)) !plines;
-    List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw kind)) !ellipses;
+    List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw kind)) !ldeco;
     List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw kind)) !texts;
     out := !out ^
     (match kind with
