@@ -35,12 +35,12 @@ let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 let _ =
   Arg.parse
     [
-      "--dump-conf", Arg.Set dump_conf, ("Dump configuration file in " ^ Conf.fname);
-      "--full-tex", Arg.Set full_tex, "Full LaTeX file";
-      "--no-tex-environment", Arg.Set Env.no_tex_environment, "Don't output LaTeX environment";
-      "-o", Arg.Set_string file_out, "Output file";
-      "--scale", Arg.Set_float Env.scaling_factor, "Scale the output";
-      "-t", Arg.Set_string out_kind, "Output type"
+      "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
+      "--full-tex", Arg.Set full_tex, "\t\tFull LaTeX file";
+      "--no-tex-environment", Arg.Set Env.no_tex_environment, "\tDon't output LaTeX environment";
+      "-o", Arg.Set_string file_out, "\t\t\tOutput file";
+      "--scale", Arg.Set_float Env.scaling_factor, "\t\tScale the output";
+      "-t", Arg.Set_string out_kind, "\t\t\tOutput type"
     ]
     (fun s ->
        file_in := s;
@@ -80,7 +80,20 @@ let _ =
       close_in fi;
       buf
   in
-  let env, ir = Parser.defs Lexer.token (Lexing.from_string sin) in
+  let env, ir =
+    let lexbuf = Lexing.from_string sin in
+      try
+        Parser.defs Lexer.token lexbuf
+      with
+        | Parsing.Parse_error ->
+            let pos = (Lexing.lexeme_end_p lexbuf) in
+            Common.error
+              (Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
+                 (Lexing.lexeme lexbuf)
+                 pos.Lexing.pos_lnum
+                 (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+              )
+  in
   let m = matrix_of_ir env ir in
   let pst = Lang.process_matrix out_kind env m in
   let fo = open_out !file_out in

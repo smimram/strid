@@ -21,9 +21,20 @@
 
     open Lexing
     open Parser
+
+    let on_newline lexbuf =
+      let pos = lexbuf.lex_curr_p in
+        lexbuf.lex_curr_p <-
+          {
+            pos with
+            pos_lnum = pos.pos_lnum + 1;
+            pos_bol = pos.pos_cnum;
+          }
+
 }
 
 let space = ' ' | '\t' | '\r'
+let newline = '\n'
 
 rule token = parse
   | "let" { LET }
@@ -42,5 +53,6 @@ rule token = parse
   | ',' { COMMA }
   | '=' { EQ }
   | (['a'-'z''0'-'9''.']+ as str) { STRING str }
-  | (space|'\n')+ { token lexbuf }
+  | space+ { token lexbuf }
+  | newline { on_newline lexbuf; token lexbuf }
   | eof { EOF }

@@ -20,9 +20,6 @@
  *)
 
     open Lang
-
-    let parse_error s =
-        Common.error ("Parse error: " ^ s)
 %}
 
 %token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF LACC RACC
