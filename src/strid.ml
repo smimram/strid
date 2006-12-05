@@ -37,9 +37,9 @@ let _ =
     [
       "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
       "--full-tex", Arg.Set full_tex, "\t\tFull LaTeX file";
-      "--no-tex-environment", Arg.Set Env.no_tex_environment, "\tDon't output LaTeX environment";
+      "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
       "-o", Arg.Set_string file_out, "\t\t\tOutput file";
-      "--scale", Arg.Set_float Env.scaling_factor, "\t\tScale the output";
+      "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
       "-t", Arg.Set_string out_kind, "\t\t\tOutput type"
     ]
     (fun s ->

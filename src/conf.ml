@@ -24,6 +24,8 @@ let default_conf = [
   "label_width", "0.8";
   "label_height", "0.5";
   "label_triangle_height", "1.5";
+  "no_tex_environment", "false";
+  "scaling_factor", "1.0";
   "small_circle_ray", "2.0"
 ]
 
@@ -41,8 +43,21 @@ let get_float n =
   with
     | _ -> Common.error (Printf.sprintf "Invalid configuration value for %s: %s" n (get n))
 
+let get_bool n =
+  let v = get n in
+    if v = "true" then true
+    else if v = "false" then false
+    else
+      Common.error (Printf.sprintf "Invalid configuration value for %s: %s" n v)
+
 let set n v =
   Hashtbl.replace conf n v
+
+let set_bool n v =
+  set n (if v then "true" else "false")
+
+let set_float n v =
+  set n (Printf.sprintf "%.2f" v)
 
 let save fname =
   let oc = open_out fname in
