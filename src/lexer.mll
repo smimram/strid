@@ -30,7 +30,6 @@
             pos_lnum = pos.pos_lnum + 1;
             pos_bol = pos.pos_cnum;
           }
-
 }
 
 let space = ' ' | '\t' | '\r'
