@@ -266,9 +266,10 @@ object (self)
   method draw outkind =
     match outkind with
       | Tikz ->
+          let color = deffound "white" (fun () -> self#get_attr "color") in
           let x1, y1 = List.hd points in
             (* TODO: use -- cycle *)
-            Printf.sprintf "\\filldraw[fill=white] (%.2f, %.2f) %s;" x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
+            Printf.sprintf "\\filldraw[fill=%s] (%.2f, %.2f) %s;" color x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
       | Pstricks -> assert false
 end
 

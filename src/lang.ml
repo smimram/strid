@@ -201,7 +201,9 @@ object (self)
                          let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
                          let dir = deffound "u" (fun () -> self#get_attr "l" "d") in (* direction *)
                          let dir = Vect.normalize (reldir_of_string dir) in
-                           [new Wire.polygon (triangle_points pos dir height)]
+                         let e = new Wire.polygon (triangle_points pos dir height) in
+                           iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
+                           [e]
                      | "ellipse" ->
                          let xray = deffound (Conf.get_float "label_width") (fun () -> self#get_attr_float "l" "w") in
                          let yray = deffound (Conf.get_float "label_height") (fun () -> self#get_attr_float "l" "h") in
