@@ -222,9 +222,8 @@ object (self)
                            let label = List.assoc "l" options in (* value *)
                            let t = List.assoc "t" label in (* text *)
                            let px, py = pos in
-                           let pxs, pys = c.(0) in
-                           let pxt, pyt = c.(1) in
-                           let p = px +. (pxt -. pxs) /. 2., py +. (pyt -. pys) /. 2. in
+                           let pxt, pyt = c.(0) in
+                           let p = (px +. pxt) /. 2., (py +. pyt) /. 2. in
                              [new Wire.text p t]
             )
         | _ ->
