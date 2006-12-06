@@ -1,9 +1,9 @@
 matrix{
 \\
-&mult(urr,dr,l)&&&&mult(ull,dl,r)&\\
+&mult(u3r,dr,l)&&&&&&mult(u3l,dl,r)&\\
 \\
-&&&sym(ul,dl,ur,dr)\\
+&&&&sym(ull,dll,urr,drr)\\
 \\
-&mult(ur,drr,l)&&&&mult(ul,dll,r)&\\
+&mult(ur,d3r,l)&&&&&&mult(ul,d3l,r)&\\
 \\
 }
