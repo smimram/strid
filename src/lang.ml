@@ -158,7 +158,12 @@ object (self)
               p1#append p2;
               p1::q::[]
         | "line" ->
-            let l = Wire.new_polyline (c.(0)::pos::c.(1)::[]) in
+            let l = Wire.new_polyline
+                      (if Array.length c >= 2 then
+                         [c.(0); pos; c.(1)]
+                       else
+                         [c.(0); pos])
+            in
               l::[]
         | "unit" ->
             [Wire.new_polyline (pos::c.(0)::[])]
@@ -222,7 +227,9 @@ object (self)
                            let label = List.assoc "l" options in (* value *)
                            let t = List.assoc "t" label in (* text *)
                            let px, py = pos in
-                           let pxt, pyt = c.(0) in
+                           let pxt, pyt =
+                             if Array.length c >= 1 then c.(0) else 0., 0.
+                           in
                            let p = (px +. pxt) /. 2., (py +. pyt) /. 2. in
                              [new Wire.text p t]
             )
