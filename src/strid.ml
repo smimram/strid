@@ -50,8 +50,17 @@ let _ =
     usage;
   if !dump_conf then
     (
-      Conf.save Conf.fname;
-      Common.info (Printf.sprintf "Configuration file saved in %s." Conf.fname);
+      if Conf.exists Conf.fname then
+        (
+          Conf.read Conf.fname;
+          Conf.save Conf.fname;
+          Common.info (Printf.sprintf "Configuration file %s updated." Conf.fname)
+        )
+      else
+        (
+          Conf.save Conf.fname;
+          Common.info (Printf.sprintf "Configuration file saved in %s." Conf.fname)
+        );
       exit 0
     );
   if Conf.exists Conf.fname then
