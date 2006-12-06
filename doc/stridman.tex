@@ -65,7 +65,7 @@ The rightmost multiplication is typeset by
 \begin{center}
 \verb+mult(ull,dl,r)+
 \end{center}
-Here, ``\verb+mult+'' is the kind of the operator (a multiplication-shaped one) and its arguments specify that it should be linked to the relative positions $(-2,1)$ (\verb+ull+ means up-left-left), $(-1,-1)$ (\verb+dl+ means down-left) and $(1,0)$. The orders in which the links should be specified is indicated on the figure below:
+Here, ``\verb+mult+'' is the kind of the operator (a multiplication-shaped one) and its arguments specify that it should be linked to the relative positions $(-2,1)$ (\verb+ull+ means up-left-left), $(-1,-1)$ (\verb+dl+ means down-left) and $(1,0)$. The order in which the links should be specified is indicated on the figure below:
 \[
 \input{order_mult.tex}
 \]
@@ -73,7 +73,7 @@ As for other operators, links are specified inputs first and then outputs.
 
 The labels are specified similarly by instructions like
 \begin{center}
-\verb+text(,r)[l,t=#$M$#]+
+\verb+text(r)[l,t=#$M$#]+
 \end{center}
 This create a ``\verb+text+'' operator from here to the relative position $(1,0)$. The brackets ``\verb+[l,t=#$M$#]+'' are here to specify optional parameters related to this operator. The ``\verb+l+'' indicates that we are going to add a label and the ``\verb+t=#$M$#+'' means that the label's text should be ``\verb+$M$+''. The text between \verb+#+ is quoted uninterpreted.
 

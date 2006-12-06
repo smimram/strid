@@ -1,7 +1,7 @@
 matrix {
 \\
-&text(,u)[l,t=#$\circ$#]&& text(,u)[l,t=#$[\![\mathcal{G}\A,\mathcal{G}\C]\!] \times \theta_\A$#] 
-&& text(,u)[l,t=#$\mathcal{G}$#] && text(,u)[l,t=#$\circ$#]&\\
+&text(u)[l,t=#$\circ$#]&&text(u)[l,t=#$[\![\mathcal{G}\A,\mathcal{G}\C]\!] \times \theta_\A$#] 
+&&text(u)[l,t=#$\mathcal{G}$#] &&text(u)[l,t=#$\circ$#]&\\
 
 
 &line(u,d)&&line(u,d)&&line(u,d)&&line(u,4d)& \\
@@ -20,15 +20,15 @@ line(5ur,dd)&&line(2u0.5r,d)&&line(2u0.5l,dd)&&line(5u,d)&&line(5ul,dd)\\
 \\
 
 &&
-text(,u)[l,t=#$[\![\mathcal{F}\C,\mathcal{G}\C]\!] \times \circ$#]
+text(u)[l,t=#$[\![\mathcal{F}\C,\mathcal{G}\C]\!] \times \circ$#]
 && &&
-text(,u)[l,t=#$\mathcal{F} \times [\![\mathcal{F}\A,\mathcal{F}\B]\!]$#]
+text(u)[l,t=#$\mathcal{F} \times [\![\mathcal{F}\A,\mathcal{F}\B]\!]$#]
 && \\
-text(,u)[l,t=#$\circ$#]
+text(u)[l,t=#$\circ$#]
 && &&
-text(,u)[l,t=#$\theta_\C \times [\![\mathcal{F}\B,\mathcal{F}\C]\!]
+text(u)[l,t=#$\theta_\C \times [\![\mathcal{F}\B,\mathcal{F}\C]\!]
 \times [\![\mathcal{F}\A,\mathcal{F}\B]\!]$#]
 && &&
-text(,u)[l,t=#$\qquad [\![\B,\C]\!] \times \mathcal{F}$#]
+text(u)[l,t=#$\qquad [\![\B,\C]\!] \times \mathcal{F}$#]
 \\
 }

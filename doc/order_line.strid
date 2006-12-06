@@ -1,7 +1,7 @@
 matrix {
-text(,d)[l,t=#1#]\\
+text(d)[l,t=#1#]\\
 \\
 line(u,d)\\
 \\
-text(,u)[l,t=#2#]\\
+text(u)[l,t=#2#]\\
 }

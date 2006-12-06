@@ -1,6 +1,6 @@
 matrix {
-text(,r)[l,t=#$M$#]\\
-text(,r)[l,t=#$M$#]&&&mult(ull,dl,r)&text(l,)[l,t=#$M$#]\\
+text(r)[l,t=#$M$#]\\
+text(r)[l,t=#$M$#]&&&mult(ull,dl,r)&text(r)[l,t=#$M$#]\\
 &&mult(ul,dl,)\\
-text(,r)[l,t=#$M$#]\\
+text(r)[l,t=#$M$#]\\
 }

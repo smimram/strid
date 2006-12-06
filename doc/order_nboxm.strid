@@ -1,7 +1,7 @@
 matrix {
-text(,d)[l,t=#$1$#]&text(,d)[l,t=#$2$#]&text(,d)[l,t=#$3$#]&text(,d)[l,t=#$4$#]&text(,d)[l,t=#$\ldots$#]&text(,d)[l,t=#$m$#]\\
+text(d)[l,t=#$1$#]&text(d)[l,t=#$2$#]&text(d)[l,t=#$3$#]&text(d)[l,t=#$4$#]&text(d)[l,t=#$\ldots$#]&text(d)[l,t=#$m$#]\\
 \\
 &&5box2(ull,ul,u,ur,urrr,dll,drr)\\
 \\
-text(,u)[l,t=#$m+1$#]&&text(,u)[l,t=#$\ldots$#]&&text(,u)[l,t=#$m+n$#]\\
+text(u)[l,t=#$m+1$#]&&text(u)[l,t=#$\ldots$#]&&text(u)[l,t=#$m+n$#]\\
 }

@@ -1,6 +1,6 @@
 matrix {
 \\
 unit(d)\\
-text(,d)[l,t=#$1$#]\\
+text(d)[l,t=#$1$#]\\
 \\
 }
