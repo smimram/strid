@@ -63,7 +63,7 @@ let save fname =
   let oc = open_out fname in
     Hashtbl.iter
       (fun n v ->
-         output_string oc (Printf.sprintf "%s = %s" n v)
+         output_string oc (Printf.sprintf "%s = %s\n" n v)
       ) conf;
     close_out oc
 
