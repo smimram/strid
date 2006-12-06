@@ -13,7 +13,7 @@ matrix {
 &&&&&&2box3(2u2l,2ur,dl,d,dr)[l,t=#$\tilde{\mathcal{F}}_2$#]&&\\
 \\
 \\
-&&&braid(3u0.5l,2u2r,d0.5l,d0.5r)&&&&&\\
+&&&braid(2u2r,3u0.5l,d0.5r,d0.5l)&&&&&\\
 \\
 \\
 line(5ur,dd)&&line(2u0.5r,d)&&line(2u0.5l,dd)&&line(5u,d)&&line(5ul,dd)\\

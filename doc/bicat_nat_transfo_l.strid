@@ -7,12 +7,12 @@ matrix {
 
 &line(u,)&&line(u,)&&line(u,)&&line(,u)& \\
 &&&&&&2box3(ul,ur,0.5dl,d0.5l,d0.5r)[l,t=#$\tilde{\mathcal{G}}_2$#]&&\\
-&&&&braid(2ul,0.5ur,0.5dl,1.5d0.5r)&&&&\\
-&&sym(3ul,0.5ur,2dl,dr)[l,t=#$\alpha$#]&&&&braid(u0.5l,u0.5r,2dl,2dr)&&\\
+&&&&braid(0.5ur,2ul,1.5d0.5r,0.5dl)&&&&\\
+&&sym(3ul,0.5ur,2dl,dr)[l,t=#$\alpha$#]&&&&braid(u0.5r,u0.5l,2dr,2dl)&&\\
 \\
 &&&&3box3(ul,1.5u0.5r,r,dl,2d,dr)[l,t=#$[\![\mathcal{G}\B,\mathcal{G}\C]\!] \times \theta$#,w=1.6,h=0.8]&&&&\\
 \\
-&&sym(2ul,ur,2dl,dr)[l,t=#$\alpha^{-1}$#]&&&&braid(2ur,ul,dr,dl)&&\\
+&&sym(2ul,ur,2dl,dr)[l,t=#$\alpha^{-1}$#]&&&&braid(ul,2ur,dl,dr)&&\\
 \\
 &&&&3box3(ul,2u,ur,dl,d,drr)[l,t=#$\theta \times [\![\mathcal{F}\A,\mathcal{F}\B]\!]$#,w=1.6,h=0.8]&&&&\\
 \\
