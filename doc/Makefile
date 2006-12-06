@@ -14,7 +14,7 @@ distclean: clean
 	rm -f stridman.pdf
 
 %.tex: %.strid
-	$(STRID) -t tikz --scale 0.6 $<
+	$(STRID) $<
 
 %.pdf: %.tex
 	pdflatex $<

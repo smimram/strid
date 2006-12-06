@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *)
 
-let debug = Printf.printf "[DD] %s\n%!"
+let debug s = () (* Printf.printf "[DD] %s\n%!" s *)
 let info = Printf.printf "[II] %s\n%!"
 let warning = Printf.printf "[WW] %s\n%!"
 let error e = Printf.printf "[EE] %s\n%!" e; exit 1
