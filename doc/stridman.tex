@@ -20,12 +20,19 @@
 \tableofcontents
 \newpage
 
-\strid{} is a string diagrams generator for inclusion into \LaTeX{} files. It is still in very $\alpha$ stage but already quite useable. It is entirely programmed in OCaml\footnote{OCaml can be downloaded at \url{http://caml.inria.fr/}.}. Feel free to drop me a line at \url{samuel.mimram@pps.jussieu.fr} if you have some comments, bug reports or feature requests about it.
+\strid{} is a string diagrams generator for inclusion into \LaTeX{} files. It is
+still in very $\alpha$ stage but already quite useable. It is entirely
+programmed in OCaml\footnote{OCaml can be downloaded at
+  \url{http://caml.inria.fr/}.}. Feel free to drop me a line at
+\url{samuel.mimram@pps.jussieu.fr} if you have some comments, bug reports or
+feature requests about it.
 
 \section{A first example}
 %\begin{figure}[ht!]
-\example{
-Suppose that $(\mathcal{C},\otimes,I)$ is a strict monoidal category. A \emph{monoid} in $\mathcal{C}$ is an object $M$ of $\mathcal{C}$ together with two maps $\mu:M\otimes M\to M$, called \emph{multiplication}, and $\eta:I\to M$, called \emph{unit}, respectively drawn as
+\example{ Suppose that $(\mathcal{C},\otimes,I)$ is a strict monoidal
+  category. A \emph{monoid} in $\mathcal{C}$ is an object $M$ of $\mathcal{C}$
+  together with two maps $\mu:M\otimes M\to M$, called \emph{multiplication},
+  and $\eta:I\to M$, called \emph{unit}, respectively drawn as
 \[
 \input{monoid_mult.tex}
 \]
@@ -52,20 +59,29 @@ hold.
 %\caption{Definition of monoid objects.}
 %\end{figure}
 
-Let's have a look at how we typeset the left member of the associativity equation:
+Let's have a look at how we typeset the left member of the associativity
+equation:
 \[
 \input{monoid_assoc_l.tex}
 \]
 The \strid{} code for this figure is
 \verbatiminput{monoid_assoc_l.strid}
 
-Despite it's apparent complexity, this code is very simple! Like every \strid{} diagram, this code starts with ``\verb+matrix {+'' and ends with ``\verb+}+''. Between those lines comes the actual description of the diagram. It is structured as a matrix whose colums are separated by ``\verb+&+'' and whose lines are separated by ``\verb+\\+''.
+Despite it's apparent complexity, this code is very simple! Like every \strid{}
+diagram, this code starts with ``\verb+matrix {+'' and ends with
+  ``\verb+}+''. Between those lines comes the actual description of the
+diagram. It is structured as a matrix whose colums are separated by ``\verb+&+''
+and whose lines are separated by ``\verb+\\+''.
 
 The rightmost multiplication is typeset by
 \begin{center}
 \verb+mult(ull,dl,r)+
 \end{center}
-Here, ``\verb+mult+'' is the kind of the operator (a multiplication-shaped one) and its arguments specify that it should be linked to the relative positions $(-2,1)$ (\verb+ull+ means up-left-left), $(-1,-1)$ (\verb+dl+ means down-left) and $(1,0)$. The order in which the links should be specified is indicated on the figure below:
+Here, ``\verb+mult+'' is the kind of the operator (a multiplication-shaped one)
+and its arguments specify that it should be linked to the relative positions
+$(-2,1)$ (\verb+ull+ means up-left-left), $(-1,-1)$ (\verb+dl+ means down-left)
+and $(1,0)$. The order in which the links should be specified is indicated on
+the figure below:
 \[
 \input{order_mult.tex}
 \]
@@ -75,13 +91,19 @@ The labels are specified similarly by instructions like
 \begin{center}
 \verb+text(r)[l,t=#$M$#]+
 \end{center}
-This create a ``\verb+text+'' operator from here to the relative position $(1,0)$. The brackets ``\verb+[l,t=#$M$#]+'' are here to specify optional parameters related to this operator. The ``\verb+l+'' indicates that we are going to add a label and the ``\verb+t=#$M$#+'' means that the label's text should be ``\verb+$M$+''. The text between \verb+#+ is quoted uninterpreted.
+This create a ``\verb+text+'' operator from here to the relative position
+$(1,0)$. The brackets ``\verb+[l,t=#$M$#]+'' are here to specify optional
+parameters related to this operator. The ``\verb+l+'' indicates that we are
+going to add a label and the ``\verb+t=#$M$#+'' means that the label's text
+should be ``\verb+$M$+''. The text between \verb+#+ is quoted uninterpreted.
 
-Suppose that we have put the text of this figure in a file named \verb+monoid_assoc_l.strid+. Compiling this file can be simply done by typing
+Suppose that we have put the text of this figure in a file named
+\verb+monoid_assoc_l.strid+. Compiling this file can be simply done by typing
 \begin{center}
 \verb+strid monoid_assoc_l.strid+
 \end{center}
-This generates a file \verb+monoid_assoc_l.tex+ which can be used in a \LaTeX{} file like:
+This generates a file \verb+monoid_assoc_l.tex+ which can be used in a \LaTeX{}
+file like:
 \begin{verbatim}
 \documentclass{article}
 
@@ -98,9 +120,8 @@ Labels can be added to operators. For example the diagram
 \[
 \input{mult_label.tex}
 \]
-can be typeset by
-\verbatiminput{mult_label.strid}
-If you don't like the size of the ellipse surrounding the label, this can of course be changed. For example,
+can be typeset by \verbatiminput{mult_label.strid} If you don't like the size of
+the ellipse surrounding the label, this can of course be changed. For example,
 \[
 \input{mult_small_label.tex}
 \]
@@ -108,14 +129,29 @@ can be typeset by
 \verbatiminput{mult_small_label.strid}
 
 \subsection{Label shapes}
-Various shapes are available for labels. For example,
+Various shapes are available for labels.
+\subsubsection{Triangles}
+For example,
 \[
 \input{bang_maybe_cut.tex}
 \]
 can be typeset by
 \verbatiminput{bang_maybe_cut.strid}
 
-Here, the \texttt{s} parameter is the shape (currently, only \texttt{ellipse} and \texttt{triangle} are available), the \texttt{d} parameter is the direction of the triangle and the \texttt{c} parameter specifies the color of the triangle.
+Here, the \texttt{s} parameter is the shape (currently, only \texttt{ellipse}
+and \texttt{triangle} are available), the \texttt{d} parameter is the direction
+of the triangle and the \texttt{c} parameter specifies the color of the
+triangle.
+
+\subsubsection{Rectangles}
+\[
+\input{monoidal_bifunct_l.tex}
+\quad\raisebox{8ex}{=}\quad\quad
+\input{monoidal_bifunct_r.tex}
+\]
+The left member is typeset by
+\verbatiminput{monoidal_bifunct_l.strid}
+
 
 \subsection{Regions}
 Regions can be delimited:
@@ -152,7 +188,8 @@ is typeset by
 \]
 
 \section{Configuration files}
-All parameters can be saved in a configuration file named \texttt{strid.conf}. To generate a configuration file, type
+All parameters can be saved in a configuration file named
+\texttt{strid.conf}. To generate a configuration file, type
 \begin{verbatim}
 strid --dump-conf
 \end{verbatim}

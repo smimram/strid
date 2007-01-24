@@ -1,0 +1,7 @@
+matrix {
+\\
+&1box1(u,3d)[l,t=#g#,s=rectangle]\\
+\\
+1box1(3u,d)[l,t=#f#,s=rectangle]\\
+\\
+}
