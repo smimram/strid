@@ -1,5 +1,5 @@
 matrix {
 \\
-unit(r)[l,t=#$\eta$#,s=triangle,d=r,c=lightgray]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
+unit(r)[l,t=#$\eta$#,s=rectangle,d=r,c=lightgray]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
 \\
 }

@@ -23,6 +23,8 @@ let fname = "strid.conf"
 let default_conf = [
   "label_width", "0.8";
   "label_height", "0.5";
+  "label_rectangle_height", "1";
+  "label_rectangle_width", "1";
   "label_triangle_height", "1.5";
   "no_tex_environment", "false";
   "scaling_factor", "1.0";
