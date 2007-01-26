@@ -304,13 +304,19 @@ let process_matrix kind env m =
     out :=
     (match kind with
        | Wire.Tikz ->
-           (if Conf.get_bool "no_tex_environment" then
-              ""
-            else
-              "\\begin{tikzpicture}"
-              ^ (if (Conf.get_float "scaling_factor") = 1. then "" else Printf.sprintf "[scale=%.02f]" (Conf.get_float "scaling_factor"))
-              ^ "\n")
-           ^ (Printf.sprintf "\\useasboundingbox (0,0) rectangle (%d,%d);\n" (!width + 1) height)
+           let params =
+             (if (Conf.get_float "scaling_factor") = 1. then [] else [Printf.sprintf "scale=%.02f" (Conf.get_float "scaling_factor")])
+             @(if (Conf.get_string "line_width") = "0.5pt" then [] else [Printf.sprintf "line width=%s" (Conf.get_string "line_width")])
+           in
+           let params = String.concat "," params in
+           let params = if params = "," then "" else "[" ^ params ^ "]" in
+             (if Conf.get_bool "no_tex_environment" then
+                ""
+              else
+                "\\begin{tikzpicture}"
+                ^ params
+                ^ "\n")
+             ^ (Printf.sprintf "\\useasboundingbox (0,0) rectangle (%d,%d);\n" (!width + 1) height)
        | _ -> Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height
     );
     plines := join_plines !plines;

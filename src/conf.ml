@@ -26,6 +26,7 @@ let default_conf = [
   "label_rectangle_height", "1";
   "label_rectangle_width", "1";
   "label_triangle_height", "1.5";
+  "line_width", "0.5pt";
   "no_tex_environment", "false";
   "scaling_factor", "1.0";
   "small_circle_ray", "2.0"
@@ -38,6 +39,8 @@ let () =
 
 let get =
   Hashtbl.find conf
+
+let get_string = get
 
 let get_float n =
   try
