@@ -1,5 +1,8 @@
 matrix {
 \\
+&mult(ul,dl,r)[l,s=rectangle,t=#x#]\\
+\\
+\\
 unit(r)[l,t=#$\eta$#,s=rectangle,d=r,c=lightgray]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
 \\
 }

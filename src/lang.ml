@@ -223,7 +223,7 @@ object (self)
                            iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
                            [e]
                      | _ ->
-                         warning (Printf.sprintf "Unknown label kind: %s." kind); []
+                         warning (Printf.sprintf "Unknown label shape: %s." shape); []
               )
 
   method get_texts pos =
