@@ -135,28 +135,28 @@ object (self)
     let c = Array.map (rd_add pos) self#connexion in
       match self#kind with
         | "mult" ->
-            let i = Wire.new_polyline (pos::(*(circle_position pos c.(2))::*)c.(2)::[]) in
-            let u = Wire.new_polyline (c.(0)::(ortho_point pos c.(2) c.(0) c.(1))::pos::(ortho_point pos c.(2) c.(1) c.(0))::c.(1)::[]) in
+            let i = Wire.new_polyline [pos; (*circle_position pos c.(2);*) c.(2)] in
+            let u = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos; ortho_point pos c.(2) c.(1) c.(0); c.(1)] in
               (*i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));*)
-              i::u::[]
+              [i; u]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
               u#append_line (new Wire.line pos c.(1));
               [u]
         | "sym" ->
-            let p = Wire.new_polyline (c.(0)::pos::c.(3)::[]) in
-            let q = Wire.new_polyline (c.(1)::pos::c.(2)::[]) in
-              p::q::[]
+            let p = Wire.new_polyline [c.(0); pos; c.(3)] in
+            let q = Wire.new_polyline [c.(1); pos; c.(2)] in
+              [p; q]
         | "braid" ->
-            let p1 = Wire.new_polyline (c.(1)::(circle_position pos c.(1))::[]) in
+            let p1 = Wire.new_polyline [c.(1); circle_position pos c.(1)] in
             let l = new Wire.line (circle_position pos c.(1)) (circle_position pos c.(2)) in
-            let p2 = Wire.new_polyline ((circle_position pos c.(2))::c.(2)::[]) in
-            (* let q = Wire.new_polyline (c.(0)::pos::c.(3)::[]) in *)
-            let q = Wire.new_polyline (c.(0)::(circle_position pos c.(0))::(circle_position pos c.(3))::c.(3)::[]) in
+            let p2 = Wire.new_polyline [circle_position pos c.(2); c.(2)] in
+            (* let q = Wire.new_polyline [c.(0); pos; c.(3)] in *)
+            let q = Wire.new_polyline [c.(0); circle_position pos c.(0); circle_position pos c.(3); c.(3)] in
               l#add_attr "opacity" "0";
               p1#append_line l;
               p1#append p2;
-              p1::q::[]
+              [p1; q]
         | "line" ->
             let l = Wire.new_polyline
                       (if Array.length c >= 2 then
@@ -165,8 +165,10 @@ object (self)
                          [c.(0); pos])
             in
               l::[]
+        | "adj" ->
+            [Wire.new_polyline [c.(0); pos]; Wire.new_polyline [pos; c.(1)]]
         | "unit" ->
-            [Wire.new_polyline (pos::c.(0)::[])]
+            [Wire.new_polyline [pos; c.(0)]]
         | "text" -> []
         | "region" -> []
         | k when Str.string_match re_box k 0 ->
@@ -175,14 +177,14 @@ object (self)
             let px, py = pos in
             let ans = ref [] in
               for n = 0 to i - 1 do
-                let pl = Wire.new_polyline (c.(n)::(*(circle_position pos c.(n))::*)(px +. (float_of_int n) *. (100. *. epsilon_float), py)::[])
+                let pl = Wire.new_polyline [c.(n); (*circle_position pos c.(n);*) px +. (float_of_int n) *. (100. *. epsilon_float), py]
                 in
-                  ans := pl ::!ans
+                  ans := pl::!ans
               done;
               for n = i to i + o - 1 do
-                let pl = Wire.new_polyline ((px +. (float_of_int n) *. (100. *. epsilon_float), py)::(*(circle_position pos c.(n))::*)c.(n)::[])
+                let pl = Wire.new_polyline [px +. (float_of_int n) *. (100. *. epsilon_float), py; (*circle_position pos c.(n);*) c.(n)]
                 in
-                  ans := pl ::!ans
+                  ans := pl::!ans
               done;
               !ans
         | k ->
@@ -202,6 +204,7 @@ object (self)
                  let _ = List.assoc "l" options in (* label *)
                  let shape = deffound "ellipse" (fun () -> self#get_attr "l" "s") in
                    match shape with
+                     | "r"
                      | "rectangle" ->
                          let dx = (deffound (Conf.get_float "label_rectangle_width") (fun () -> self#get_attr_float "l" "w")) /. 2. in
                          let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 2. in
@@ -209,6 +212,7 @@ object (self)
                          let e = new Wire.polygon [x-.dx,y-.dy; x-.dx,y+.dy; x+.dx,y+.dy; x+.dx,y-.dy; x-.dx,y-.dy] in
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
                            [e]
+                     | "t"
                      | "triangle" ->
                          let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
                          let dir = deffound "u" (fun () -> self#get_attr "l" "d") in (* direction *)
@@ -216,6 +220,7 @@ object (self)
                          let e = new Wire.polygon (triangle_points pos dir height) in
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
                            [e]
+                     | "e"
                      | "ellipse" ->
                          let xray = deffound (Conf.get_float "label_width") (fun () -> self#get_attr_float "l" "w") in
                          let yray = deffound (Conf.get_float "label_height") (fun () -> self#get_attr_float "l" "h") in

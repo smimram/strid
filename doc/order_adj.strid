@@ -1,0 +1,5 @@
+matrix {
+&adj(dl,dr)&\\
+\\
+text(u)[l,t=#1#]&&text(u)[l,t=#2#]\\
+}
