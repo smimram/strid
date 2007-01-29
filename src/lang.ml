@@ -204,7 +204,7 @@ object (self)
                    match shape with
                      | "rectangle" ->
                          let dx = (deffound (Conf.get_float "label_rectangle_width") (fun () -> self#get_attr_float "l" "w")) /. 2. in
-                         let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 1. in
+                         let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 2. in
                          let x,y = pos in
                          let e = new Wire.polygon [x-.dx,y-.dy; x-.dx,y+.dy; x+.dx,y+.dy; x+.dx,y-.dy; x-.dx,y-.dy] in
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
