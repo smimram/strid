@@ -1,5 +1,5 @@
 PROG = strid
-DISTFILES = COPYING README Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mll src/*.mly doc/stridman.tex doc/stridman.pdf doc/Makefile doc/*.strid
+DISTFILES = COPYING README Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mll src/*.mly doc/stridman.tex doc/stridman.pdf doc/Makefile doc/*.strid doc/strid.conf
 VERSION = 0.1.0
 
 all:
