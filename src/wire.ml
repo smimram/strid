@@ -196,11 +196,10 @@ object (self)
                                     | Tikz ->
                                         Printf.sprintf "\\draw (%.2f,%.2f)" (fst fstpt) (snd fstpt) ^
                                         List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
-                                        ";\n"
+                                        ";"
                                     | _ ->
                                         Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
-                                        List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines ^
-                                        "\n"
+                                        List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines
                               )
                         )
           )
