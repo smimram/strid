@@ -21,6 +21,7 @@
 let fname = "strid.conf"
 
 let default_conf = [
+  "interpolation", "cspline";
   "label_width", "0.8";
   "label_height", "0.5";
   "label_rectangle_height", "1";
