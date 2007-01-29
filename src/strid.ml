@@ -21,7 +21,7 @@
 open Lang
 
 let re_file_in = Str.regexp "\\(.*\\)\\.strid"
-let file_in = ref ""
+let file_in = ref []
 let file_out = ref ""
 let full_tex = ref false
 let dump_conf = ref false
@@ -42,11 +42,7 @@ let _ =
       "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
       "-t", Arg.Set_string out_kind, "\t\t\tOutput type"
     ]
-    (fun s ->
-       file_in := s;
-       if !file_out = "" && Str.string_match re_file_in !file_in 0 then
-         file_out := (Str.matched_group 1 !file_in) ^ ".tex"
-    )
+    (fun s -> file_in := s::!file_in)
     usage;
   if !dump_conf then
     (
@@ -68,7 +64,7 @@ let _ =
       Conf.read Conf.fname;
       Common.info (Printf.sprintf "Read configuration file %s." Conf.fname)
     );
-  if !file_in = "" then
+  if !file_in = [] then
     (
       Printf.eprintf "%s\n%!" usage;
       exit 1
@@ -81,52 +77,64 @@ let _ =
           Printf.eprintf "Unknown output type: %s\n%!" !out_kind;
           exit 2
   in
-  let sin =
-    let fi = open_in !file_in in
-    let flen = in_channel_length fi in
-    let buf = String.create flen in
-      Common.debug (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
-      close_in fi;
-      buf
-  in
-  let env, ir =
-    let lexbuf = Lexing.from_string sin in
-      try
-        Parser.defs Lexer.token lexbuf
-      with
-        | Failure "lexing: empty token" ->
-            let pos = (Lexing.lexeme_end_p lexbuf) in
-              Common.error
-                (Printf.sprintf "Lexing error at line %d, character %d."
-                   pos.Lexing.pos_lnum
-                   (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
-                )
-        | Parsing.Parse_error ->
-            let pos = (Lexing.lexeme_end_p lexbuf) in
-              Common.error
-                (Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
-                   (Lexing.lexeme lexbuf)
-                   pos.Lexing.pos_lnum
-                   (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
-                )
-  in
-  let m = matrix_of_ir env ir in
-  let pst = Lang.process_matrix out_kind env m in
-  let fo = open_out !file_out in
-    if !full_tex then
-      (
-        output_string fo "\\documentclass{article}\n";
-        output_string fo
-          (match out_kind with
-             | Wire.Tikz ->
-                 "\\usepackage{tikz}\n"
-             | Wire.Pstricks ->
-                 "\\usepackage{pstricks}\n"
-          );
-        output_string fo "\\begin{document}\n";
-      );
-    output_string fo pst;
-    if !full_tex then
-      output_string fo "\\end{document}\n";
-    close_out fo;
-    Common.info (Printf.sprintf "Successfully generated %s." !file_out)
+    List.iter
+      (fun fname_in ->
+         let sin =
+           let fi = open_in fname_in in
+           let flen = in_channel_length fi in
+           let buf = String.create flen in
+             Common.debug (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
+             close_in fi;
+             buf
+         in
+         let env, ir =
+           let lexbuf = Lexing.from_string sin in
+             try
+               Parser.defs Lexer.token lexbuf
+             with
+               | Failure "lexing: empty token" ->
+                   let pos = (Lexing.lexeme_end_p lexbuf) in
+                     Common.error
+                       (Printf.sprintf "Lexing error at line %d, character %d."
+                          pos.Lexing.pos_lnum
+                          (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+                       )
+               | Parsing.Parse_error ->
+                   let pos = (Lexing.lexeme_end_p lexbuf) in
+                     Common.error
+                       (Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
+                          (Lexing.lexeme lexbuf)
+                          pos.Lexing.pos_lnum
+                          (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+                       )
+         in
+         let m = matrix_of_ir env ir in
+         let pst = Lang.process_matrix out_kind env m in
+         let fname_out =
+           if List.length !file_in = 1 && !file_out <> "" then
+             !file_out
+           else
+             if !file_out = "" && Str.string_match re_file_in fname_in 0 then
+               Str.matched_group 1 fname_in ^ ".tex"
+             else
+               Common.error (Printf.sprintf "Invalid input file name: %s\n" fname_in)
+         in
+         let fo = open_out fname_out in
+           if !full_tex then
+             (
+               output_string fo "\\documentclass{article}\n";
+               output_string fo
+                 (match out_kind with
+                    | Wire.Tikz ->
+                        "\\usepackage{tikz}\n"
+                    | Wire.Pstricks ->
+                        "\\usepackage{pstricks}\n"
+                 );
+               output_string fo "\\begin{document}\n";
+             );
+           output_string fo pst;
+           if !full_tex then
+             output_string fo "\\end{document}\n";
+           close_out fo;
+           Common.info (Printf.sprintf "Successfully generated %s." fname_out)
+      ) !file_in
