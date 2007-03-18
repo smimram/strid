@@ -2,6 +2,9 @@ PROG = strid
 DISTFILES = COPYING README Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mll src/*.mly doc/stridman.tex doc/stridman.pdf doc/Makefile doc/*.strid doc/strid.conf
 VERSION = 0.1.0
 
+BINDIR=$(DESTDIR)/usr/local/bin
+MANDIR=$(DESTDIR)/usr/local/share/man/man1
+
 all:
 	make -C src $@
 
@@ -14,10 +17,10 @@ distclean:
 	make -C doc $@
 
 install: all
-	mkdir -p $(DESTDIR)/usr/bin
-	cp src/strid $(DESTDIR)/usr/bin
-	mkdir -p $(DESTDIR)/usr/share/man/man1
-	cp strid.1 $(DESTDIR)/usr/share/man/man1
+	mkdir -p $(BINDIR)
+	cp src/strid $(BINDIR)
+	mkdir -p $(MANDIR)
+	cp strid.1 $(MANDIR)
 
 doc: all
 	make -C doc
