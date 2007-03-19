@@ -200,6 +200,23 @@ strid --dump-conf
 \end{verbatim}
 You can then edit \texttt{strid.conf}.
 
+Some of the options that can be set are:
+\begin{itemize}
+\item \verb+line_width+: default width of a line
+\item \verb+label_width+: default width of a label
+\item \verb+label_height+: default height of a label
+\item \verb+no_tex_environment+: do not output \verb+\begin{tikz}+ and
+    \verb+\end{tikz}+
+\item \verb+scaling_factor+: scale the diagrams
+\item \verb+label_triangle_height+: default height of a triangular label
+\item \verb+label_rectangle_width+: default width of a rectangular label
+\item \verb+label_rectangle_height+: default height of a rectangular label
+\item \verb+interpolation+: interpolation method for drawing lines (possible
+  values are \verb+cspline+ and \verb+linear+)
+\item \verb+small_circle_ray+: ray of small circles (used to tweak the drawing
+  of multiplications)
+\end{itemize}
+
 \section{Examples}
 \subsection{Yang-Baxter equality for braids}
 \[
