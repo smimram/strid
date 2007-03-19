@@ -189,7 +189,7 @@ object (self)
                                       )
                                 done;
                                 !ans
-                          | _ ->
+                          | "linear" ->
                               (
                                 let fstpt = (List.hd lines)#src in
                                   match outkind with
@@ -201,6 +201,8 @@ object (self)
                                         Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
                                         List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines
                               )
+                          | s ->
+                              failwith "Unkown interpolation type: " ^ s ^ "."
                         )
           )
 end
