@@ -227,6 +227,9 @@ object (self)
                          let e = new Wire.ellipse pos (xray, yray) in
                            iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
                            [e]
+                     | "n"
+                     | "none" ->
+                         []
                      | _ ->
                          warning (Printf.sprintf "Unknown label shape: %s." shape); []
               )
