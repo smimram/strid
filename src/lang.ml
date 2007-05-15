@@ -85,21 +85,19 @@ let ortho_point center point dir dir2 =
     if sens = 0. then center
     else 
       let sign = sens/.(abs_float sens) in
-      let scale = (*(1./.3.)*)0.15*.sqrt(dx*.dx+.dy*.dy) in 
+      let scale = 0.15 *. sqrt (dx *. dx +. dy *. dy) in
       let (decalage_x,decalage_y) = (cx-.px,cy-.py) in
-        circle_position center (cx +. sign *. dx -. scale*.decalage_x,
-                                cy +. sign *. dy -. scale*.decalage_y)
+        circle_position center (cx +. sign *. dx -. scale *. decalage_x,
+                                cy +. sign *. dy -. scale *. decalage_y)
 
-let triangle_points pos dir height =
+let triangle_points pos dir height width =
   let px, py = pos in
   let dx, dy = dir in
   let ox, oy = Vect.orthogonal dir in
   let r = height /. 3. in
-  let rr = 2. *. r in
-  let up = px+.rr*.dx, py+.rr*.dy in
-  let a = height *. 2. /. (sqrt 3.) in
-  let left = px-.r*.dx+.a/.2.*.ox, py-.r*.dy+.a/.2.*.oy in
-  let right = px-.r*.dx-.a/.2.*.ox, py-.r*.dy-.a/.2.*.oy in
+  let up = px +. 2. *. r *. dx, py +. 2. *. r *. dy in
+  let left = px -. r *. dx +. width /. 2. *. ox, py -. r *. dy +. width /. 2. *. oy in
+  let right = px -. r *. dx -. width /. 2. *. ox, py -. r *. dy -. width /. 2. *. oy in
     [up; left; right; up]
 
 let middle p q =
@@ -192,12 +190,16 @@ object (self)
             let i = int_of_string (Str.matched_group 1 k) in
             let px, py = pos in
             let ans = ref [] in
+            let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
+            let width = deffound (Conf.get_float "label_triangle_height"*.2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
               for n = 0 to i - 1 do
-                let pl = Wire.new_polyline [c.(n); (*circle_position pos c.(n);*) px +. (float_of_int n) *. (100. *. epsilon_float), py]
-                in
+                let pl = Wire.new_polyline [c.(n); px +. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.), py +. height /. 3.] in
                   ans := pl::!ans
               done;
-              !ans
+              let pl = Wire.new_polyline [pos; c.(i)]
+              in
+                ans := pl::!ans;
+                !ans
         | k ->
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
@@ -226,9 +228,10 @@ object (self)
                      | "t"
                      | "triangle" ->
                          let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
+                         let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
                          let dir = deffound "u" (fun () -> self#get_attr "l" "d") in (* direction *)
                          let dir = Vect.normalize (reldir_of_string dir) in
-                         let e = new Wire.polygon (triangle_points pos dir height) in
+                         let e = new Wire.polygon (triangle_points pos dir height width) in
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
                            [e]
                      | "e"
