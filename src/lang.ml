@@ -20,12 +20,13 @@
 
 open Common
 
-let pi = 4.*. (atan 1.)
+let pi = 4. *. atan 1.
 
 let iffound f =
   try f () with Not_found -> ()
 
 let rd_add (x, y) (dx, dy) = (x +. dx, y +. dy)
+let rd_sub (x2, y2) (x1, y1) = (x2 -. x1, y2 -. y1)
 type opt = string * ((string * string) list)
 
 let re_dir = Str.regexp "\\([0-9\\.]*\\)\\([lrud]\\)"
@@ -229,8 +230,16 @@ object (self)
                      | "triangle" ->
                          let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
                          let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
-                         let dir = deffound "u" (fun () -> self#get_attr "l" "d") in (* direction *)
-                         let dir = Vect.normalize (reldir_of_string dir) in
+                         (* direction *)
+                         let dir =
+                           deffound
+                             (if Str.string_match re_operad self#kind 0 then
+                                (* We can guess the direction for operads. *)
+                                Vect.normalize (rd_sub c.(int_of_string (Str.matched_group 1 self#kind)) pos)
+                              else
+                                Vect.normalize (reldir_of_string "u"))
+                             (fun () -> Vect.normalize (reldir_of_string (self#get_attr "l" "d")))
+                         in
                          let e = new Wire.polygon (triangle_points pos dir height width) in
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
                            [e]
