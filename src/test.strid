@@ -1,5 +1,7 @@
 matrix {
 \\
+operad(ul,l,r)\\
+\\
 &mult(ul,dl,r)[l,s=rectangle,t=#x#]\\
 \\
 \\

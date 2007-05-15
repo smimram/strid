@@ -52,7 +52,6 @@ let reldir_of_string s =
     with Not_found -> !xans, !yans
 
 let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
-let re_operad = Str.regexp "\\([0-9]+\\)operad"
 
 let circle_position center point =
   let (px,py) = center in
@@ -171,6 +170,31 @@ object (self)
             [Wire.new_polyline [pos; c.(0)]]
         | "text" -> []
         | "region" -> []
+        | "operad" ->
+            let i = Array.length c - 1 in
+            let px, py = pos in
+            let ans = ref [] in
+            let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
+            let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
+            let dx,dy = Vect.normalize (rd_sub c.(i) pos) in
+            let ox,oy = Vect.normalize (orthogonal c.(i) pos) in
+              for n = 0 to i - 1 do
+                let pl =
+                  Wire.new_polyline
+                    [
+                      c.(n);
+                      px +. ox *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
+                      -. dx *. height /. 2.,
+                      py +. oy *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
+                      -. dy *. height /. 2.
+                    ]
+                in
+                  ans := pl::!ans
+              done;
+              let pl = Wire.new_polyline [pos; c.(i)]
+              in
+                ans := pl::!ans;
+                !ans
         | k when Str.string_match re_box k 0 ->
             let i = int_of_string (Str.matched_group 1 k) in
             let o = int_of_string (Str.matched_group 2 k) in
@@ -187,31 +211,6 @@ object (self)
                   ans := pl::!ans
               done;
               !ans
-        | k when Str.string_match re_operad k 0 ->
-            let i = int_of_string (Str.matched_group 1 k) in
-            let px, py = pos in
-            let ans = ref [] in
-            let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
-            let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
-            let dx,dy = Vect.normalize (rd_sub c.(i) pos) in
-            let ox,oy = Vect.normalize (orthogonal c.(i) pos) in
-              for n = 0 to i - 1 do
-                let pl = 
-                  Wire.new_polyline
-                    [
-                      c.(n);
-                      px +. ox *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
-                      -. dx *. height /. 2., 
-                      py +. oy *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
-                      -. dy *. height /. 2.
-                    ]
-                in
-                  ans := pl::!ans
-              done;
-              let pl = Wire.new_polyline [pos; c.(i)]
-              in
-                ans := pl::!ans;
-                !ans
         | k ->
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
@@ -244,9 +243,9 @@ object (self)
                          (* direction *)
                          let dir =
                            deffound
-                             (if Str.string_match re_operad self#kind 0 then
+                             (if self#kind = "operad" then
                                 (* We can guess the direction for operads. *)
-                                Vect.normalize (rd_sub c.(int_of_string (Str.matched_group 1 self#kind)) pos)
+                                Vect.normalize (rd_sub c.(Array.length c - 1) pos)
                               else
                                 Vect.normalize (reldir_of_string "u"))
                              (fun () -> Vect.normalize (reldir_of_string (self#get_attr "l" "d")))
