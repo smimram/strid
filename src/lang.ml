@@ -225,8 +225,22 @@ object (self)
         | _ ->
             deffound []
               (fun () ->
-                 let _ = List.assoc "l" options in (* label *)
-                 let shape = deffound "ellipse" (fun () -> self#get_attr "l" "s") in
+                 let () =
+                   if self#kind <> "operad" then
+                     (* Do we have a label? *)
+                     ignore (List.assoc "l" options)
+                   else
+                     ()
+                 in
+                 let shape =
+                   deffound
+                     (if self#kind = "operad" then
+                        (* The default shape for operads is a triangle. *)
+                        "triangle"
+                      else
+                        "ellipse")
+                     (fun () -> self#get_attr "l" "s")
+                 in
                    match shape with
                      | "r"
                      | "rectangle" ->

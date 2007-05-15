@@ -1,8 +1,11 @@
 matrix {
 \\
-operad(ul,l,r)\\
+operad(ull,ul,dr)\\
 \\
 &mult(ul,dl,r)[l,s=rectangle,t=#x#]\\
+\\
+\\
+&mult(ul,dl,r)\\
 \\
 \\
 &0box2(ur,dr)\\
