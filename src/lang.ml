@@ -95,8 +95,8 @@ let triangle_points pos dir height width =
   let px, py = pos in
   let dx, dy = dir in
   let ox, oy = Vect.orthogonal dir in
-  let r = height /. 3. in
-  let up = px +. 2. *. r *. dx, py +. 2. *. r *. dy in
+  let r = height /. 2. in
+  let up = px +. r *. dx, py +. r *. dy in
   let left = px -. r *. dx +. width /. 2. *. ox, py -. r *. dy +. width /. 2. *. oy in
   let right = px -. r *. dx -. width /. 2. *. ox, py -. r *. dy -. width /. 2. *. oy in
     [up; left; right; up]
@@ -192,9 +192,20 @@ object (self)
             let px, py = pos in
             let ans = ref [] in
             let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
-            let width = deffound (Conf.get_float "label_triangle_height"*.2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
+            let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
+            let dx,dy = Vect.normalize (rd_sub c.(i) pos) in
+            let ox,oy = Vect.normalize (orthogonal c.(i) pos) in
               for n = 0 to i - 1 do
-                let pl = Wire.new_polyline [c.(n); px +. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.), py +. height /. 3.] in
+                let pl = 
+                  Wire.new_polyline
+                    [
+                      c.(n);
+                      px +. ox *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
+                      -. dx *. height /. 2., 
+                      py +. oy *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
+                      -. dy *. height /. 2.
+                    ]
+                in
                   ans := pl::!ans
               done;
               let pl = Wire.new_polyline [pos; c.(i)]
