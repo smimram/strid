@@ -51,6 +51,7 @@ let reldir_of_string s =
     with Not_found -> !xans, !yans
 
 let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
+let re_operad = Str.regexp "\\([0-9]+\\)operad"
 
 let circle_position center point =
   let (px,py) = center in
@@ -183,6 +184,16 @@ object (self)
               done;
               for n = i to i + o - 1 do
                 let pl = Wire.new_polyline [px +. (float_of_int n) *. (100. *. epsilon_float), py; (*circle_position pos c.(n);*) c.(n)]
+                in
+                  ans := pl::!ans
+              done;
+              !ans
+        | k when Str.string_match re_operad k 0 ->
+            let i = int_of_string (Str.matched_group 1 k) in
+            let px, py = pos in
+            let ans = ref [] in
+              for n = 0 to i - 1 do
+                let pl = Wire.new_polyline [c.(n); (*circle_position pos c.(n);*) px +. (float_of_int n) *. (100. *. epsilon_float), py]
                 in
                   ans := pl::!ans
               done;
