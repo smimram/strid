@@ -4,7 +4,7 @@ OCAMLYACC=ocamlyacc
 #INCDIRS=+gsl
 LIBS=str unix #bigarray gsl
 
-all: dc
+all: nc
 
 test: all
 	./strid --full-tex test.strid
