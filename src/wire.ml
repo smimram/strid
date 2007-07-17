@@ -220,13 +220,9 @@ let new_polyline l =
       | p::q::t -> aux (new polyline (new line p q)) (q::t)
       | _ -> failwith "Trying to create an empty polyline."
 
-class ellipse pos r =
+class ellipse position radius =
 object (self)
   inherit wire
-
-  val position = pos
-
-  val radius = r
 
   method draw outkind =
     let x, y = position in
@@ -258,13 +254,9 @@ object (self)
               Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)" bw x y xr yr
 end
 
-class rectangle p1 p2 =
+class rectangle corner1 corner2 =
 object (self)
   inherit wire
-
-  val corner1 = p1
-
-  val corner2 = p2
 
   method draw outkind =
     let x1, y1 = corner1 in
@@ -278,11 +270,9 @@ object (self)
         | Pstricks -> assert false
 end
 
-class polygon pp =
+class polygon points =
 object (self)
   inherit wire
-
-  val points = pp
 
   method draw outkind =
     match outkind with
@@ -294,13 +284,9 @@ object (self)
       | Pstricks -> assert false
 end
 
-class text pos t =
+class text position text =
 object (self)
   inherit wire
-
-  val position = pos
-
-  val text = t
 
   method draw outkind =
     let x, y = position in
