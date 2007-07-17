@@ -20,6 +20,8 @@
 
 open Common
 
+let epsilon = 100. *. epsilon_float
+
 let pi = 4. *. atan 1.
 
 let iffound f =
@@ -170,6 +172,10 @@ object (self)
             [Wire.new_polyline [pos; c.(0)]]
         | "text" -> []
         | "region" -> []
+        | "vbox" ->
+            let px, _ = pos in
+            let u = Array.map (fun (x,y) -> Wire.new_polyline [x,y; px+.x*.epsilon,y]) c in
+              Array.to_list u
         | "operad" ->
             let i = Array.length c - 1 in
             let px, py = pos in
@@ -201,12 +207,12 @@ object (self)
             let px, py = pos in
             let ans = ref [] in
               for n = 0 to i - 1 do
-                let pl = Wire.new_polyline [c.(n); (*circle_position pos c.(n);*) px +. (float_of_int n) *. (100. *. epsilon_float), py]
+                let pl = Wire.new_polyline [c.(n); (*circle_position pos c.(n);*) px +. (float_of_int n) *. epsilon, py]
                 in
                   ans := pl::!ans
               done;
               for n = i to i + o - 1 do
-                let pl = Wire.new_polyline [px +. (float_of_int n) *. (100. *. epsilon_float), py; (*circle_position pos c.(n);*) c.(n)]
+                let pl = Wire.new_polyline [px +. (float_of_int n) *. epsilon, py; (*circle_position pos c.(n);*) c.(n)]
                 in
                   ans := pl::!ans
               done;
@@ -219,9 +225,19 @@ object (self)
       match self#kind with
         | "text" -> []
         | "region" ->
-            [new Wire.rectangle pos c.(0)]
+            let r = new Wire.rectangle pos c.(0) in
+              r#add_attr "style" "dashed";
+              [r]
         | "unit" when not (self#has_attr "l") ->
             [new Wire.ellipse pos (0.14, 0.14)]
+        | "vbox" ->
+            let dx = (deffound (Conf.get_float "label_rectangle_width") (fun () -> self#get_attr_float "l" "w")) /. 2. in
+            let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 2. in
+            let px, _ = pos in
+            let y, y' = Array.fold_left (fun (y,y') (_, cy) -> min y cy, max y' cy) pos c in
+            let r = new Wire.rectangle (px-.dx,y-.dy) (px+.dx,y'+.dy) in
+              r#add_attr "color" (deffound "white" (fun () -> self#get_attr "l" "s"));
+              [r]
         | _ ->
             deffound []
               (fun () ->

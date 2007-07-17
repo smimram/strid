@@ -39,7 +39,7 @@ rule token = parse
   | "let" { LET }
   | "include" { INCLUDE }
   | "matrix" { MATRIX }
-  | "%"_* { token lexbuf }
+  | "%"[^'\n']* { token lexbuf }
   | "&" { NEWCOL}
   | "\\\\" { NEWLINE }
   | '#'([^'#']* as tex)'#' { STRING tex }

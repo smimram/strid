@@ -269,9 +269,12 @@ object (self)
   method draw outkind =
     let x1, y1 = corner1 in
     let x2, y2 = corner2 in
+    let style = deffound "" (fun () -> self#get_attr "style") in
+    let color = deffound "" (fun () -> self#get_attr "color") in
       match outkind with
         | Tikz ->
-            Printf.sprintf "\\draw[dashed] (%.2f,%.2f) rectangle (%.2f,%.2f);" x1 y1 x2 y2
+            let color = if color = "" then "" else "fill=" ^ color in
+              Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);" (if color = "" then "" else "fill") style color x1 y1 x2 y2
         | Pstricks -> assert false
 end
 
