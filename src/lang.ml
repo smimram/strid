@@ -20,7 +20,7 @@
 
 open Common
 
-let epsilon = 100. *. epsilon_float
+let epsilon = 1000. *. epsilon_float
 
 let pi = 4. *. atan 1.
 
@@ -233,8 +233,8 @@ object (self)
         | "vbox" ->
             let dx = (deffound (Conf.get_float "label_rectangle_width") (fun () -> self#get_attr_float "l" "w")) /. 2. in
             let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 2. in
-            let px, _ = pos in
-            let y, y' = Array.fold_left (fun (y,y') (_, cy) -> min y cy, max y' cy) pos c in
+            let px, py = pos in
+            let y, y' = Array.fold_left (fun (y,y') (_,cy) -> min y cy, max y' cy) (py,py) c in
             let r = new Wire.rectangle (px-.dx,y-.dy) (px+.dx,y'+.dy) in
               r#add_attr "color" (deffound "white" (fun () -> self#get_attr "l" "s"));
               [r]
@@ -302,16 +302,17 @@ object (self)
     let c = Array.map (rd_add pos) self#connexion in
       match self#kind with
         | "text" ->
-            deffound [] (fun () ->
-                           let label = List.assoc "l" options in (* value *)
-                           let t = List.assoc "t" label in (* text *)
-                           let px, py = pos in
-                           let pxt, pyt =
-                             if Array.length c >= 1 then c.(0) else 0., 0.
-                           in
-                           let p = (px +. pxt) /. 2., (py +. pyt) /. 2. in
-                             [new Wire.text p t]
-            )
+            deffound []
+              (fun () ->
+                 let label = List.assoc "l" options in (* value *)
+                 let t = List.assoc "t" label in (* text *)
+                 let px, py = pos in
+                 let pxt, pyt =
+                   if Array.length c >= 1 then c.(0) else 0., 0.
+                 in
+                 let p = (px +. pxt) /. 2., (py +. pyt) /. 2. in
+                   [new Wire.text p t]
+              )
         | _ ->
             deffound []
               (fun () ->
