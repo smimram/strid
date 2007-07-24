@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.1.4 on Thu Mar 29 23:06:15 2007 by smimram@funk-->
+<!--Generated with glade3 3.2.2 on Tue Jul 24 14:47:08 2007 by smimram@cerium-->
 <glade-interface>
   <widget class="GtkWindow" id="window">
     <child>
@@ -143,22 +143,11 @@
           </packing>
         </child>
         <child>
-          <widget class="GtkToolbar" id="toolbar">
-            <property name="height_request">20</property>
-            <property name="visible">True</property>
-            <property name="toolbar_style">GTK_TOOLBAR_BOTH</property>
-          </widget>
-          <packing>
-            <property name="expand">False</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child>
           <widget class="GtkDrawingArea" id="drawingarea">
             <property name="visible">True</property>
           </widget>
           <packing>
-            <property name="position">2</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -167,7 +156,7 @@
           </widget>
           <packing>
             <property name="expand">False</property>
-            <property name="position">3</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </widget>
