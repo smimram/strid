@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE glade-interface SYSTEM "glade-2.0.dtd">
-<!--Generated with glade3 3.2.2 on Tue Jul 24 14:47:08 2007 by smimram@cerium-->
+<!--Generated with glade3 3.2.2 on Tue Jul 24 14:53:36 2007 by smimram@cerium-->
 <glade-interface>
   <widget class="GtkWindow" id="window">
     <child>
@@ -144,6 +144,8 @@
         </child>
         <child>
           <widget class="GtkDrawingArea" id="drawingarea">
+            <property name="width_request">500</property>
+            <property name="height_request">300</property>
             <property name="visible">True</property>
           </widget>
           <packing>
