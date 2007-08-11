@@ -391,7 +391,7 @@ let process_matrix kind env m =
                 "\\begin{tikzpicture}"
                 ^ params
                 ^ "\n")
-             ^ (Printf.sprintf "\\useasboundingbox (0,0) rectangle (%d,%d);\n" (!width + 1) height)
+             ^ (Printf.sprintf "\\useasboundingbox (-0.5,0) rectangle (%d.5,%d);\n" !width height)
        | _ -> Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height
     );
     plines := join_plines !plines;
