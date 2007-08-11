@@ -1,5 +1,5 @@
 matrix {
 &unit(r)\\
-&&&mult(ul,dll,r)&text(r)[l,t=#$M$#]\\
+&&&mult(ul,dll,r)&text(r)[l,t=#$M$#]&\\
 text(r)[l,t=#$M$#]\\
 }

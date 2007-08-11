@@ -13,7 +13,7 @@ clean:
 distclean: clean
 	rm -f stridman.pdf
 
-%.tex: %.strid
+%.tex: %.strid strid.conf
 	$(STRID) $<
 
 %.pdf: %.tex
