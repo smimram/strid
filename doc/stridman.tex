@@ -13,6 +13,7 @@
 
 \newcommand{\strid}{\textsl{strid}}
 \newcommand{\example}[1]{\begin{center}\fbox{\begin{minipage}{11cm}#1\end{minipage}}\end{center}}
+\newcommand{\cinput}[1]{\vcenter{\hbox{\input{#1}}}}
 
 \title{strid -- A string diagrams generator}
 \author{Samuel Mimram\and Nicolas Tabareau}
@@ -43,17 +44,17 @@ and
 \]
 such that the equalities
 \[
-\input{monoid_assoc_l.tex}
-\raisebox{7ex}{=}
-\input{monoid_assoc_r.tex}
+\cinput{monoid_assoc_l.tex}
+=
+\cinput{monoid_assoc_r.tex}
 \]
 and
 \[
-\input{monoid_neutral_l.tex}
-\raisebox{5ex}{=}
-\input{monoid_neutral.tex}
-\raisebox{5ex}{=}
-\input{monoid_neutral_r.tex}
+\cinput{monoid_neutral_l.tex}
+=
+\cinput{monoid_neutral.tex}
+=
+\cinput{monoid_neutral_r.tex}
 \]
 hold.
 }
@@ -147,9 +148,9 @@ triangle.
 
 \subsubsection{Rectangles: \texttt{rectangle} / \texttt{r}}
 \[
-\input{monoidal_bifunct_l.tex}
-\quad\raisebox{10ex}{=}\quad
-\input{monoidal_bifunct_r.tex}
+\cinput{monoidal_bifunct_l.tex}
+\quad=\quad
+\cinput{monoidal_bifunct_r.tex}
 \]
 The left member is typeset by
 \verbatiminput{monoidal_bifunct_l.strid}
@@ -221,9 +222,9 @@ Some of the options that can be set are:
 \section{Examples}
 \subsection{Yang-Baxter equality for braids}
 \[
-\input{yang_baxter_l.tex}
-\qquad\raisebox{9ex}{=}\qquad
-\input{yang_baxter_r.tex}
+\cinput{yang_baxter_l.tex}
+\qquad=\qquad
+\cinput{yang_baxter_r.tex}
 \]
 Left member is typeset by
 \verbatiminput{yang_baxter_l.strid}
@@ -232,9 +233,9 @@ and right member by
 
 \subsection{Hopf law for bialgebras}
 \[
-\input{bialgebra_hopf_l.tex}
-\quad\raisebox{13ex}{=}\quad
-\input{bialgebra_hopf_r.tex}
+\cinput{bialgebra_hopf_l.tex}
+\quad=\quad
+\cinput{bialgebra_hopf_r.tex}
 \]
 Left member is typeset by
 \verbatiminput{bialgebra_hopf_l.strid}
