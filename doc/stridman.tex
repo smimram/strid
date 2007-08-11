@@ -115,7 +115,23 @@ file like:
 \input{monoid_assoc_l.tex}
 \end{document}
 \end{verbatim}
-You will need the \texttt{TikZ} package which can be downloaded at \url{http://sourceforge.net/projects/pgf/}.
+You will need the \texttt{TikZ} package which can be downloaded at
+\url{http://sourceforge.net/projects/pgf/}.
+
+\bigskip
+
+Similarly, the right member of the equation is generated in a file
+\verb+monoid_assoc_r.tex+. To have the equality sign between the two diagrams
+centered vertically you need to center the two diagrams. This can be done using
+the \verb+\vcenter+ and \verb+\hbox+ \LaTeX{} commands as shown in the following
+example:
+\begin{verbatim}
+\[
+\vcenter{\hbox{\input{monoid_assoc_l.tex}}}
+=
+\vcenter{\hbox{\input{monoid_assoc_r.tex}}}
+\]
+\end{verbatim}
 
 \section{The language of matrices}
 \subsection{Labels}
