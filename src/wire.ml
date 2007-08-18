@@ -47,6 +47,12 @@ object (self)
   method get_attr name =
     List.assoc name attrs
 
+  method get_attr_d name default =
+    try
+      self#get_attr name
+    with
+      | Not_found -> default
+
   method get_attrs = attrs
 end
 
@@ -122,89 +128,84 @@ object (self)
 
   (** Get the code for drawing the polyline. *)
   method draw outkind =
-    match outkind with
-      | Tikz
-      | Pstricks ->
-          (
-            let resolution = ref 20 in (* number of generated points between two lines *)
-            (* Remove trivial lines. *)
-            let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
-              if lines = [] then "" else
-                let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-                  (* let points = remove_consecutive_dups points in *)
-                  match points with
-                    | (x1,y1)::(x2,y2)::[] ->
-                        (match outkind with
-                           | Tikz ->
-                               Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
-                           | _ ->
-                               Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
-                        )
-                    | _::[] | [] -> failwith "Drawing empty line."
-                    | points ->
+    let resolution = ref 20 in (* number of generated points between two lines *)
+    (* Remove trivial lines. *)
+    let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
+      if lines = [] then "" else
+        let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+          (* let points = remove_consecutive_dups points in *)
+          match points with
+            | (x1,y1)::(x2,y2)::[] ->
+                (match outkind with
+                   | Tikz ->
+                       Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
+                   | Pstricks ->
+                       Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                )
+            | _::[] | [] -> failwith "Drawing empty line."
+            | points ->
+                (
+                  match Conf.get_string "interpolation" with
+                    | "cspline" ->
+                        let periodic = List.hd points = list_last points in
+                        let spl = Spline.compute ~periodic !resolution points in
+                        let spl = List.map snd spl in
+                        let spl = queue_of_list spl in
+                        let lines = queue_of_list lines in
+                        let plast = ref (Queue.pop spl) in
+                        let ans = ref "" in
+                          while Queue.length spl <> 0 do
+                            let l = Queue.pop lines in
+                              if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
+                                (
+                                  ans := !ans ^
+                                  (match outkind with
+                                     | Tikz ->
+                                         Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                     | Pstricks ->
+                                         Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
+                                  );
+                                  for i = 0 to !resolution - 1 do
+                                    plast := Queue.pop spl;
+                                    ans := !ans ^
+                                    (match outkind with
+                                       | Tikz ->
+                                           (* TODO: use "-- cycle" when periodic *)
+                                           Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                       | Pstricks ->
+                                           Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
+                                    )
+                                  done;
+                                  (match outkind with
+                                     | Tikz ->
+                                         ans := !ans ^ ";"
+                                     | Pstricks -> ()
+                                  );
+                                  ans := !ans ^ "\n"
+                                )
+                              else
+                                (
+                                  for i = 0 to !resolution - 1 do
+                                    plast := Queue.pop spl
+                                  done
+                                )
+                          done;
+                          !ans
+                    | "linear" ->
                         (
-                        match Conf.get_string "interpolation" with
-                          | "cspline" ->
-                              let periodic = List.hd points = list_last points in
-                              let spl = Spline.compute ~periodic !resolution points in
-                              let spl = List.map snd spl in
-                              let spl = queue_of_list spl in
-                              let lines = queue_of_list lines in
-                              let plast = ref (Queue.pop spl) in
-                              let ans = ref "" in
-                                while Queue.length spl <> 0 do
-                                  let l = Queue.pop lines in
-                                    if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
-                                      (
-                                        ans := !ans ^
-                                        (match outkind with
-                                           | Tikz ->
-                                               Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
-                                           | _ ->
-                                               Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
-                                        );
-                                        for i = 0 to !resolution - 1 do
-                                          plast := Queue.pop spl;
-                                          ans := !ans ^
-                                          (match outkind with
-                                             | Tikz ->
-                                                 (* TODO: use "-- cycle" when periodic *)
-                                                 Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
-                                             | _ ->
-                                                 Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
-                                          )
-                                        done;
-                                        (match outkind with
-                                           | Tikz ->
-                                               ans := !ans ^ ";"
-                                           | _ -> ()
-                                        );
-                                        ans := !ans ^ "\n"
-                                      )
-                                    else
-                                      (
-                                        for i = 0 to !resolution - 1 do
-                                          plast := Queue.pop spl
-                                        done
-                                      )
-                                done;
-                                !ans
-                          | "linear" ->
-                              (
-                                let fstpt = (List.hd lines)#src in
-                                  match outkind with
-                                    | Tikz ->
-                                        Printf.sprintf "\\draw (%.2f,%.2f)" (fst fstpt) (snd fstpt) ^
-                                        List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
-                                        ";"
-                                    | _ ->
-                                        Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
-                                        List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines
-                              )
-                          | s ->
-                              failwith "Unkown interpolation type: " ^ s ^ "."
+                          let fstpt = (List.hd lines)#src in
+                            match outkind with
+                              | Tikz ->
+                                  Printf.sprintf "\\draw (%.2f,%.2f)" (fst fstpt) (snd fstpt) ^
+                                  List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
+                                  ";"
+                              | Pstricks ->
+                                  Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
+                                  List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines
                         )
-          )
+                    | s ->
+                        failwith "Unkown interpolation type: " ^ s ^ "."
+                )
 end
 
 (** Create a new polyline, given a list of points. *)
