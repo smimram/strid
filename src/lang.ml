@@ -107,22 +107,24 @@ let middle p q =
   let xt, yt = q in
     (xt -. xs) /. 2. , (yt -. ys) /. 2.
 
+type environment = (string * string) list
+
 class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
 object (self)
   val options = options
 
   val mutable env = []
 
-  method set_env (e:(string * string) list) =
+  method set_env (e:environment) =
     env <- e
 
-  method get_attr name subname =
+  method private get_attr name subname =
     List.assoc subname (List.assoc name options)
 
-  method get_attr_float name subname =
+  method private get_attr_float name subname =
     float_of_string (self#get_attr name subname)
 
-  method has_attr name =
+  method private has_attr name =
     try
       ignore (List.assoc name options); true
     with
@@ -130,7 +132,7 @@ object (self)
 
   method kind = kind
 
-  method connexion = Array.of_list connexions
+  method private connexion = Array.of_list connexions
 
   method get_plines pos =
     let c = Array.map (rd_add pos) self#connexion in

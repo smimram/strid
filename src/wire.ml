@@ -179,7 +179,7 @@ object (self)
                                   (match outkind with
                                      | Tikz ->
                                          ans := !ans ^ ";"
-                                     | Pstricks -> ()
+                                     | _ -> ()
                                   );
                                   ans := !ans ^ "\n"
                                 )
