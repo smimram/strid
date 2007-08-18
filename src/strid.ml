@@ -61,10 +61,7 @@ let parse_file f =
                 (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
             in
               if !out_kind = Wire.Graphics then
-                (
-                  Common.warning err;
-                  [], []
-                )
+                failwith err
               else
                 Common.error err
         | Parsing.Parse_error ->
@@ -76,10 +73,7 @@ let parse_file f =
                 (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
             in
               if !out_kind = Wire.Graphics then
-                (
-                  Common.warning err;
-                  [], []
-                )
+                failwith err
               else
                 Common.error err
   in
@@ -144,10 +138,14 @@ let _ =
                  while !loop do
                    if !graphics_refresh then
                      (
-                       Unix.sleep 1;
-                       let env, m = parse_file fname_in in
-                         Graphics.clear_graph ();
-                         ignore (Lang.process_matrix !out_kind env m)
+                       try
+                         Unix.sleep 1;
+                         let env, m = parse_file fname_in in
+                           Graphics.clear_graph ();
+                           ignore (Lang.process_matrix !out_kind env m)
+                       with
+                         | e ->
+                             Common.warning (Printexc.to_string e)
                      )
                    else
                      let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
