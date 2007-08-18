@@ -300,6 +300,12 @@ object (self)
         | Graphics ->
             let x1, y1 = graphics_scale (x1, y1) in
             let x2, y2 = graphics_scale (x2, y2) in
+              if color <> "" then
+                (
+                  Graphics.set_color Graphics.white;
+                  Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1);
+                  Graphics.set_color Graphics.black;
+                );
               Graphics.draw_rect x1 y1 (x2 - x1) (y2 - y1);
               ""
 end
@@ -319,6 +325,9 @@ object (self)
       | Graphics ->
           let points = List.map graphics_scale points in
           let points = Array.of_list points in
+            Graphics.set_color Graphics.white;
+            Graphics.fill_poly points;
+            Graphics.set_color Graphics.black;
             Graphics.draw_poly points;
             ""
 end
