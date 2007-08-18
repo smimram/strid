@@ -394,7 +394,13 @@ let process_matrix kind env m =
                 ^ params
                 ^ "\n")
              ^ (Printf.sprintf "\\useasboundingbox (-0.5,-0.5) rectangle (%d.5,%d.5);\n" !width height)
-       | _ -> Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" (!width + 1) height
+       | Wire.Pstricks ->
+           Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" !width height
+       | Wire.Graphics ->
+           Graphics.open_graph "";
+           Graphics.resize_window (!width*50) (height*50);
+           Graphics.set_window_title "Strid";
+           ""
     );
     plines := join_plines !plines;
     List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw kind)) !plines;
@@ -404,7 +410,7 @@ let process_matrix kind env m =
     (match kind with
        | Wire.Tikz ->
            if (Conf.get_bool "no_tex_environment") then "" else "\\end{tikzpicture}\n"
-       | _ ->
-           "\\end{pspicture}\n"
+       | Wire.Pstricks -> "\\end{pspicture}\n"
+       | Wire.Graphics -> ""
     );
     !out

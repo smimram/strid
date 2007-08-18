@@ -25,7 +25,11 @@ type dir = float * float
 
 let showpoints = ref false
 
-type output_kind = Pstricks | Tikz
+type output_kind = Pstricks | Tikz | Graphics
+
+let graphics_scale (x,y) =
+  int_of_float (x *. 50.),
+  int_of_float (y *. 50.)
 
 class virtual wire =
 object (self)
@@ -141,6 +145,12 @@ object (self)
                        Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
                    | Pstricks ->
                        Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                   | Graphics ->
+                       let x1, y1 = graphics_scale (x1, y1) in
+                       let x2, y2 = graphics_scale (x2, y2) in
+                         Graphics.moveto x1 y1;
+                         Graphics.lineto x2 y2;
+                         ""
                 )
             | _::[] | [] -> failwith "Drawing empty line."
             | points ->
@@ -164,6 +174,10 @@ object (self)
                                          Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
                                      | Pstricks ->
                                          Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
+                                     | Graphics ->
+                                         let x, y = graphics_scale !plast in
+                                           Graphics.moveto x y;
+                                           ""
                                   );
                                   for i = 0 to !resolution - 1 do
                                     plast := Queue.pop spl;
@@ -174,6 +188,10 @@ object (self)
                                            Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
                                        | Pstricks ->
                                            Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
+                                       | Graphics ->
+                                           let x, y = graphics_scale !plast in
+                                             Graphics.lineto x y;
+                                             ""
                                     )
                                   done;
                                   (match outkind with
@@ -202,6 +220,11 @@ object (self)
                               | Pstricks ->
                                   Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
                                   List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines
+                              | Graphics ->
+                                  let x, y = graphics_scale fstpt in
+                                    Graphics.moveto x y;
+                                    List.iter (fun l -> let x, y = graphics_scale l#dst in Graphics.lineto x y) lines;
+                                    ""
                         )
                     | s ->
                         failwith "Unkown interpolation type: " ^ s ^ "."
@@ -253,6 +276,11 @@ object (self)
                 )
             in
               Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)" bw x y xr yr
+        | Graphics ->
+            let x, y = graphics_scale (x, y) in
+            let xr, yr = graphics_scale (xr, yr) in
+              Graphics.draw_ellipse x y xr yr;
+              ""
 end
 
 class rectangle corner1 corner2 =
@@ -269,6 +297,11 @@ object (self)
             let color = if color = "" then "" else "fill=" ^ color in
               Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);" (if color = "" then "" else "fill") style color x1 y1 x2 y2
         | Pstricks -> assert false
+        | Graphics ->
+            let x1, y1 = graphics_scale (x1, y1) in
+            let x2, y2 = graphics_scale (x2, y2) in
+              Graphics.draw_rect x1 y1 (x2 - x1) (y2 - y1);
+              ""
 end
 
 class polygon points =
@@ -283,6 +316,11 @@ object (self)
             (* TODO: use -- cycle *)
             Printf.sprintf "\\filldraw[fill=%s] (%.2f, %.2f) %s;" color x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
       | Pstricks -> assert false
+      | Graphics ->
+          let points = List.map graphics_scale points in
+          let points = Array.of_list points in
+            Graphics.draw_poly points;
+            ""
 end
 
 class text position text =
@@ -296,4 +334,9 @@ object (self)
             Printf.sprintf "\\draw (%.2f,%.2f) node{%s};" x y text
         | Pstricks ->
             Printf.sprintf "\\rput(%.2f,%.2f){%s}" x y text
+        | Graphics ->
+            let x, y = graphics_scale (x, y) in
+              Graphics.moveto x y;
+              Graphics.draw_string text;
+              ""
 end

@@ -1,8 +1,7 @@
 SOURCES=common.ml vect.ml conf.ml cubic_spline.ml spline.ml wire.mli wire.ml lang.mli lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
 OCAMLYACC=ocamlyacc
-#INCDIRS=+gsl
-LIBS=str unix #bigarray gsl
+LIBS=str unix graphics
 
 all: nc
 

@@ -1,6 +1,6 @@
 matrix {
 \\
-operad(ull,ul,dr)\\
+&&operad(ull,ul,dr)\\
 \\
 &mult(ul,dl,r)[l,s=rectangle,t=#x#]\\
 \\
@@ -11,6 +11,6 @@ operad(ull,ul,dr)\\
 &0box2(ur,dr)\\
 \\
 \\
-unit(r)[l,t=#$\eta$#,s=rectangle,d=r,c=lightgray]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
+&unit(r)[l,t=#$\eta$#,s=rectangle,d=r,c=lightgray]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
 \\
 }

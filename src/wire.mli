@@ -11,6 +11,7 @@ val showpoints : bool ref
 type output_kind =
   | Pstricks (** pstricks output *)
   | Tikz (** tikz output *)
+  | Graphics (** graphics output *)
 
 (** Base class for geometrical figures. *)
 class virtual wire :
