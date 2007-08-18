@@ -25,10 +25,18 @@ let file_in = ref []
 let file_out = ref ""
 let full_tex = ref false
 let dump_conf = ref false
-let out_kind = ref "tikz"
+let out_kind = ref Wire.Tikz
 
 let get_pos d i j =
   (i*10, j*10)
+
+let kind_of_string = function
+  | "pstricks" -> Wire.Pstricks
+  | "tikz" -> Wire.Tikz
+  | "graphics" -> Wire.Graphics
+  | s ->
+      Printf.eprintf "Unknown output type: %s\n%!" s;
+      exit 2
 
 let parse_file f =
   let sin =
@@ -69,11 +77,11 @@ let _ =
     [
       "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
       "--full-tex", Arg.Set full_tex, "\t\tFull LaTeX file";
-      "-g", Arg.Unit (fun () -> out_kind := "graphics"), "\t\tUse Graphics output";
+      "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics), "\t\tUse Graphics output";
       "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
       "-o", Arg.Set_string file_out, "\t\t\tOutput file";
       "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
-      "-t", Arg.Set_string out_kind, "\t\t\tOutput type"
+      "-t", Arg.String (fun s -> out_kind := kind_of_string s), "\t\t\tOutput type"
     ]
     (fun s -> file_in := s::!file_in)
     usage;
@@ -102,63 +110,54 @@ let _ =
       Printf.eprintf "%s\n%!" usage;
       exit 1
     );
-  let out_kind =
-    match !out_kind with
-      | "pstricks" -> Wire.Pstricks
-      | "tikz" -> Wire.Tikz
-      | "graphics" -> Wire.Graphics
-      | _ ->
-          Printf.eprintf "Unknown output type: %s\n%!" !out_kind;
-          exit 2
-  in
-    List.iter
-      (fun fname_in ->
-         let env, m = parse_file fname_in in
-         let pst = Lang.process_matrix out_kind env m in
-         let fname_out =
-           if List.length !file_in = 1 && !file_out <> "" then
-             !file_out
+  List.iter
+    (fun fname_in ->
+       let env, m = parse_file fname_in in
+       let pst = Lang.process_matrix !out_kind env m in
+       let fname_out =
+         if List.length !file_in = 1 && !file_out <> "" then
+           !file_out
+         else
+           if !file_out = "" && Str.string_match re_file_in fname_in 0 then
+             Str.matched_group 1 fname_in ^ ".tex"
            else
-             if !file_out = "" && Str.string_match re_file_in fname_in 0 then
-               Str.matched_group 1 fname_in ^ ".tex"
-             else
-               Common.error (Printf.sprintf "Invalid input file name: %s.\n" fname_in)
-         in
-           match out_kind with
-             | Wire.Graphics ->
-                 let loop = ref true in
-                   while !loop do
-                     let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
-                       if st.Graphics.keypressed then
-                         (
-                           if st.Graphics.key = 'q' then
-                             loop := false
-                           else if st.Graphics.key = 'r' then
-                             let env, m = parse_file fname_in in
-                               Graphics.clear_graph ();
-                               ignore (Lang.process_matrix out_kind env m);
-                               loop := true
-                         )
-                   done;
-                   Graphics.close_graph ()
-             | _ ->
-                 let fo = open_out fname_out in
-                   if !full_tex then
-                     (
-                       output_string fo "\\documentclass{article}\n";
-                       output_string fo
-                         (match out_kind with
-                            | Wire.Tikz ->
-                                "\\usepackage{tikz}\n"
-                            | Wire.Pstricks ->
-                                "\\usepackage{pstricks}\n"
-                            | Wire.Graphics -> ""
-                         );
-                       output_string fo "\\begin{document}\n";
-                     );
-                   output_string fo pst;
-                   if !full_tex then
-                     output_string fo "\\end{document}\n";
-                   close_out fo;
-                   Common.info (Printf.sprintf "Successfully generated %s." fname_out)
-      ) !file_in
+             Common.error (Printf.sprintf "Invalid input file name: %s.\n" fname_in)
+       in
+         match !out_kind with
+           | Wire.Graphics ->
+               let loop = ref true in
+                 while !loop do
+                   let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
+                     if st.Graphics.keypressed then
+                       (
+                         if st.Graphics.key = 'q' then
+                           loop := false
+                         else if st.Graphics.key = 'r' then
+                           let env, m = parse_file fname_in in
+                             Graphics.clear_graph ();
+                             ignore (Lang.process_matrix !out_kind env m);
+                             loop := true
+                       )
+                 done;
+                 Graphics.close_graph ()
+           | _ ->
+               let fo = open_out fname_out in
+                 if !full_tex then
+                   (
+                     output_string fo "\\documentclass{article}\n";
+                     output_string fo
+                       (match !out_kind with
+                          | Wire.Tikz ->
+                              "\\usepackage{tikz}\n"
+                          | Wire.Pstricks ->
+                              "\\usepackage{pstricks}\n"
+                          | Wire.Graphics -> ""
+                       );
+                     output_string fo "\\begin{document}\n";
+                   );
+                 output_string fo pst;
+                 if !full_tex then
+                   output_string fo "\\end{document}\n";
+                 close_out fo;
+                 Common.info (Printf.sprintf "Successfully generated %s." fname_out)
+    ) !file_in
