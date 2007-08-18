@@ -26,6 +26,7 @@ let file_out = ref ""
 let full_tex = ref false
 let dump_conf = ref false
 let out_kind = ref Wire.Tikz
+let graphics_refresh = ref false
 
 let get_pos d i j =
   (i*10, j*10)
@@ -54,19 +55,33 @@ let parse_file f =
       with
         | Failure "lexing: empty token" ->
             let pos = (Lexing.lexeme_end_p lexbuf) in
-              Common.error
-                (Printf.sprintf "Lexing error at line %d, character %d."
-                   pos.Lexing.pos_lnum
-                   (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+            let err =
+              Printf.sprintf "Lexing error at line %d, character %d."
+                pos.Lexing.pos_lnum
+                (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+            in
+              if !out_kind = Wire.Graphics then
+                (
+                  Common.warning err;
+                  [], []
                 )
+              else
+                Common.error err
         | Parsing.Parse_error ->
             let pos = (Lexing.lexeme_end_p lexbuf) in
-              Common.error
-                (Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
-                   (Lexing.lexeme lexbuf)
-                   pos.Lexing.pos_lnum
-                   (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+            let err =
+              Printf.sprintf "Parse error at word \"%s\", line %d, character %d."
+                (Lexing.lexeme lexbuf)
+                pos.Lexing.pos_lnum
+                (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+            in
+              if !out_kind = Wire.Graphics then
+                (
+                  Common.warning err;
+                  [], []
                 )
+              else
+                Common.error err
   in
     env, matrix_of_ir env ir
 
@@ -77,7 +92,7 @@ let _ =
     [
       "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
       "--full-tex", Arg.Set full_tex, "\t\tFull LaTeX file";
-      "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics), "\t\tUse Graphics output";
+      "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\tUse Graphics output";
       "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
       "-o", Arg.Set_string file_out, "\t\t\tOutput file";
       "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
@@ -127,17 +142,24 @@ let _ =
            | Wire.Graphics ->
                let loop = ref true in
                  while !loop do
-                   let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
-                     if st.Graphics.keypressed then
-                       (
-                         if st.Graphics.key = 'q' then
-                           loop := false
-                         else if st.Graphics.key = 'r' then
-                           let env, m = parse_file fname_in in
-                             Graphics.clear_graph ();
-                             ignore (Lang.process_matrix !out_kind env m);
-                             loop := true
-                       )
+                   if !graphics_refresh then
+                     (
+                       Unix.sleep 1;
+                       let env, m = parse_file fname_in in
+                         Graphics.clear_graph ();
+                         ignore (Lang.process_matrix !out_kind env m)
+                     )
+                   else
+                     let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
+                       if st.Graphics.keypressed then
+                         (
+                           if st.Graphics.key = 'q' then
+                             loop := false
+                           else if st.Graphics.key = 'r' then
+                             let env, m = parse_file fname_in in
+                               Graphics.clear_graph ();
+                               ignore (Lang.process_matrix !out_kind env m)
+                         )
                  done;
                  Graphics.close_graph ()
            | _ ->
