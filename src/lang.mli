@@ -27,6 +27,9 @@ object
 
   (** Get the kind of the box. *)
   method kind : string
+
+  (** Map a function to the connexions. *)
+  method map_connexions : (Wire.reldir -> Wire.reldir) -> unit
 end
 
 (** A relative direction. *)

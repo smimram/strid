@@ -132,10 +132,14 @@ object (self)
 
   method kind = kind
 
-  method private connexion = Array.of_list connexions
+  val mutable connexions = Array.of_list connexions
+
+  method private connexions = connexions
+
+  method map_connexions f = connexions <- Array.map f connexions
 
   method get_plines pos =
-    let c = Array.map (rd_add pos) self#connexion in
+    let c = Array.map (rd_add pos) self#connexions in
       match self#kind with
         | "mult" ->
             let i = Wire.new_polyline [pos; (*circle_position pos c.(2);*) c.(2)] in
@@ -223,7 +227,7 @@ object (self)
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
   method get_label_decorations pos =
-    let c = Array.map (rd_add pos) self#connexion in
+    let c = Array.map (rd_add pos) self#connexions in
       match self#kind with
         | "text" -> []
         | "region" ->
@@ -301,7 +305,7 @@ object (self)
               )
 
   method get_texts pos =
-    let c = Array.map (rd_add pos) self#connexion in
+    let c = Array.map (rd_add pos) self#connexions in
       match self#kind with
         | "text" ->
             deffound []
@@ -365,7 +369,7 @@ let process_matrix kind env m =
           debug (Printf.sprintf "New %s box." b#kind);
           plines := !plines@b#get_plines pos;
           ldeco := !ldeco@b#get_label_decorations pos;
-          texts := !texts@b#get_texts pos;
+          texts := !texts@b#get_texts pos
   in
   let height = Array.length m - 1 in
   let width = ref 0 in
