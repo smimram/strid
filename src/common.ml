@@ -50,3 +50,7 @@ let rec list_last = function
   | [] -> raise Not_found
   | [x] -> x
   | _::t -> list_last t
+
+let get_some = function
+  | Some x -> x
+  | None -> assert false
