@@ -109,7 +109,7 @@ let middle p q =
 
 type environment = (string * string) list
 
-class box (kind:string) (connexions:Wire.reldir list) (options:opt list) =
+class box (kind:string) (connections:Wire.reldir list) (options:opt list) =
 object (self)
   val options = options
 
@@ -132,14 +132,14 @@ object (self)
 
   method kind = kind
 
-  val mutable connexions = Array.of_list connexions
+  val mutable connections = Array.of_list connections
 
-  method private connexions = connexions
+  method connections = connections
 
-  method map_connexions f = connexions <- Array.map f connexions
+  method set_connections c = connections <- c
 
   method get_plines pos =
-    let c = Array.map (rd_add pos) self#connexions in
+    let c = Array.map (rd_add pos) self#connections in
       match self#kind with
         | "mult" ->
             let i = Wire.new_polyline [pos; (*circle_position pos c.(2);*) c.(2)] in
@@ -227,7 +227,7 @@ object (self)
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
   method get_label_decorations pos =
-    let c = Array.map (rd_add pos) self#connexions in
+    let c = Array.map (rd_add pos) self#connections in
       match self#kind with
         | "text" -> []
         | "region" ->
@@ -305,7 +305,7 @@ object (self)
               )
 
   method get_texts pos =
-    let c = Array.map (rd_add pos) self#connexions in
+    let c = Array.map (rd_add pos) self#connections in
       match self#kind with
         | "text" ->
             deffound []
