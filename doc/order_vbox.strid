@@ -1,0 +1,8 @@
+matrix {
+\\
+text(r)[l,t=#$1$#]&&&text(2r)[l,t=#$m+1$#]&\\
+text(r)[l,t=#$2$#]&&&text(2r)[l,t=#$m+2$#]&\\
+text(r)[l,t=#$\vdots$#]&&vbox(2ul,ul,dl,2ur,ur,dr)&text(r)[l,t=#$\vdots$#]\\
+text(r)[l,t=#$m$#]&&&text(r)[l,t=#$n$#]&\\
+\\
+}
