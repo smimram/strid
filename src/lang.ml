@@ -402,7 +402,7 @@ let process_matrix kind env m =
            Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" !width height
        | Wire.Graphics ->
            Graphics.open_graph "";
-           Graphics.resize_window (!width*50) (height*50);
+           Graphics.resize_window ((max !width 1)*50) ((max height 1)*50);
            Graphics.set_window_title "Strid";
            ""
     );
