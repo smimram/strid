@@ -401,8 +401,11 @@ let process_matrix kind env m =
        | Wire.Pstricks ->
            Printf.sprintf "\\begin{pspicture}(0,0)(%d,%d)\n" !width height
        | Wire.Graphics ->
+           let w, h = float_of_int !width, float_of_int height in
+           let w, h = max w 1., max h 1. in
+           let w, h = Wire.graphics_scale (w, h) in
            Graphics.open_graph "";
-           Graphics.resize_window ((max !width 1)*50) ((max height 1)*50);
+           Graphics.resize_window w h;
            Graphics.set_window_title "Strid";
            ""
     );

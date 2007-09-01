@@ -13,6 +13,8 @@ type output_kind =
   | Tikz (** tikz output *)
   | Graphics (** graphics output *)
 
+val graphics_scale : float * float -> int * int
+
 (** Base class for geometrical figures. *)
 class virtual wire :
 object
