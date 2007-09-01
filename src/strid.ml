@@ -142,7 +142,8 @@ let _ =
                          Unix.sleep 1;
                          let env, m = parse_file fname_in in
                            Graphics.clear_graph ();
-                           ignore (Lang.process_matrix !out_kind env m)
+                           ignore (Lang.process_matrix !out_kind env m);
+                           Graphics.set_window_title ("Strid - " ^ fname_in)
                        with
                          | e ->
                              Common.warning (Printexc.to_string e)

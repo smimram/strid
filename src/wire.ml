@@ -28,8 +28,13 @@ let showpoints = ref false
 type output_kind = Pstricks | Tikz | Graphics
 
 let graphics_scale (x,y) =
-  int_of_float (x *. 50.),
-  int_of_float (y *. 50.)
+  let xs, ys = Conf.get_float "xscale", Conf.get_float "yscale" in
+  let xs, ys =
+    let s = Conf.get_float "scaling_factor" in
+      xs *. s, ys *. s
+  in
+    int_of_float (x *. 100. *. xs),
+    int_of_float (y *. 100. *. ys)
 
 class virtual wire =
 object (self)
