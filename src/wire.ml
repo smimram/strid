@@ -241,7 +241,7 @@ let new_polyline l =
   let rec aux pl = function
     | p::q::t ->
         pl#append_line (new line p q);
-        aux pl (q::t);
+        ignore (aux pl (q::t));
         pl
     | _ -> pl
   in
