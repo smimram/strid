@@ -1,4 +1,5 @@
 matrix {
+line(rrr)[a]\\
 \\
 &&operad(ull,ul,dr)\\
 \\

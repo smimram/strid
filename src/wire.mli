@@ -23,6 +23,8 @@ object
 
   method add_attr_float : string -> float -> unit
 
+  method has_attr : string -> bool
+
   (** Get the value of an attribute. *)
   method get_attr : string -> string
 
@@ -60,6 +62,8 @@ object
   method rev : unit
 
   method draw : output_kind -> string
+
+  method draw_arrow : output_kind -> string
 end
 
 (** A sequence of joined lines. *)

@@ -56,6 +56,13 @@ object (self)
   method add_attr_float name value =
     self#add_attr name (string_of_float value)
 
+  method has_attr name =
+    try
+      ignore (self#get_attr name);
+      true
+    with
+      | Not_found -> false
+
   method get_attr name =
     List.assoc name attrs
 
@@ -76,6 +83,30 @@ object (self)
   inherit wire
 
   method draw _ = failwith "Lines can't be drawn."
+
+  method draw_arrow outkind =
+    if self#has_attr "a" then
+      (
+        match outkind with
+          | Tikz ->
+              let t = self#get_attr_float "a" in
+              let t, src, dst =
+                if t < 0. then
+                  (0. -. t), dst, src
+                else
+                  t, src, dst
+              in
+              let dst =
+                let sx, sy = src in
+                let tx, ty = dst in
+                  sx +. (tx -. sx) *. t,
+                  sy +. (ty -. sy) *. t
+              in
+                Printf.sprintf "\n\\draw [->] (%.2f,%.2f) -- (%.2f,%.2f);" (fst src) (snd src) (fst dst) (snd dst)
+          | _ -> assert false
+      )
+    else
+      ""
 
   val mutable src = src
 
@@ -146,22 +177,33 @@ object (self)
     let resolution = ref 20 in (* number of generated points between two lines *)
     (* Remove trivial lines. *)
     let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
+      if self#has_attr "a" then
+        (
+          let lines = Array.of_list lines in
+          let t = self#get_attr_float "a" in
+          let len = float_of_int (Array.length lines) in
+          let n = int_of_float (len *. t) in
+          let t = t -. (float_of_int n) /. len in
+            lines.(n)#add_attr_float "a" t
+        );
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
           (* let points = remove_consecutive_dups points in *)
+        let drawing =
           match points with
             | (x1,y1)::(x2,y2)::[] ->
-                (match outkind with
-                   | Tikz ->
-                       Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
-                   | Pstricks ->
-                       Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
-                   | Graphics ->
-                       let x1, y1 = graphics_scale (x1, y1) in
-                       let x2, y2 = graphics_scale (x2, y2) in
-                         Graphics.moveto x1 y1;
-                         Graphics.lineto x2 y2;
-                         ""
+                (
+                  match outkind with
+                    | Tikz ->
+                        Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
+                    | Pstricks ->
+                        Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                    | Graphics ->
+                        let x1, y1 = graphics_scale (x1, y1) in
+                        let x2, y2 = graphics_scale (x2, y2) in
+                          Graphics.moveto x1 y1;
+                          Graphics.lineto x2 y2;
+                          ""
                 )
             | _::[] | [] -> failwith "Drawing empty line."
             | points ->
@@ -240,6 +282,9 @@ object (self)
                     | s ->
                         failwith "Unkown interpolation type: " ^ s ^ "."
                 )
+        in
+        let arrows = List.fold_left (fun s l -> s ^ l#draw_arrow outkind) "" lines in
+          drawing ^ arrows
 end
 
 (** Create a new polyline, given a list of points. *)

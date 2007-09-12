@@ -178,14 +178,14 @@ object (self)
                       (if Array.length c >= 2 then
                          [c.(0); pos; c.(1)]
                        else
-                         [c.(0); pos])
+                         [pos; c.(0)])
             in
               if self#has_attr "a" then
                 (
                   let dir = self#get_attr "a" ~d:"f" "d" in
                   let dir = if dir = "f" then 1. else if dir = "b" then -1. else assert false in
                   let t = dir *. (self#get_attr_float "a" ~d:0.5 "t") in
-                    (* l#add_attr "" *) ()
+                    l#add_attr_float "a" t
                 );
               l::[]
         | "adj" ->
