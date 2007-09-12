@@ -21,8 +21,12 @@ object
   (** [add_attr attr val] sets the attibute [attr] to the value [val]. *)
   method add_attr : string -> string -> unit
 
+  method add_attr_float : string -> float -> unit
+
   (** Get the value of an attribute. *)
   method get_attr : string -> string
+
+  method get_attr_float : string -> float
 
   (** Get the value of an attribute returning a default value if the attribute
     * was not set. *)

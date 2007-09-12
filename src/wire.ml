@@ -53,8 +53,14 @@ object (self)
   method add_attr name value =
     attrs <- (name, value)::attrs
 
+  method add_attr_float name value =
+    self#add_attr name (string_of_float value)
+
   method get_attr name =
     List.assoc name attrs
+
+  method get_attr_float name =
+    float_of_string (self#get_attr name)
 
   method get_attr_d name default =
     try

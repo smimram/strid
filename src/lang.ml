@@ -118,11 +118,20 @@ object (self)
   method set_env (e:environment) =
     env <- e
 
-  method private get_attr name subname =
-    List.assoc subname (List.assoc name options)
+  method private get_attr name ?d subname =
+    try
+      List.assoc subname (List.assoc name options)
+    with
+      | Not_found ->
+          (
+            match d with
+              | Some d -> d
+              | None -> raise Not_found
+          )
 
-  method private get_attr_float name subname =
-    float_of_string (self#get_attr name subname)
+  method private get_attr_float name ?d subname =
+    (* TODO: don't use strings for floats *)
+    float_of_string (self#get_attr name ?d:(map_some string_of_float d) subname)
 
   method private has_attr name =
     try
@@ -171,6 +180,13 @@ object (self)
                        else
                          [c.(0); pos])
             in
+              if self#has_attr "a" then
+                (
+                  let dir = self#get_attr "a" ~d:"f" "d" in
+                  let dir = if dir = "f" then 1. else if dir = "b" then -1. else assert false in
+                  let t = dir *. (self#get_attr_float "a" ~d:0.5 "t") in
+                    (* l#add_attr "" *) ()
+                );
               l::[]
         | "adj" ->
             [Wire.new_polyline [c.(0); pos]; Wire.new_polyline [pos; c.(1)]]
@@ -186,8 +202,8 @@ object (self)
             let i = Array.length c - 1 in
             let px, py = pos in
             let ans = ref [] in
-            let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
-            let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
+            let height = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height") "h" in
+            let width = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) "w" in
             let dx,dy = Vect.normalize (rd_sub c.(i) pos) in
             let ox,oy = Vect.normalize (orthogonal c.(i) pos) in
               for n = 0 to i - 1 do
@@ -237,12 +253,12 @@ object (self)
         | "unit" when not (self#has_attr "l") ->
             [new Wire.ellipse pos (0.14, 0.14)]
         | "vbox" ->
-            let dx = (deffound (Conf.get_float "label_rectangle_width") (fun () -> self#get_attr_float "l" "w")) /. 2. in
-            let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 2. in
+            let dx = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_width") "w") /. 2. in
+            let dy = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_height") "h") /. 2. in
             let px, py = pos in
             let y, y' = Array.fold_left (fun (y,y') (_,cy) -> min y cy, max y' cy) (py,py) c in
             let r = new Wire.rectangle (px-.dx,y-.dy) (px+.dx,y'+.dy) in
-              r#add_attr "color" (deffound "white" (fun () -> self#get_attr "l" "s"));
+              r#add_attr "color" (self#get_attr "l" ~d:"white" "s");
               [r]
         | _ ->
             deffound []
@@ -266,16 +282,16 @@ object (self)
                    match shape with
                      | "r"
                      | "rectangle" ->
-                         let dx = (deffound (Conf.get_float "label_rectangle_width") (fun () -> self#get_attr_float "l" "w")) /. 2. in
-                         let dy = (deffound (Conf.get_float "label_rectangle_height") (fun () -> self#get_attr_float "l" "h")) /. 2. in
+                         let dx = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_width") "w") /. 2. in
+                         let dy = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_height") "h") /. 2. in
                          let x,y = pos in
                          let e = new Wire.polygon [x-.dx,y-.dy; x-.dx,y+.dy; x+.dx,y+.dy; x+.dx,y-.dy; x-.dx,y-.dy] in
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
                            [e]
                      | "t"
                      | "triangle" ->
-                         let height = deffound (Conf.get_float "label_triangle_height") (fun () -> self#get_attr_float "l" "h") in
-                         let width = deffound (Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) (fun () -> self#get_attr_float "l" "w") in
+                         let height = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height") "h" in
+                         let width =self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) "w" in
                          (* direction *)
                          let dir =
                            deffound
@@ -291,8 +307,8 @@ object (self)
                            [e]
                      | "e"
                      | "ellipse" ->
-                         let xray = deffound (Conf.get_float "label_width") (fun () -> self#get_attr_float "l" "w") in
-                         let yray = deffound (Conf.get_float "label_height") (fun () -> self#get_attr_float "l" "h") in
+                         let xray = self#get_attr_float "l" ~d:(Conf.get_float "label_width") "w" in
+                         let yray = self#get_attr_float "l" ~d:(Conf.get_float "label_height") "h" in
                          let e = new Wire.ellipse pos (xray, yray) in
                            iffound (fun () -> e#add_attr "border width" (self#get_attr "l" "b"));
                            iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));

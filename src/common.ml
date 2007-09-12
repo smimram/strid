@@ -33,7 +33,7 @@ let iffound = deffound ()
 let length p1 p2 =
   let x1, y1 = p1 in
   let x2, y2 = p2 in
-    sqrt((x2-.x1)*.(x2-.x1) +. (y2-.y1)*.(y2-.y1))
+    sqrt ((x2-.x1) *. (x2-.x1) +. (y2-.y1) *. (y2-.y1))
 
 (* Remove duplicate coordinates. *)
 let rec remove_consecutive_dups = function
@@ -54,3 +54,7 @@ let rec list_last = function
 let get_some = function
   | Some x -> x
   | None -> assert false
+
+let map_some f = function
+  | Some x -> Some (f x)
+  | None -> None
