@@ -56,6 +56,9 @@ object (self)
   method add_attr_float name value =
     self#add_attr name (string_of_float value)
 
+  method del_attr name =
+    attrs <- List.filter (fun (n, v) -> n <> name) attrs
+
   method has_attr name =
     try
       ignore (self#get_attr name);
@@ -161,19 +164,23 @@ object (self)
     self
 
   method append_line line =
+    self#propagate_arrows;
     lines <- lines@[line]
 
   method prepend_line line =
+    self#propagate_arrows;
     lines <- line::lines
 
   (** Append a polyline at the end. *)
   method append (pl:polyline) =
     assert (self#dst = pl#src);
+    self#propagate_arrows;
     List.iter self#append_line pl#lines
 
   (** Put a polyline before. *)
   method prepend (pl:polyline) =
     assert (self#src = pl#dst);
+    self#propagate_arrows;
     List.iter self#prepend_line (List.rev pl#lines)
 
   (** Split into contiguous lines with same attributes. *)
@@ -190,20 +197,25 @@ object (self)
         | h::t -> aux h#get_attrs (new polyline h) t
         | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
 
+  (** Propagate the arrow attribute to lines. *)
+  method private propagate_arrows =
+    if self#has_attr "a" then
+      (
+        let lines = Array.of_list lines in
+        let t = self#get_attr_float "a" in
+        let len = float_of_int (Array.length lines) in
+        let n = int_of_float (len *. t) in
+        let t = t -. (float_of_int n) /. len in
+          lines.(n)#add_attr_float "a" t;
+          self#del_attr "a"
+      )
+
   (** Get the code for drawing the polyline. *)
   method draw outkind =
     let resolution = ref 20 in (* number of generated points between two lines *)
     (* Remove trivial lines. *)
     let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
-      if self#has_attr "a" then
-        (
-          let lines = Array.of_list lines in
-          let t = self#get_attr_float "a" in
-          let len = float_of_int (Array.length lines) in
-          let n = int_of_float (len *. t) in
-          let t = t -. (float_of_int n) /. len in
-            lines.(n)#add_attr_float "a" t
-        );
+      self#propagate_arrows;
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
           (* let points = remove_consecutive_dups points in *)

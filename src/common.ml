@@ -58,3 +58,7 @@ let get_some = function
 let map_some f = function
   | Some x -> Some (f x)
   | None -> None
+
+let on_some f = function
+  | Some x -> f x
+  | None -> ()

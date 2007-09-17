@@ -129,6 +129,17 @@ object (self)
               | None -> raise Not_found
           )
 
+  method private get_arrow =
+    if self#has_attr "a" then
+      (
+        let dir = self#get_attr "a" ~d:"f" "d" in
+        let dir = if dir = "f" then 1. else if dir = "b" then -1. else assert false in
+        let t = dir *. (self#get_attr_float "a" ~d:0.5 "t") in
+          Some t
+      )
+    else
+      None
+
   method private get_attr_float name ?d subname =
     (* TODO: don't use strings for floats *)
     float_of_string (self#get_attr name ?d:(map_some string_of_float d) subname)
@@ -152,9 +163,15 @@ object (self)
       match self#kind with
         | "mult" ->
             let i = Wire.new_polyline [pos; (*circle_position pos c.(2);*) c.(2)] in
-            let u = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos; ortho_point pos c.(2) c.(1) c.(0); c.(1)] in
-              (*i#append_line (new Wire.line (circle_position pos c.(2)) c.(2));*)
-              [i; u]
+            let u1 = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos] in
+            let u2 = Wire.new_polyline [c.(1); ortho_point pos c.(2) c.(1) c.(0); pos] in
+              on_some
+                (fun t ->
+                   u1#add_attr_float "a" t;
+                   u2#add_attr_float "a" t;
+                   i#add_attr_float "a" t
+                ) self#get_arrow;
+              [i; u1; u2]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
               u#append_line (new Wire.line pos c.(1));
@@ -180,23 +197,28 @@ object (self)
                        else
                          [pos; c.(0)])
             in
-              if self#has_attr "a" then
-                (
-                  let dir = self#get_attr "a" ~d:"f" "d" in
-                  let dir = if dir = "f" then 1. else if dir = "b" then -1. else assert false in
-                  let t = dir *. (self#get_attr_float "a" ~d:0.5 "t") in
-                    l#add_attr_float "a" t
-                );
-              l::[]
+              on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              [l]
         | "adj" ->
-            [Wire.new_polyline [c.(0); pos]; Wire.new_polyline [pos; c.(1)]]
+            let l = Wire.new_polyline [c.(0); pos; c.(1)] in
+              on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              [l]
         | "unit" ->
-            [Wire.new_polyline [pos; c.(0)]]
+            let l = Wire.new_polyline [pos; c.(0)] in
+              on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              [l]
         | "text" -> []
         | "region" -> []
         | "vbox" ->
             let px, _ = pos in
-            let u = Array.map (fun (x,y) -> Wire.new_polyline [x,y; px+.x*.epsilon,y]) c in
+            let u =
+              Array.map
+                (fun (x,y) ->
+                   let l = Wire.new_polyline [x,y; px+.x*.epsilon,y] in
+                     on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+                     l
+                ) c
+            in
               Array.to_list u
         | "operad" ->
             let i = Array.length c - 1 in

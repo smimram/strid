@@ -25,6 +25,8 @@ object
 
   method has_attr : string -> bool
 
+  method del_attr : string -> unit
+
   (** Get the value of an attribute. *)
   method get_attr : string -> string
 
