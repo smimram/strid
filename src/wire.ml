@@ -87,23 +87,41 @@ object (self)
   method draw_arrow outkind =
     if self#has_attr "a" then
       (
-        match outkind with
-          | Tikz ->
-              let t = self#get_attr_float "a" in
-              let t, src, dst =
-                if t < 0. then
-                  (0. -. t), dst, src
-                else
-                  t, src, dst
-              in
-              let dst =
-                let sx, sy = src in
-                let tx, ty = dst in
-                  sx +. (tx -. sx) *. t,
-                  sy +. (ty -. sy) *. t
-              in
-                Printf.sprintf "\\draw [->] (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst src) (snd src) (fst dst) (snd dst)
-          | _ -> assert false
+        let t = self#get_attr_float "a" in
+        let sign = if t < 0. then -1. else 1. in
+        let t = abs_float t in
+        let head =
+          let sx, sy = src in
+          let tx, ty = dst in
+            sx +. (tx -. sx) *. t,
+            sy +. (ty -. sy) *. t
+        in
+        let base =
+          Vect.sub head
+          (Vect.scale (sign *. (Conf.get_float "arrow_length")) (Vect.normalize (Vect.sub dst src)))
+        in
+        let o =
+          Vect.scale (Conf.get_float "arrow_height" /. 2.)
+          (Vect.orthogonal (Vect.sub dst src))
+        in
+        let s1, s2 =
+          Vect.add base o,
+          Vect.sub base o
+        in
+          match outkind with
+            | Tikz ->
+                Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s1) (snd s1) (fst head) (snd head) ^
+                Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s2) (snd s2) (fst head) (snd head)
+            | Graphics ->
+                let s1 = graphics_scale s1 in
+                let s2 = graphics_scale s2 in
+                let head = graphics_scale head in
+                  Graphics.moveto (fst s1) (snd s1);
+                  Graphics.lineto (fst head) (snd head);
+                  Graphics.moveto (fst s2) (snd s2);
+                  Graphics.lineto (fst head) (snd head);
+                  ""
+            | _ -> assert false
       )
     else
       ""

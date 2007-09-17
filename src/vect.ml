@@ -12,4 +12,10 @@ let orthogonal (x,y) =
     normalize (1., -.x/.y)
 
 let scale l (x, y) =
-  (l *. x, l *. y)
+  l *. x, l *. y
+
+let add (x,y) (x',y') =
+  x +. x', y +. y'
+
+let sub (x,y) (x',y') =
+  x -. x', y -. y'
