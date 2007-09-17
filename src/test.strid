@@ -1,7 +1,7 @@
 matrix {
 line(rrr)[a]\\
 \\
-&mult(ul,dl,r)[a]&\\
+&mult(ul,dl,r)[a,d=b]&\\
 \\
 \\
 &&operad(ull,ul,dr)\\
