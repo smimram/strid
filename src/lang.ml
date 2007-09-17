@@ -426,9 +426,9 @@ let process_matrix kind env m =
            ""
     );
     plines := join_plines !plines;
-    List.iter (fun pl -> out := !out ^ Printf.sprintf "%s\n" (pl#draw kind)) !plines;
-    List.iter (fun e -> out := !out ^ Printf.sprintf "%s\n" (e#draw kind)) !ldeco;
-    List.iter (fun t -> out := !out ^ Printf.sprintf "%s\n" (t#draw kind)) !texts;
+    List.iter (fun pl -> out := !out ^ Printf.sprintf "%s" (pl#draw kind)) !plines;
+    List.iter (fun e -> out := !out ^ Printf.sprintf "%s" (e#draw kind)) !ldeco;
+    List.iter (fun t -> out := !out ^ Printf.sprintf "%s" (t#draw kind)) !texts;
     out := !out ^
     (match kind with
        | Wire.Tikz ->

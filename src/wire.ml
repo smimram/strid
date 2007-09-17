@@ -102,7 +102,7 @@ object (self)
                   sx +. (tx -. sx) *. t,
                   sy +. (ty -. sy) *. t
               in
-                Printf.sprintf "\n\\draw [->] (%.2f,%.2f) -- (%.2f,%.2f);" (fst src) (snd src) (fst dst) (snd dst)
+                Printf.sprintf "\\draw [->] (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst src) (snd src) (fst dst) (snd dst)
           | _ -> assert false
       )
     else
@@ -195,9 +195,9 @@ object (self)
                 (
                   match outkind with
                     | Tikz ->
-                        Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);" x1 y1 x2 y2
+                        Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" x1 y1 x2 y2
                     | Pstricks ->
-                        Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)" (sp ()) x1 y1 x2 y2
+                        Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
                     | Graphics ->
                         let x1, y1 = graphics_scale (x1, y1) in
                         let x2, y2 = graphics_scale (x2, y2) in
@@ -269,10 +269,11 @@ object (self)
                               | Tikz ->
                                   Printf.sprintf "\\draw (%.2f,%.2f)" (fst fstpt) (snd fstpt) ^
                                   List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
-                                  ";"
+                                  ";\n"
                               | Pstricks ->
                                   Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
-                                  List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines
+                                  List.fold_left (fun s l -> let x,y = l#dst in
+                                  Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines ^ "\n"
                               | Graphics ->
                                   let x, y = graphics_scale fstpt in
                                     Graphics.moveto x y;
@@ -319,7 +320,7 @@ object (self)
                        ",line width = " ^ bw ^ "pt"
                 )
             in
-              Printf.sprintf "\\filldraw[fill=white%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);" bw x y xr yr
+              Printf.sprintf "\\filldraw[fill=white%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" bw x y xr yr
         | Pstricks ->
             let bw =
               deffound ""
@@ -331,7 +332,7 @@ object (self)
                        ",linewidth=" ^ bw
                 )
             in
-              Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)" bw x y xr yr
+              Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)\n" bw x y xr yr
         | Graphics ->
             let x, y = graphics_scale (x, y) in
             let xr, yr = graphics_scale (xr, yr) in
@@ -351,7 +352,7 @@ object (self)
       match outkind with
         | Tikz ->
             let color = if color = "" then "" else "fill=" ^ color in
-              Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);" (if color = "" then "" else "fill") style color x1 y1 x2 y2
+              Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);\n" (if color = "" then "" else "fill") style color x1 y1 x2 y2
         | Pstricks -> assert false
         | Graphics ->
             let x1, y1 = graphics_scale (x1, y1) in
@@ -376,7 +377,7 @@ object (self)
           let color = deffound "white" (fun () -> self#get_attr "color") in
           let x1, y1 = List.hd points in
             (* TODO: use -- cycle *)
-            Printf.sprintf "\\filldraw[fill=%s] (%.2f, %.2f) %s;" color x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
+            Printf.sprintf "\\filldraw[fill=%s] (%.2f, %.2f) %s;\n" color x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
       | Pstricks -> assert false
       | Graphics ->
           let points = List.map graphics_scale points in
@@ -396,9 +397,9 @@ object (self)
     let x, y = position in
       match outkind with
         | Tikz ->
-            Printf.sprintf "\\draw (%.2f,%.2f) node{%s};" x y text
+            Printf.sprintf "\\draw (%.2f,%.2f) node{%s};\n" x y text
         | Pstricks ->
-            Printf.sprintf "\\rput(%.2f,%.2f){%s}" x y text
+            Printf.sprintf "\\rput(%.2f,%.2f){%s}\n" x y text
         | Graphics ->
             let x, y = graphics_scale (x, y) in
               Graphics.moveto x y;
