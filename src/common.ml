@@ -62,3 +62,12 @@ let map_some f = function
 let on_some f = function
   | Some x -> f x
   | None -> ()
+
+let rec may_map f = function
+  | h::t ->
+      (
+        match f h with
+          | Some x -> x::(may_map f t)
+          | None -> may_map f t
+      )
+  | [] -> []

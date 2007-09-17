@@ -30,14 +30,15 @@ object
   (** Get the value of an attribute. *)
   method get_attr : string -> string
 
+  method get_attrs : string -> string list
+
   method get_attr_float : string -> float
+
+  method get_attrs_float : string -> float list
 
   (** Get the value of an attribute returning a default value if the attribute
     * was not set. *)
   method get_attr_d : string -> string -> string
-
-  (** Get all the attributes. *)
-  method get_attrs : (string * string) list
 
   (** Add a dependency (a [wire] that should be drawn before this one). *)
   method add_dep : wire -> unit

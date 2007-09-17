@@ -69,16 +69,20 @@ object (self)
   method get_attr name =
     List.assoc name attrs
 
+  method get_attrs name =
+    may_map (fun (n,v) -> if n = name then Some v else None) attrs
+
   method get_attr_float name =
     float_of_string (self#get_attr name)
+
+  method get_attrs_float name =
+    List.map float_of_string (self#get_attrs name)
 
   method get_attr_d name default =
     try
       self#get_attr name
     with
       | Not_found -> default
-
-  method get_attrs = attrs
 end
 
 class line (src:dir) (dst:dir) =
@@ -93,19 +97,14 @@ object (self)
         let t = self#get_attr_float "a" in
         let sign = if t < 0. then -1. else 1. in
         let t = abs_float t in
-        let head =
-          let sx, sy = src in
-          let tx, ty = dst in
-            sx +. (tx -. sx) *. t,
-            sy +. (ty -. sy) *. t
-        in
+        let head = Vect.add src (Vect.scale (t +. Conf.get_float "arrow_length" /. 2.) (Vect.sub dst src)) in
         let base =
           Vect.sub head
-          (Vect.scale (sign *. (Conf.get_float "arrow_length")) (Vect.normalize (Vect.sub dst src)))
+            (Vect.scale (sign *. (Conf.get_float "arrow_length")) (Vect.normalize (Vect.sub dst src)))
         in
         let o =
           Vect.scale (Conf.get_float "arrow_height" /. 2.)
-          (Vect.orthogonal (Vect.sub dst src))
+            (Vect.orthogonal (Vect.sub dst src))
         in
         let s1, s2 =
           Vect.add base o,
@@ -163,24 +162,22 @@ object (self)
     List.iter (fun l -> l#rev) lines;
     self
 
+  (* TODO: update arrows when appending *)
+
   method append_line line =
-    self#propagate_arrows;
     lines <- lines@[line]
 
   method prepend_line line =
-    self#propagate_arrows;
     lines <- line::lines
 
   (** Append a polyline at the end. *)
   method append (pl:polyline) =
     assert (self#dst = pl#src);
-    self#propagate_arrows;
     List.iter self#append_line pl#lines
 
   (** Put a polyline before. *)
   method prepend (pl:polyline) =
     assert (self#src = pl#dst);
-    self#propagate_arrows;
     List.iter self#prepend_line (List.rev pl#lines)
 
   (** Split into contiguous lines with same attributes. *)
@@ -197,44 +194,43 @@ object (self)
         | h::t -> aux h#get_attrs (new polyline h) t
         | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
 
-  (** Propagate the arrow attribute to lines. *)
-  method private propagate_arrows =
-    if self#has_attr "a" then
-      (
-        let lines = Array.of_list lines in
-        let t = self#get_attr_float "a" in
-        let len = float_of_int (Array.length lines) in
-        let n = int_of_float (len *. t) in
-        let t = t -. (float_of_int n) /. len in
-          lines.(n)#add_attr_float "a" t;
-          self#del_attr "a"
-      )
+  method private arrows =
+    self#get_attrs_float "a"
 
   (** Get the code for drawing the polyline. *)
   method draw outkind =
     let resolution = ref 20 in (* number of generated points between two lines *)
     (* Remove trivial lines. *)
     let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
-      self#propagate_arrows;
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
           (* let points = remove_consecutive_dups points in *)
         let drawing =
           match points with
             | (x1,y1)::(x2,y2)::[] ->
-                (
-                  match outkind with
-                    | Tikz ->
-                        Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" x1 y1 x2 y2
-                    | Pstricks ->
-                        Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
-                    | Graphics ->
-                        let x1, y1 = graphics_scale (x1, y1) in
-                        let x2, y2 = graphics_scale (x2, y2) in
-                          Graphics.moveto x1 y1;
-                          Graphics.lineto x2 y2;
-                          ""
-                )
+                let arrows =
+                  let ans = ref "" in
+                    List.iter
+                      (fun t ->
+                         let l = new line (x1,y1) (x2,y2) in
+                           l#add_attr_float "a" t;
+                           ans := !ans ^ l#draw_arrow outkind
+                      ) self#arrows;
+                    !ans
+                in
+                  (
+                    match outkind with
+                      | Tikz ->
+                          Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" x1 y1 x2 y2
+                      | Pstricks ->
+                          Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
+                      | Graphics ->
+                          let x1, y1 = graphics_scale (x1, y1) in
+                          let x2, y2 = graphics_scale (x2, y2) in
+                            Graphics.moveto x1 y1;
+                            Graphics.lineto x2 y2;
+                            ""
+                  ) ^ arrows
             | _::[] | [] -> failwith "Drawing empty line."
             | points ->
                 (
@@ -243,6 +239,20 @@ object (self)
                         let periodic = List.hd points = list_last points in
                         let spl = Spline.compute ~periodic !resolution points in
                         let spl = List.map snd spl in
+                        let arrows =
+                          let spl = Array.of_list spl in
+                          let ans = ref "" in
+                            List.iter
+                              (fun t ->
+                                 let len = float_of_int (Array.length spl) -. 1. in
+                                 let n = int_of_float (len *. t) in
+                                 let t = t -. (float_of_int n) /. len in
+                                 let l = new line spl.(n) spl.(n+1) in
+                                   l#add_attr_float "a" t;
+                                   ans := !ans ^ l#draw_arrow outkind
+                              ) self#arrows;
+                            !ans
+                        in
                         let spl = queue_of_list spl in
                         let lines = queue_of_list lines in
                         let plast = ref (Queue.pop spl) in
@@ -291,7 +301,7 @@ object (self)
                                   done
                                 )
                           done;
-                          !ans
+                          !ans ^ arrows
                     | "linear" ->
                         (
                           let fstpt = (List.hd lines)#src in

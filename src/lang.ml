@@ -162,7 +162,7 @@ object (self)
     let c = Array.map (rd_add pos) self#connections in
       match self#kind with
         | "mult" ->
-            let i = Wire.new_polyline [pos; (*circle_position pos c.(2);*) c.(2)] in
+            let i = Wire.new_polyline [pos; c.(2)] in
             let u1 = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos] in
             let u2 = Wire.new_polyline [c.(1); ortho_point pos c.(2) c.(1) c.(0); pos] in
               on_some
