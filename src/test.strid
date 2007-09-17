@@ -1,6 +1,9 @@
 matrix {
 line(rrr)[a]\\
 \\
+&mult(ul,dl,r)[a]&\\
+\\
+\\
 &&operad(ull,ul,dr)\\
 \\
 &mult(ul,dl,r)[l,s=rectangle,t=#x#]\\

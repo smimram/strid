@@ -61,6 +61,8 @@ object
   (** Target. *)
   method dst : dir
 
+  method length : float
+
   (** Reverse the line. *)
   method rev : unit
 
@@ -79,6 +81,8 @@ object ('a)
 
   (** Target. *)
   method dst : dir
+
+  method length : float
 
   (** Lines this polyline is made of. *)
   method lines : line list

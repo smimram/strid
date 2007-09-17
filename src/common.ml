@@ -71,3 +71,9 @@ let rec may_map f = function
           | None -> may_map f t
       )
   | [] -> []
+
+let rec map_by_2 f = function
+  | x::y::t -> (f x y)::(map_by_2 f (y::t))
+  | _ -> []
+
+let float_sign x = if x < 0. then -1. else 1.

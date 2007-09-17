@@ -95,7 +95,7 @@ object (self)
     if self#has_attr "a" then
       (
         let t = self#get_attr_float "a" in
-        let sign = if t < 0. then -1. else 1. in
+        let sign = float_sign t in
         let t = abs_float t in
         let head = Vect.add src (Vect.scale (t +. Conf.get_float "arrow_length" /. 2.) (Vect.sub dst src)) in
         let base =
@@ -136,6 +136,9 @@ object (self)
 
   method dst = dst
 
+  method length =
+    Vect.norm (Vect.sub dst src)
+
   method rev =
     let tmp = src in
       src <- dst;
@@ -162,23 +165,66 @@ object (self)
     List.iter (fun l -> l#rev) lines;
     self
 
+  method length =
+    List.fold_left (+.) 0. (List.map (fun l -> l#length) self#lines)
+
   (* TODO: update arrows when appending *)
 
   method append_line line =
-    lines <- lines@[line]
+    self#append (new polyline line)
 
   method prepend_line line =
-    lines <- line::lines
+    self#prepend (new polyline line)
 
   (** Append a polyline at the end. *)
   method append (pl:polyline) =
     assert (self#dst = pl#src);
-    List.iter self#append_line pl#lines
+    let s_a = self#get_attrs_float "a" in
+    let p_a = pl#get_attrs_float "a" in
+    let s_l = self#length in
+    let p_l = pl#length in
+    let l = s_l +. p_l in
+      self#del_attr "a";
+      List.iter
+        (fun t ->
+           let sign = float_sign t in
+           let t = abs_float t in
+           let t = t *. (s_l /. l) in
+             self#add_attr_float "a" (sign *. t)
+        ) s_a;
+      List.iter
+        (fun t ->
+           let sign = float_sign t in
+           let t = abs_float t in
+           let t = s_l /. l +. t *. (p_l /. l) in
+             self#add_attr_float "a" (sign *. t)
+        ) p_a;
+      lines <- lines@(pl#lines)
 
   (** Put a polyline before. *)
   method prepend (pl:polyline) =
     assert (self#src = pl#dst);
-    List.iter self#prepend_line (List.rev pl#lines)
+    let s_a = self#get_attrs_float "a" in
+    let p_a = pl#get_attrs_float "a" in
+    let s_l = self#length in
+    let p_l = pl#length in
+    let l = s_l +. p_l in
+      self#del_attr "a";
+      List.iter
+        (fun t ->
+           let sign = float_sign t in
+           let t = abs_float t in
+           let t = t *. (p_l /. l) in
+             self#add_attr_float "a" (sign *. t)
+        ) p_a;
+      List.iter
+        (fun t ->
+           let sign = float_sign t in
+           let t = abs_float t in
+           let t = p_l /. l +. t *. (s_l /. l) in
+             self#add_attr_float "a" (sign *. t)
+        ) s_a;
+      lines <- (pl#lines)@lines
 
   (** Split into contiguous lines with same attributes. *)
   method private split_attrs =
@@ -240,15 +286,28 @@ object (self)
                         let spl = Spline.compute ~periodic !resolution points in
                         let spl = List.map snd spl in
                         let arrows =
+                          let spln = map_by_2 (fun p q -> Vect.norm (Vect.sub p q)) spl in
+                          let norm = List.fold_left (+.) 0. spln in
+                          let spln = Array.of_list spln in
                           let spl = Array.of_list spl in
                           let ans = ref "" in
                             List.iter
                               (fun t ->
+                                 let sign = float_sign t in
+                                 let t = abs_float t in
                                  let len = float_of_int (Array.length spl) -. 1. in
-                                 let n = int_of_float (len *. t) in
+                                 let n =
+                                   let n = ref 0 in
+                                   let len = ref 0. in
+                                     while !len < norm *. t && !n < Array.length spln do
+                                       len := !len +. spln.(!n);
+                                       incr n
+                                     done;
+                                     !n
+                                 in
                                  let t = t -. (float_of_int n) /. len in
                                  let l = new line spl.(n) spl.(n+1) in
-                                   l#add_attr_float "a" t;
+                                   l#add_attr_float "a" (sign *. t);
                                    ans := !ans ^ l#draw_arrow outkind
                               ) self#arrows;
                             !ans
