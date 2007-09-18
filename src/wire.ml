@@ -305,7 +305,6 @@ object (self)
                               (fun t ->
                                  let sign = float_sign t in
                                  let t = abs_float t in
-                                 let len = float_of_int (Array.length spl) -. 1. in
                                  let n, nlen =
                                    let n = ref 0 in
                                    let len = ref 0. in
@@ -315,7 +314,7 @@ object (self)
                                      done;
                                      !n - 1, !len -. spln.(!n)
                                  in
-                                 let t = t -. nlen /. len in
+                                 let t = t -. nlen /. norm in
                                  let t = if t = 0. then epsilon_float else t in
                                  let l = new line spl.(n) spl.(n+1) in
                                    l#add_attr_float "a" (sign *. t);
