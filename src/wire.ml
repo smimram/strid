@@ -315,7 +315,8 @@ object (self)
                                      !n - 1, !len -. spln.(!n)
                                  in
                                  let t = t -. nlen /. norm in
-                                 let t = if t = 0. then epsilon_float else t in
+                                 (* Sometimes we get very small negative values... *)
+                                 let t = if t <= 0. then epsilon_float else t in
                                  let l = new line spl.(n) spl.(n+1) in
                                    l#add_attr_float "a" (sign *. t);
                                    ans := !ans ^ l#draw_arrow outkind
