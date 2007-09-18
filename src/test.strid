@@ -2,8 +2,8 @@ matrix {
 line(r)&\\
 &&sym(ul,dl,ur,dr)[a,d=b]&\\
 \\
-line(drr)[a]\\
-&&line(ur)[a,d=b]&\\
+line(drr)[a]&&&line(dl)[a]\\
+\\
 &mult(ul,dl,r)[a,d=b]&\\
 \\
 \\

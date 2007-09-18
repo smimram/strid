@@ -161,15 +161,16 @@ object (self)
       match self#kind with
         | "mult" ->
             let i = Wire.new_polyline [pos; c.(2)] in
-            let u1 = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos] in
-            let u2 = Wire.new_polyline [c.(1); ortho_point pos c.(2) c.(1) c.(0); pos] in
+            let u = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos] in
+            let u' = Wire.new_polyline [c.(1); ortho_point pos c.(2) c.(1) c.(0); pos] in
               on_some
                 (fun t ->
-                   u1#add_attr_float "a" t;
-                   u2#add_attr_float "a" t;
-                   i#add_attr_float "a" t
+                   u#add_attr_float "a" t;
+                   u'#add_attr_float "a" t;
+                   i#add_attr_float "a" (Wire.compl_arrow t)
                 ) self#get_arrow;
-              [i; u1; u2]
+              u#append (u'#rev);
+              [i; u]
         | "arc" ->
             let u = new Wire.polyline (new Wire.line c.(0) pos) in
               u#append_line (new Wire.line pos c.(1));

@@ -7,7 +7,7 @@ all: nc
 
 test: all
 	./strid --full-tex test.strid
-	pdflatex test.tex #> /dev/null
+	pdflatex test.tex > /dev/null
 #	cat test.tex
 
 tikz: all

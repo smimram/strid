@@ -191,8 +191,8 @@ object (self)
   method append (pl:polyline) =
     assert (self#dst = pl#src);
     let s_a = self#get_attrs_float "a" in
-    let p_a = pl#get_attrs_float "a" in
     let s_l = self#length in
+    let p_a = pl#get_attrs_float "a" in
     let p_l = pl#length in
     let l = s_l +. p_l in
       self#del_attr "a";
@@ -216,8 +216,8 @@ object (self)
   method prepend (pl:polyline) =
     assert (self#src = pl#dst);
     let s_a = self#get_attrs_float "a" in
-    let p_a = pl#get_attrs_float "a" in
     let s_l = self#length in
+    let p_a = pl#get_attrs_float "a" in
     let p_l = pl#length in
     let l = s_l +. p_l in
       self#del_attr "a";
@@ -306,16 +306,16 @@ object (self)
                                  let sign = float_sign t in
                                  let t = abs_float t in
                                  let len = float_of_int (Array.length spl) -. 1. in
-                                 let n =
+                                 let n, nlen =
                                    let n = ref 0 in
                                    let len = ref 0. in
-                                     while !len < norm *. t && !n < Array.length spln do
+                                     while !len <= norm *. t && !n < Array.length spln - 1 do
                                        len := !len +. spln.(!n);
                                        incr n
                                      done;
-                                     !n
+                                     !n - 1, !len -. spln.(!n)
                                  in
-                                 let t = t -. (float_of_int n) /. len in
+                                 let t = t -. nlen /. len in
                                  let t = if t = 0. then epsilon_float else t in
                                  let l = new line spl.(n) spl.(n+1) in
                                    l#add_attr_float "a" (sign *. t);
