@@ -111,8 +111,6 @@ type environment = (string * string) list
 
 class box (kind:string) (connections:Wire.reldir list) (options:opt list) =
 object (self)
-  val options = options
-
   val mutable env = []
 
   method set_env (e:environment) =
@@ -133,7 +131,7 @@ object (self)
     if self#has_attr "a" then
       (
         let dir = self#get_attr "a" ~d:"f" "d" in
-        let dir = if dir = "f" then 1. else if dir = "b" then -1. else assert false in
+        let dir = if dir = "f" then 1. else if dir = "b" then -1. else error "Direction of arrows should be either 'f' or 'b'." in
         let t = dir *. (self#get_attr_float "a" ~d:0.5 "t") in
           Some t
       )
@@ -177,8 +175,19 @@ object (self)
               u#append_line (new Wire.line pos c.(1));
               [u]
         | "sym" ->
-            let p = Wire.new_polyline [c.(0); pos; c.(3)] in
-            let q = Wire.new_polyline [c.(1); pos; c.(2)] in
+            let p = Wire.new_polyline [c.(0); pos] in
+            let p' = Wire.new_polyline [pos; c.(3)] in
+            let q = Wire.new_polyline [c.(1); pos] in
+            let q' = Wire.new_polyline [pos; c.(2)] in
+              on_some
+                (fun t ->
+                   p#add_attr_float "a" t;
+                   p'#add_attr_float "a" (Wire.compl_arrow t);
+                   q#add_attr_float "a" t;
+                   q'#add_attr_float "a" (Wire.compl_arrow t);
+                ) self#get_arrow;
+              p#append p';
+              q#append q';
               [p; q]
         | "braid" ->
             let p1 = Wire.new_polyline [c.(1); circle_position pos c.(1)] in

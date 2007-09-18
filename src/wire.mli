@@ -15,6 +15,8 @@ type output_kind =
 
 val graphics_scale : float * float -> int * int
 
+val compl_arrow : float -> float
+
 (** Base class for geometrical figures. *)
 class virtual wire :
 object

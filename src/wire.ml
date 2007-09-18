@@ -36,6 +36,11 @@ let graphics_scale (x,y) =
     int_of_float (x *. 100. *. xs),
     int_of_float (y *. 100. *. ys)
 
+let compl_arrow t =
+  let sign = float_sign t in
+  let t = abs_float t in
+    sign *. (1. -. t)
+
 class virtual wire =
 object (self)
   method virtual draw : output_kind -> string
@@ -161,14 +166,20 @@ object (self)
   method dst = (List.nth lines (List.length lines - 1))#dst
 
   method rev =
-    lines <- List.rev lines;
-    List.iter (fun l -> l#rev) lines;
-    self
+    let a = self#get_attrs_float "a" in
+      self#del_attr "a";
+      List.iter
+        (fun t ->
+           let sign = float_sign t in
+           let t = abs_float t in
+             self#add_attr_float "a" (-1. *. sign *. (1. -. t))
+        ) a;
+      lines <- List.rev lines;
+      List.iter (fun l -> l#rev) lines;
+      self
 
   method length =
     List.fold_left (+.) 0. (List.map (fun l -> l#length) self#lines)
-
-  (* TODO: update arrows when appending *)
 
   method append_line line =
     self#append (new polyline line)
@@ -251,7 +262,6 @@ object (self)
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
           (* let points = remove_consecutive_dups points in *)
-        let drawing =
           match points with
             | (x1,y1)::(x2,y2)::[] ->
                 let arrows =
@@ -306,6 +316,7 @@ object (self)
                                      !n
                                  in
                                  let t = t -. (float_of_int n) /. len in
+                                 let t = if t = 0. then epsilon_float else t in
                                  let l = new line spl.(n) spl.(n+1) in
                                    l#add_attr_float "a" (sign *. t);
                                    ans := !ans ^ l#draw_arrow outkind
@@ -382,9 +393,6 @@ object (self)
                     | s ->
                         failwith "Unkown interpolation type: " ^ s ^ "."
                 )
-        in
-        let arrows = List.fold_left (fun s l -> s ^ l#draw_arrow outkind) "" lines in
-          drawing ^ arrows
 end
 
 (** Create a new polyline, given a list of points. *)

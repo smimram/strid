@@ -1,18 +1,15 @@
 matrix {
-line(rrr)[a]\\
+line(r)&\\
+&&sym(ul,dl,ur,dr)[a,d=b]&\\
 \\
+line(drr)[a]\\
+&&line(ur)[a,d=b]&\\
 &mult(ul,dl,r)[a,d=b]&\\
 \\
 \\
 &&operad(ull,ul,dr)\\
 \\
 &mult(ul,dl,r)[l,s=rectangle,t=#x#]\\
-\\
-\\
-&mult(ul,dl,r)\\
-\\
-\\
-&0box2(ur,dr)\\
 \\
 \\
 &unit(r)[l,t=#$\eta$#,s=rectangle,d=r,c=lightgray]&&mult(ur,dr,l)&&mult(ul,dl,r)&\\
