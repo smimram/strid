@@ -188,7 +188,7 @@ is typeset by
 \verbatiminput{pl_composition.strid}
 
 
-\section{Options of operators}
+\section{Parameters of operators}
 \subsection{Labels}
 Labels can be added to operators. For example the diagram
 \[
@@ -225,6 +225,17 @@ triangle.
 The left member is typeset by
 \verbatiminput{monoidal_bifunct_l.strid}
 
+\subsection{Arrows}
+Lines can be oriented using the \texttt{a} attribute. For example,
+\[
+\input{mult_a.tex}
+\]
+can be typeset by \verbatiminput{mult_a.strid} To specify that the direction
+should be backwards use the \texttt{d=b} subattribute. For example,
+\[
+\input{mult_ab.tex}
+\]
+can by typeset by \verbatiminput{mult_ab.strid}
 
 
 \section{Configuration files}
