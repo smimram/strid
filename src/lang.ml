@@ -27,8 +27,6 @@ let pi = 4. *. atan 1.
 let iffound f =
   try f () with Not_found -> ()
 
-let rd_add (x, y) (dx, dy) = (x +. dx, y +. dy)
-let rd_sub (x2, y2) (x1, y1) = (x2 -. x1, y2 -. y1)
 type opt = string * ((string * string) list)
 
 let re_dir = Str.regexp "\\([0-9\\.]*\\)\\([lrud]\\)"
@@ -157,7 +155,7 @@ object (self)
   method set_connections c = connections <- c
 
   method get_plines pos =
-    let c = Array.map (rd_add pos) self#connections in
+    let c = Array.map (Vect.add pos) self#connections in
       match self#kind with
         | "mult" ->
             let i = Wire.new_polyline [pos; c.(2)] in
@@ -236,7 +234,7 @@ object (self)
             let ans = ref [] in
             let height = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height") "h" in
             let width = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) "w" in
-            let dx,dy = Vect.normalize (rd_sub c.(i) pos) in
+            let dx,dy = Vect.normalize (Vect.sub c.(i) pos) in
             let ox,oy = Vect.normalize (orthogonal c.(i) pos) in
               for n = 0 to i - 1 do
                 let pl =
@@ -275,7 +273,7 @@ object (self)
             warning (Printf.sprintf "Don't know lines for %s box." k); []
 
   method get_label_decorations pos =
-    let c = Array.map (rd_add pos) self#connections in
+    let c = Array.map (Vect.add pos) self#connections in
       match self#kind with
         | "text" -> []
         | "region" ->
@@ -329,7 +327,7 @@ object (self)
                            deffound
                              (if self#kind = "operad" then
                                 (* We can guess the direction for operads. *)
-                                Vect.normalize (rd_sub c.(Array.length c - 1) pos)
+                                Vect.normalize (Vect.sub c.(Array.length c - 1) pos)
                               else
                                 Vect.normalize (reldir_of_string "u"))
                              (fun () -> Vect.normalize (reldir_of_string (self#get_attr "l" "d")))
@@ -353,7 +351,7 @@ object (self)
               )
 
   method get_texts pos =
-    let c = Array.map (rd_add pos) self#connections in
+    let c = Array.map (Vect.add pos) self#connections in
       match self#kind with
         | "text" ->
             deffound []

@@ -19,3 +19,12 @@ let add (x,y) (x',y') =
 
 let sub (x,y) (x',y') =
   x -. x', y -. y'
+
+let distance p q =
+  norm (sub q p)
+
+let ( +@ ) = add
+
+let ( -@ ) = sub
+
+let ( *@ ) = scale

@@ -19,6 +19,7 @@
  *)
 
 open Common
+open Vect
 
 type reldir = float * float
 type dir = float * float
@@ -102,22 +103,13 @@ object (self)
         let t = self#get_attr_float "a" in
         let sign = float_sign t in
         let t = abs_float t in
-        let head =
-          Vect.add src
-            (Vect.scale (t +. sign *. Conf.get_float "arrow_length" /. 2.) (Vect.sub dst src))
-        in
-        let base =
-          Vect.sub head
-            (Vect.scale (sign *. (Conf.get_float "arrow_length")) (Vect.normalize (Vect.sub dst src)))
-        in
-        let o =
-          Vect.scale (Conf.get_float "arrow_height" /. 2.)
-            (Vect.orthogonal (Vect.sub dst src))
-        in
-        let s1, s2 =
-          Vect.add base o,
-          Vect.sub base o
-        in
+        let support = dst -@ src in
+        let nsupport = Vect.normalize support in
+        let head = src +@ (t *@ support) in
+        let head = head +@ ((sign *. Conf.get_float "arrow_length" /. 2.) *@ nsupport) in
+        let base = head -@ ((sign *. (Conf.get_float "arrow_length")) *@ nsupport) in
+        let o = (Conf.get_float "arrow_height" /. 2.) *@ (Vect.orthogonal nsupport) in
+        let s1, s2 = base +@ o, base -@ o in
           match outkind with
             | Tikz ->
                 Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s1) (snd s1) (fst head) (snd head) ^
@@ -144,8 +136,7 @@ object (self)
 
   method dst = dst
 
-  method length =
-    Vect.norm (Vect.sub dst src)
+  method length = Vect.distance src dst
 
   method rev =
     let tmp = src in
@@ -299,7 +290,7 @@ object (self)
                         let spl = Spline.compute ~periodic !resolution points in
                         let spl = List.map snd spl in
                         let arrows =
-                          let spln = map_by_2 (fun p q -> Vect.norm (Vect.sub p q)) spl in
+                          let spln = map_by_2 Vect.distance spl in
                           let norm = List.fold_left (+.) 0. spln in
                           let spln = Array.of_list spln in
                           let spl = Array.of_list spl in
