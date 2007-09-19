@@ -102,7 +102,7 @@ object (self)
         let t = self#get_attr_float "a" in
         let sign = float_sign t in
         let t = abs_float t in
-        let head = Vect.add src (Vect.scale (t +. Conf.get_float "arrow_length" /. 2.) (Vect.sub dst src)) in
+        let head = Vect.add src (Vect.scale (t +. sign *. Conf.get_float "arrow_length" /. 2.) (Vect.sub dst src)) in
         let base =
           Vect.sub head
             (Vect.scale (sign *. (Conf.get_float "arrow_length")) (Vect.normalize (Vect.sub dst src)))
