@@ -135,34 +135,37 @@ let _ =
          match !out_kind with
            | Wire.Graphics ->
                let loop = ref true in
+               let reload = ref false in
                let last_mtime = ref 0. in
                  while !loop do
+                   if !reload then
+                     (
+                       let m = parse_file fname_in in
+                         Graphics.clear_graph ();
+                         ignore (Lang.process_matrix !out_kind m);
+                         Graphics.set_window_title ("Strid - " ^ fname_in);
+                         reload := false;
+                     );
                    if !graphics_refresh then
-                       try
-                         Unix.sleep 1;
-                         let mtime = (Unix.stat fname_in).Unix.st_mtime in
-                           if mtime <> !last_mtime then
-                             (
-                               last_mtime := mtime;
-                               let m = parse_file fname_in in
-                                 Graphics.clear_graph ();
-                                 ignore (Lang.process_matrix !out_kind m);
-                                 Graphics.set_window_title ("Strid - " ^ fname_in)
-                             )
-                       with
-                         | e ->
-                             Common.warning (Printexc.to_string e)
+                     try
+                       Unix.sleep 1;
+                       let mtime = (Unix.stat fname_in).Unix.st_mtime in
+                         if mtime <> !last_mtime then
+                           (
+                             last_mtime := mtime;
+                             reload := true
+                           )
+                     with
+                       | e ->
+                           Common.warning (Printexc.to_string e)
                    else
-                     let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
-                       if st.Graphics.keypressed then
-                         (
-                           if st.Graphics.key = 'q' then
-                             loop := false
-                           else if st.Graphics.key = 'r' then
-                             let m = parse_file fname_in in
-                               Graphics.clear_graph ();
-                               ignore (Lang.process_matrix !out_kind m)
-                         )
+                     ignore (Graphics.wait_next_event [Graphics.Key_pressed]);
+                   if Graphics.key_pressed () then
+                     let k = Graphics.read_key () in
+                       if k = 'q' then
+                         loop := false
+                       else if k = 'r' then
+                         reload := true
                  done;
                  Graphics.close_graph ()
            | _ ->
