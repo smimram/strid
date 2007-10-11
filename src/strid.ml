@@ -135,19 +135,23 @@ let _ =
          match !out_kind with
            | Wire.Graphics ->
                let loop = ref true in
+               let last_mtime = ref 0. in
                  while !loop do
                    if !graphics_refresh then
-                     (
                        try
                          Unix.sleep 1;
-                         let m = parse_file fname_in in
-                           Graphics.clear_graph ();
-                           ignore (Lang.process_matrix !out_kind m);
-                           Graphics.set_window_title ("Strid - " ^ fname_in)
+                         let mtime = (Unix.stat fname_in).Unix.st_mtime in
+                           if mtime <> !last_mtime then
+                             (
+                               last_mtime := mtime;
+                               let m = parse_file fname_in in
+                                 Graphics.clear_graph ();
+                                 ignore (Lang.process_matrix !out_kind m);
+                                 Graphics.set_window_title ("Strid - " ^ fname_in)
+                             )
                        with
                          | e ->
                              Common.warning (Printexc.to_string e)
-                     )
                    else
                      let st = Graphics.wait_next_event [Graphics.Button_up; Graphics.Key_pressed] in
                        if st.Graphics.keypressed then
