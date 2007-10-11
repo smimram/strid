@@ -27,12 +27,11 @@
 %token <string> STRING INMATRIX
 
 %start defs
-%type <((string * string) list) * Lang.ir_matrix> defs
+%type <Lang.ir_matrix> defs
 %%
 
 defs:
-    | LET STRING EQ STRING defs { let env, mat = $5 in ($2,$4)::env, mat }
-    | matrix { [], $1 }
+    | matrix { $1 }
 
 matrix:
     | MATRIX LACC matrix_lines RACC EOF { $3 }

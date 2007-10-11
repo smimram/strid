@@ -48,7 +48,7 @@ let parse_file f =
       close_in fi;
       buf
   in
-  let env, ir =
+  let ir =
     let lexbuf = Lexing.from_string sin in
       try
         Parser.defs Lexer.token lexbuf
@@ -77,7 +77,7 @@ let parse_file f =
               else
                 Common.error err
   in
-    env, matrix_of_ir env ir
+    matrix_of_ir ir
 
 let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 
@@ -121,8 +121,8 @@ let _ =
     );
   List.iter
     (fun fname_in ->
-       let env, m = parse_file fname_in in
-       let pst = Lang.process_matrix !out_kind env m in
+       let m = parse_file fname_in in
+       let pst = Lang.process_matrix !out_kind m in
        let fname_out =
          if List.length !file_in = 1 && !file_out <> "" then
            !file_out
@@ -140,9 +140,9 @@ let _ =
                      (
                        try
                          Unix.sleep 1;
-                         let env, m = parse_file fname_in in
+                         let m = parse_file fname_in in
                            Graphics.clear_graph ();
-                           ignore (Lang.process_matrix !out_kind env m);
+                           ignore (Lang.process_matrix !out_kind m);
                            Graphics.set_window_title ("Strid - " ^ fname_in)
                        with
                          | e ->
@@ -155,9 +155,9 @@ let _ =
                            if st.Graphics.key = 'q' then
                              loop := false
                            else if st.Graphics.key = 'r' then
-                             let env, m = parse_file fname_in in
+                             let m = parse_file fname_in in
                                Graphics.clear_graph ();
-                               ignore (Lang.process_matrix !out_kind env m)
+                               ignore (Lang.process_matrix !out_kind m)
                          )
                  done;
                  Graphics.close_graph ()

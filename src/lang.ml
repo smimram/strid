@@ -105,15 +105,8 @@ let middle p q =
   let xt, yt = q in
     (xt -. xs) /. 2. , (yt -. ys) /. 2.
 
-type environment = (string * string) list
-
 class box (kind:string) (connections:Wire.reldir list) (options:opt list) =
 object (self)
-  val mutable env = []
-
-  method set_env (e:environment) =
-    env <- e
-
   method private get_attr name ?d subname =
     try
       List.assoc subname (List.assoc name options)
@@ -378,8 +371,8 @@ type ir_matrix = line list
 type matrix = box option array array
 type dir = Left | Right | Up | Down
 
-let matrix_of_ir env ir =
-  Array.map (fun l -> (List.iter (fun b -> match b with None -> () | Some b -> b#set_env env) l); Array.of_list l) (Array.of_list ir)
+let matrix_of_ir ir =
+  Array.map (fun l -> Array.of_list l) (Array.of_list ir)
 
 let rec join_plines plines =
   let rec find cur = function
@@ -403,7 +396,7 @@ let rec join_plines plines =
       | [] -> []
       | h::t -> let tl = find h (join_plines t) in h::tl
 
-let process_matrix kind env m =
+let process_matrix kind m =
   let out = ref "" in
   let plines = ref [] in
   let ldeco = ref [] in
