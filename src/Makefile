@@ -1,4 +1,4 @@
-SOURCES=common.ml vect.ml conf.ml cubic_spline.ml spline.ml wire.mli wire.ml lang.mli lang.ml parser.mly lexer.mll strid.ml
+SOURCES=common.ml vect.ml conf.ml cubic_spline.ml spline.ml wire.mli wire.ml term.ml lang.mli lang.ml parser.mly lexer.mll strid.ml
 RESULT=strid
 OCAMLYACC=ocamlyacc
 LIBS=str unix graphics
