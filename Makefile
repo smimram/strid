@@ -1,6 +1,6 @@
 PROG = strid
 DISTFILES = COPYING CHANGES README Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mli src/*.mll src/*.mly doc/stridman.tex doc/stridman.pdf doc/Makefile doc/*.strid doc/strid.conf
-VERSION = 0.1.0
+VERSION = 0.2.0
 
 BINDIR=$(DESTDIR)/usr/local/bin
 MANDIR=$(DESTDIR)/usr/local/share/man/man1
