@@ -34,8 +34,9 @@ let graphics_scale (x,y) =
     let s = Conf.get_float "scaling_factor" in
       xs *. s, ys *. s
   in
-    int_of_float (x *. 100. *. xs),
-    int_of_float (y *. 100. *. ys)
+  let gs = Conf.get_float "graphics_scale" in
+    int_of_float (x *. gs *. xs),
+    int_of_float (y *. gs *. ys)
 
 let compl_arrow t =
   let sign = float_sign t in
