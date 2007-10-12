@@ -141,9 +141,11 @@ let _ =
                    if !reload then
                      (
                        let m = parse_file fname_in in
+                         Graphics.auto_synchronize false;
                          Graphics.clear_graph ();
                          ignore (Lang.process_matrix !out_kind m);
                          Graphics.set_window_title ("Strid - " ^ fname_in);
+                         Graphics.auto_synchronize true;
                          reload := false;
                      );
                    if !graphics_refresh then
