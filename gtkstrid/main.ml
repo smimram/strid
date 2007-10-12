@@ -3,7 +3,7 @@ open Strid_glade
 let about () =
   let md =
       GWindow.about_dialog
-      ~authors:["Samuel Mimram"; "Nicolas Tabareau"]
+      ~authors:["Samuel Mimram"]
       ~comments:"A GTK interface for strid."
       ~copyright:"Copyright (C) 2006-2007 Samuel Mimram"
       ~license:"This program is free software; you can redistribute it and/or
