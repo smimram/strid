@@ -121,73 +121,78 @@ let _ =
     );
   List.iter
     (fun fname_in ->
-       let m = parse_file fname_in in
-       let pst = Lang.process_matrix !out_kind m in
-       let fname_out =
-         if List.length !file_in = 1 && !file_out <> "" then
-           !file_out
-         else
-           if !file_out = "" && Str.string_match re_file_in fname_in 0 then
-             Str.matched_group 1 fname_in ^ ".tex"
-           else
-             Common.error (Printf.sprintf "Invalid input file name: %s.\n" fname_in)
-       in
-         match !out_kind with
-           | Wire.Graphics ->
-               let loop = ref true in
-               let reload = ref false in
-               let last_mtime = ref 0. in
-                 while !loop do
-                   if !reload then
-                     (
+       match !out_kind with
+         | Wire.Graphics ->
+             let loop = ref true in
+             let reload = ref true in
+             let last_mtime = ref 0. in
+               Graphics.open_graph "";
+               Graphics.resize_window 100 100;
+               while !loop do
+                 if !reload then
+                   (
+                     try
                        let m = parse_file fname_in in
                          Graphics.auto_synchronize false;
                          Graphics.clear_graph ();
                          ignore (Lang.process_matrix !out_kind m);
                          Graphics.set_window_title ("Strid - " ^ fname_in);
                          Graphics.auto_synchronize true;
-                         reload := false;
-                     );
-                   if !graphics_refresh then
-                     try
-                       Unix.sleep 1;
-                       let mtime = (Unix.stat fname_in).Unix.st_mtime in
-                         if mtime <> !last_mtime then
-                           (
-                             last_mtime := mtime;
-                             reload := true
-                           )
+                         reload := false
                      with
-                       | e ->
-                           Common.warning (Printexc.to_string e)
-                   else
-                     ignore (Graphics.wait_next_event [Graphics.Key_pressed]);
-                   if Graphics.key_pressed () then
-                     let k = Graphics.read_key () in
-                       if k = 'q' then
-                         loop := false
-                       else if k = 'r' then
-                         reload := true
-                 done;
-                 Graphics.close_graph ()
-           | _ ->
-               let fo = open_out fname_out in
-                 if !full_tex then
-                   (
-                     output_string fo "\\documentclass{article}\n";
-                     output_string fo
-                       (match !out_kind with
-                          | Wire.Tikz ->
-                              "\\usepackage{tikz}\n"
-                          | Wire.Pstricks ->
-                              "\\usepackage{pstricks}\n"
-                          | Wire.Graphics -> ""
-                       );
-                     output_string fo "\\begin{document}\n";
+                       | e -> Common.warning (Printf.sprintf "Ignoring error: %s." (Printexc.to_string e))
                    );
-                 output_string fo pst;
-                 if !full_tex then
-                   output_string fo "\\end{document}\n";
-                 close_out fo;
-                 Common.info (Printf.sprintf "Successfully generated %s." fname_out)
+                 if !graphics_refresh then
+                   try
+                     Unix.sleep 1;
+                     let mtime = (Unix.stat fname_in).Unix.st_mtime in
+                       if mtime <> !last_mtime then
+                         (
+                           last_mtime := mtime;
+                           reload := true
+                         )
+                   with
+                     | e ->
+                         Common.warning (Printexc.to_string e)
+                 else
+                    ignore (Graphics.wait_next_event [Graphics.Key_pressed]);
+                 if Graphics.key_pressed () then
+                   let k = Graphics.read_key () in
+                     if k = 'q' then
+                       loop := false
+                     else if k = 'r' then
+                       reload := true
+               done;
+               Graphics.close_graph ()
+         | _ ->
+             let m = parse_file fname_in in
+             let pst = Lang.process_matrix !out_kind m in
+             let fname_out =
+               if List.length !file_in = 1 && !file_out <> "" then
+                 !file_out
+               else
+                 if !file_out = "" && Str.string_match re_file_in fname_in 0 then
+                   Str.matched_group 1 fname_in ^ ".tex"
+                 else
+                   Common.error (Printf.sprintf "Invalid input file name: %s.\n" fname_in)
+             in
+             let fo = open_out fname_out in
+               if !full_tex then
+                 (
+                   output_string fo "\\documentclass{article}\n";
+                   output_string fo
+                     (match !out_kind with
+                        | Wire.Tikz ->
+                            "\\usepackage{tikz}\n"
+                        | Wire.Pstricks ->
+                            "\\usepackage{pstricks}\n"
+                        | Wire.Graphics -> ""
+                     );
+                   output_string fo "\\begin{document}\n";
+                 );
+               output_string fo pst;
+               if !full_tex then
+                 output_string fo "\\end{document}\n";
+               close_out fo;
+               Common.info (Printf.sprintf "Successfully generated %s." fname_out)
     ) !file_in
