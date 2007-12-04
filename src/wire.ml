@@ -410,8 +410,12 @@ object (self)
   method draw outkind =
     let x, y = position in
     let xr, yr = radius in
+    (* let style = deffound "" (fun () -> self#get_attr "style") in *)
+    let color = deffound "" (fun () -> self#get_attr "color") in
       match outkind with
         | Tikz ->
+            let color = if color = "" then "white" else color in
+            let color = "fill=" ^ color in
             let bw =
               deffound ""
                 (fun () ->
@@ -422,7 +426,7 @@ object (self)
                        ",line width = " ^ bw ^ "pt"
                 )
             in
-              Printf.sprintf "\\filldraw[fill=white%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" bw x y xr yr
+              Printf.sprintf "\\filldraw[%s%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" color bw x y xr yr
         | Pstricks ->
             let bw =
               deffound ""
