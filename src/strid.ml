@@ -140,7 +140,9 @@ let _ =
                          Graphics.auto_synchronize true;
                          reload := false
                      with
-                       | e -> Common.warning (Printf.sprintf "Ignoring error: %s." (Printexc.to_string e))
+                       | e ->
+                           Common.warning (Printf.sprintf "Ignoring error: %s." (Printexc.to_string e));
+                           reload := false
                    );
                  if !graphics_refresh then
                    try
