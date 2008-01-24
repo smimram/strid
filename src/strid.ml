@@ -98,6 +98,7 @@ let _ =
     ]
     (fun s -> file_in := s::!file_in)
     usage;
+  if !full_tex then Conf.set_bool "no_tex_environment" false;
   if !dump_conf then
     (
       if Conf.exists Conf.fname then
