@@ -195,7 +195,7 @@ let _ =
                             "\\usepackage{pstricks}\n"
                         | Wire.Graphics -> ""
                      );
-                   output_string fo ("\\begin{document}\n\\thispagestyle{empty}\n" ^ !latex_preamble ^ "\n");
+                   output_string fo ("\\begin{document}\n\\pagestyle{empty}\n" ^ !latex_preamble ^ "\n");
                  );
                output_string fo pst;
                if !full_tex then
