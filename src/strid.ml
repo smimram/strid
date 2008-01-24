@@ -98,7 +98,6 @@ let _ =
     ]
     (fun s -> file_in := s::!file_in)
     usage;
-  if !pdf_output then full_tex := true;
   if !dump_conf then
     (
       if Conf.exists Conf.fname then
@@ -184,13 +183,18 @@ let _ =
                    Common.error (Printf.sprintf "Invalid input file name: %s.\n" fname_in)
              in
              let fo = open_out fname_out in
-               if !full_tex then
+               if !full_tex || !pdf_output then
                  (
                    output_string fo "\\documentclass{article}\n";
                    output_string fo
                      (match !out_kind with
                         | Wire.Tikz ->
-                            "\\usepackage{tikz}\n"
+                            "\\usepackage{tikz}\n" ^
+                            (
+                              if !pdf_output then
+                                "\\usepackage[active,tightpage,textmath]{preview}\n\\PreviewEnvironment{tikzpicture}\n"
+                              else ""
+                            )
                         | Wire.Pstricks ->
                             "\\usepackage{pstricks}\n"
                         | Wire.Graphics -> ""
@@ -198,7 +202,7 @@ let _ =
                    output_string fo ("\\begin{document}\n\\pagestyle{empty}\n" ^ !latex_preamble ^ "\n");
                  );
                output_string fo pst;
-               if !full_tex then
+               if !full_tex || !pdf_output then
                  output_string fo "\\end{document}\n";
                close_out fo;
                Common.info (Printf.sprintf "Successfully generated %s." fname_out);
@@ -206,7 +210,6 @@ let _ =
                  let fname_out_chopped = Filename.chop_extension fname_out in
                  let fname_out_pdf = fname_out_chopped ^ ".pdf" in
                    assert ((Sys.command (Printf.sprintf "pdflatex '%s' > /dev/null" fname_out)) = 0);
-                   assert ((Sys.command (Printf.sprintf "pdfcrop '%s' '%s' > /dev/null" fname_out_pdf fname_out_pdf)) = 0);
                    assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux'" fname_out fname_out_chopped fname_out_chopped)) = 0);
                    Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
     ) !file_in
