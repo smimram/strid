@@ -192,7 +192,7 @@ let _ =
                             "\\usepackage{tikz}\n" ^
                             (
                               if !pdf_output then
-                                "\\usepackage[active,tightpage,textmath]{preview}\n\\PreviewEnvironment{tikzpicture}\n"
+                                "\\usepackage[active,tightpage]{preview}\n\\PreviewEnvironment{tikzpicture}\n"
                               else ""
                             )
                         | Wire.Pstricks ->
