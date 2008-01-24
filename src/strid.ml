@@ -23,11 +23,12 @@ open Lang
 let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref []
 let file_out = ref ""
-let full_tex = ref false
 let pdf_output = ref false
 let dump_conf = ref false
 let out_kind = ref Wire.Tikz
 let graphics_refresh = ref false
+let full_tex = ref false
+let latex_preamble = ref ""
 
 let get_pos d i j =
   (i*10, j*10)
@@ -87,8 +88,9 @@ let _ =
     [
       "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
       "--pdf", Arg.Set pdf_output, "\t\tGenerate a pdf file";
-      "--full-tex", Arg.Set full_tex, "\t\tFull LaTeX file";
       "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\tUse Graphics output";
+      "--latex-full", Arg.Set full_tex, "\t\tFull LaTeX file";
+      "--latex-preamble", Arg.Set_string latex_preamble, "\t\tLaTeX preamble";
       "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
       "-o", Arg.Set_string file_out, "\t\t\tOutput file";
       "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
@@ -193,7 +195,7 @@ let _ =
                             "\\usepackage{pstricks}\n"
                         | Wire.Graphics -> ""
                      );
-                   output_string fo "\\begin{document}\n\\thispagestyle{empty}\n";
+                   output_string fo ("\\begin{document}\n\\thispagestyle{empty}\n" ^ !latex_preamble ^ "\n");
                  );
                output_string fo pst;
                if !full_tex then
