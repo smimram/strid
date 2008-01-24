@@ -24,6 +24,7 @@ let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref []
 let file_out = ref ""
 let full_tex = ref false
+let pdf_output = ref false
 let dump_conf = ref false
 let out_kind = ref Wire.Tikz
 let graphics_refresh = ref false
@@ -85,6 +86,7 @@ let _ =
   Arg.parse
     [
       "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
+      "--pdf", Arg.Set pdf_output, "\t\tGenerate a pdf file";
       "--full-tex", Arg.Set full_tex, "\t\tFull LaTeX file";
       "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\tUse Graphics output";
       "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
@@ -94,6 +96,7 @@ let _ =
     ]
     (fun s -> file_in := s::!file_in)
     usage;
+  if !pdf_output then full_tex := true;
   if !dump_conf then
     (
       if Conf.exists Conf.fname then
@@ -190,11 +193,18 @@ let _ =
                             "\\usepackage{pstricks}\n"
                         | Wire.Graphics -> ""
                      );
-                   output_string fo "\\begin{document}\n";
+                   output_string fo "\\begin{document}\n\\thispagestyle{empty}\n";
                  );
                output_string fo pst;
                if !full_tex then
                  output_string fo "\\end{document}\n";
                close_out fo;
-               Common.info (Printf.sprintf "Successfully generated %s." fname_out)
+               Common.info (Printf.sprintf "Successfully generated %s." fname_out);
+               if !pdf_output then
+                 let fname_out_chopped = Filename.chop_extension fname_out in
+                 let fname_out_pdf = fname_out_chopped ^ ".pdf" in
+                   assert ((Sys.command (Printf.sprintf "pdflatex '%s' > /dev/null" fname_out)) = 0);
+                   assert ((Sys.command (Printf.sprintf "pdfcrop '%s' '%s' > /dev/null" fname_out_pdf fname_out_pdf)) = 0);
+                   assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux'" fname_out fname_out_chopped fname_out_chopped)) = 0);
+                   Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
     ) !file_in
