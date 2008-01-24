@@ -90,7 +90,7 @@ let _ =
       "--pdf", Arg.Set pdf_output, "\t\tGenerate a pdf file";
       "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\tUse Graphics output";
       "--latex-full", Arg.Set full_tex, "\t\tFull LaTeX file";
-      "--latex-preamble", Arg.Set_string latex_preamble, "\t\tLaTeX preamble";
+      "--latex-preamble", Arg.Set_string latex_preamble, "\tLaTeX preamble";
       "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
       "-o", Arg.Set_string file_out, "\t\t\tOutput file";
       "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
