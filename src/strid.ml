@@ -86,15 +86,15 @@ let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 let _ =
   Arg.parse
     [
-      "--dump-conf", Arg.Set dump_conf, ("\t\tDump configuration file in " ^ Conf.fname);
-      "--pdf", Arg.Set pdf_output, "\t\tGenerate a pdf file";
-      "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\tUse Graphics output";
-      "--latex-full", Arg.Set full_tex, "\t\tFull LaTeX file";
-      "--latex-preamble", Arg.Set_string latex_preamble, "\tLaTeX preamble";
-      "--no-tex-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
-      "-o", Arg.Set_string file_out, "\t\t\tOutput file";
-      "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\tScale the output";
-      "-t", Arg.String (fun s -> out_kind := kind_of_string s), "\t\t\tOutput type"
+      "--dump-conf", Arg.Set dump_conf, ("\t\t\tDump configuration file in " ^ Conf.fname);
+      "--pdf", Arg.Set pdf_output, "\t\t\tGenerate a pdf file";
+      "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\t\tUse Graphics output";
+      "--latex-full", Arg.Set full_tex, "\t\t\tFull LaTeX file";
+      "--latex-no-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
+      "--latex-preamble", Arg.Set_string latex_preamble, "\t\tLaTeX preamble";
+      "-o", Arg.Set_string file_out, "\t\t\t\tOutput file";
+      "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\t\tScale the output";
+      "-t", Arg.String (fun s -> out_kind := kind_of_string s), "\t\t\t\tOutput type"
     ]
     (fun s -> file_in := s::!file_in)
     usage;
