@@ -176,6 +176,7 @@ let _ =
              let pst = Lang.process_matrix !out_kind m in
              let fname_out =
                if List.length !file_in = 1 && !file_out <> "" then
+                 (* TODO: handle .pdf when in pdf_output mode *)
                  !file_out
                else
                  if !file_out = "" && Str.string_match re_file_in fname_in 0 then
@@ -208,9 +209,10 @@ let _ =
                close_out fo;
                Common.info (Printf.sprintf "Successfully generated %s." fname_out);
                if !pdf_output then
+                 let fname_out_dir = Filename.dirname fname_out in
                  let fname_out_chopped = Filename.chop_extension fname_out in
                  let fname_out_pdf = fname_out_chopped ^ ".pdf" in
-                   assert ((Sys.command (Printf.sprintf "pdflatex '%s' > /dev/null" fname_out)) = 0);
+                   assert ((Sys.command (Printf.sprintf "pdflatex -halt-on-error -output-directory '%s' '%s' > /dev/null" fname_out_dir fname_out)) = 0);
                    assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux'" fname_out fname_out_chopped fname_out_chopped)) = 0);
                    Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
     ) !file_in
