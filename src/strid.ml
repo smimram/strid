@@ -46,7 +46,8 @@ let parse_file f =
     let fi = open_in f in
     let flen = in_channel_length fi in
     let buf = String.create flen in
-      Common.debug (Printf.sprintf "Read %d bytes." (input fi buf 0 flen));
+      really_input fi buf 0 flen;
+      Common.debug (Printf.sprintf "Read %d bytes." flen);
       close_in fi;
       buf
   in
