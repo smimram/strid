@@ -375,12 +375,7 @@ let matrix_of_ir ir =
   Array.map (fun l -> Array.of_list l) (Array.of_list ir)
 
 let rec join_plines (plines:Wire.polyline list) =
-  let eq x y =
-    abs_float (y -. x) <= 10. *. min_float
-  in
-  let eq (x1,y1) (x2,y2) =
-    eq x1 x2 && eq y1 y2
-  in
+  let eq = float_approx2 in
   let rec find cur = function
     | [] -> []
     | h::t when eq cur#dst h#src ->

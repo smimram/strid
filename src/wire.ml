@@ -184,7 +184,7 @@ object (self)
 
   (** Append a polyline at the end. *)
   method append (pl:polyline) =
-    assert (self#dst = pl#src);
+    assert (float_approx2 self#dst pl#src);
     let s_a = self#get_attrs_float "a" in
     let s_l = self#length in
     let p_a = pl#get_attrs_float "a" in

@@ -77,3 +77,7 @@ let rec map_by_2 f = function
   | _ -> []
 
 let float_sign x = if x < 0. then -1. else 1.
+
+let float_approx x y = abs_float (y -. x) <= 10. *. epsilon_float
+
+let float_approx2 (x1,y1) (x2,y2) = float_approx x1 x2 && float_approx y1 y2
