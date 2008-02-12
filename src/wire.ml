@@ -209,7 +209,7 @@ object (self)
 
   (** Put a polyline before. *)
   method prepend (pl:polyline) =
-    assert (self#src = pl#dst);
+    assert (float_approx2 self#src pl#dst);
     let s_a = self#get_attrs_float "a" in
     let s_l = self#length in
     let p_a = pl#get_attrs_float "a" in
