@@ -374,19 +374,25 @@ type dir = Left | Right | Up | Down
 let matrix_of_ir ir =
   Array.map (fun l -> Array.of_list l) (Array.of_list ir)
 
-let rec join_plines plines =
+let rec join_plines (plines:Wire.polyline list) =
+  let eq x y =
+    abs_float (y -. x) <= 10. *. min_float
+  in
+  let eq (x1,y1) (x2,y2) =
+    eq x1 x2 && eq y1 y2
+  in
   let rec find cur = function
     | [] -> []
-    | h::t when cur#dst = h#src ->
+    | h::t when eq cur#dst h#src ->
         cur#append h;
         find cur t
-    | h::t when cur#src = h#dst ->
+    | h::t when eq cur#src h#dst ->
         cur#prepend h;
         find cur t
-    | h::t when cur#dst = h#dst ->
+    | h::t when eq cur#dst h#dst ->
         cur#append (h#rev);
         find cur t
-    | h::t when cur#src = h#src ->
+    | h::t when eq cur#src h#src ->
         cur#prepend (h#rev);
         find cur t
     | h::t ->
