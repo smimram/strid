@@ -36,7 +36,11 @@ type dir = Left | Right | Up | Down
 type line = box option list
 
 (** Intermediate representation of the matrix. *)
-type ir_matrix = line list
+type ir_matrix =
+    {
+      ir_options : string list;
+      ir_lines : line list;
+    }
 
 (** Abstract representation of a matrix. *)
 type matrix = box option array array

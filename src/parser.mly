@@ -34,8 +34,17 @@ defs:
     | matrix { $1 }
 
 matrix:
-    | MATRIX LACC matrix_lines RACC EOF { $3 }
+    | MATRIX matrix_options LACC matrix_lines RACC EOF { { ir_options = $2; ir_lines = $4 } }
 ;
+
+matrix_options:
+    | LBRACK matrix_opts RBRACK { $2 }
+    | LBRACK RBRACK { [] }
+    | { [] }
+
+matrix_opts:
+    | STRING COMMA matrix_opts { $1::$3 }
+    | STRING { [$1] }
 
 matrix_lines:
     | line matrix_lines { $1::$2 }
@@ -65,6 +74,7 @@ dir:
 
 options:
     | LBRACK STRING option_val RBRACK options { ($2, $3)::$5 }
+    | LBRACK RBRACK { [] }
     | { [] }
 ;
 

@@ -367,12 +367,41 @@ object (self)
 end
 
 type line = box option list
-type ir_matrix = line list
+type ir_matrix =
+    {
+      ir_options : string list;
+      ir_lines : line list;
+    }
 type matrix = box option array array
 type dir = Left | Right | Up | Down
 
 let matrix_of_ir ir =
-  Array.map (fun l -> Array.of_list l) (Array.of_list ir)
+  let matrix =
+    Array.map (fun l -> Array.of_list l) (Array.of_list ir.ir_lines)
+  in
+  let vmirror () =
+    let height = Array.length matrix in
+      Array.iter
+        (fun l ->
+           Array.iter
+             (function
+                | Some b ->
+                    b#set_connections (Array.map (fun (x,y) -> x,-.y) b#connections)
+                | None -> ()
+             ) l
+        ) matrix;
+      for i = 0 to (height - 1) / 2 do
+        let tmp = matrix.(i) in
+          matrix.(i) <- matrix.(height - 1 - i);
+          matrix.(height - 1 - i) <- tmp
+      done
+  in
+    List.iter
+      (function
+         | "vmirror" -> vmirror ()
+         | _ -> ()
+      ) ir.ir_options;
+    matrix
 
 let rec join_plines (plines:Wire.polyline list) =
   let eq = float_approx2 in
