@@ -9,14 +9,23 @@
 \usepackage{tikz}
 \usepackage{a4wide}
 
-
-
 \newcommand{\strid}{\textsl{strid}}
 \newcommand{\example}[1]{\begin{center}\fbox{\begin{minipage}{11cm}#1\end{minipage}}\end{center}}
 \newcommand{\cinput}[1]{\vcenter{\hbox{\input{#1}}}}
 
 \title{strid -- A string diagrams generator}
 \author{Samuel Mimram}
+
+\hypersetup{
+  pdftitle={\csname @title\endcsname},
+  pdfauthor={\csname @author\endcsname},
+  unicode=true,
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
 \begin{document}
 \maketitle
 \tableofcontents
