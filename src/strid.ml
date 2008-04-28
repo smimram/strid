@@ -160,6 +160,7 @@ let _ =
                            reload := true
                          )
                    with
+                     | Unix.Unix_error(Unix.ENOENT, _, _) -> () (* file not found *)
                      | e ->
                          Common.warning (Printexc.to_string e)
                  else
