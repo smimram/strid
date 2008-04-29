@@ -23,7 +23,7 @@ let fname = "strid.conf"
 let default_conf = [
   "arrow_height", "0.2";
   "arrow_length", "0.2";
-  "drive_braids", "true";
+  "drive_braids", "false";
   "graphics_scale", "50.";
   "interpolation", "cspline";
   "label_width", "0.8";
