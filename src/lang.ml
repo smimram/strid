@@ -186,7 +186,12 @@ object (self)
             let l = new Wire.line (circle_position pos c.(1)) (circle_position pos c.(2)) in
             let p2 = Wire.new_polyline [circle_position pos c.(2); c.(2)] in
             (* let q = Wire.new_polyline [c.(0); pos; c.(3)] in *)
-            let q = Wire.new_polyline [c.(0); circle_position pos c.(0); circle_position pos c.(3); c.(3)] in
+            let q =
+              if Conf.get_bool "drive_braids" then
+                Wire.new_polyline [c.(0); circle_position pos c.(0); circle_position pos c.(3); c.(3)]
+              else
+                Wire.new_polyline [c.(0); pos; c.(3)]
+            in
               l#add_attr "opacity" "0";
               p1#append_line l;
               p1#append p2;
@@ -263,7 +268,7 @@ object (self)
               done;
               !ans
         | k ->
-            warning (Printf.sprintf "Don't know lines for %s box." k); []
+            error (Printf.sprintf "Don't know lines for %s box." k)
 
   method get_label_decorations pos =
     let c = Array.map (Vect.add pos) self#connections in

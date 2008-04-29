@@ -23,6 +23,7 @@ let fname = "strid.conf"
 let default_conf = [
   "arrow_height", "0.2";
   "arrow_length", "0.2";
+  "drive_braids", "true";
   "graphics_scale", "50.";
   "interpolation", "cspline";
   "label_width", "0.8";
@@ -33,9 +34,9 @@ let default_conf = [
   "line_width", "0.5pt";
   "no_tex_environment", "false";
   "scaling_factor", "1.0";
+  "small_circle_ray", "2.0";
   "xscale", "1.0";
   "yscale", "1.0";
-  "small_circle_ray", "2.0"
 ]
 
 let conf = Hashtbl.create 100
