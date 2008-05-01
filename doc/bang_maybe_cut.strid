@@ -1,7 +1,7 @@
 matrix {
 \\
-unit(d)[l,t=#$!$#,s=triangle,d=d,c=lightgray]&&
-unit(d)[l,t=#$?$#,s=triangle,d=d,c=lightgray]\\
+&unit(d)[l,t=#$!$#,s=triangle,d=d,c=lightgray]&&
+unit(d)[l,t=#$?$#,s=triangle,d=d,c=lightgray]&\\
 \\
-&arc(ul,ur)&\\
+&&arc(ul,ur)&\\
 }

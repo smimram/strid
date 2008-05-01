@@ -2,7 +2,7 @@ matrix {
 \\
 &text(u)[l,t=#$\circ$#]
 && text(u)[l,t=#$[\![\mathcal{G}\A,\mathcal{G}\C]\!] \times \theta_\A$#]
-&& text(u)[l,t=#$\mathcal{G}$#] 
+&& text(u)[l,t=#$\mathcal{G}$#]
 && text(u)[l,t=#$\circ$#]&\\
 
 &line(u,)&&line(u,)&&line(u,)&&line(,u)& \\

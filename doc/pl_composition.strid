@@ -1,6 +1,6 @@
 matrix {
 \\
-region(6d6r)\\
+region(6d6r)&&&&&&\\
 &&&mult(dl,dr,uu)[l,t=#$f$#]\\
 \\
 &&mult(4dl,dr,u)[l,t=#$g$#]\\

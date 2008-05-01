@@ -1,20 +1,26 @@
 STRID=../src/strid
 STRIDFILES=$(wildcard *.strid)
-STRIDTEX=$(STRIDFILES:.strid=.tex)
+STRIDPDF=$(STRIDFILES:.strid=.pdf)
 
-all: $(STRIDTEX) stridman.pdf
+all: stridman.pdf
 
-stridman.pdf: $(STRIDTEX)
+stridman.pdf: $(STRIDPDF) bicat_nat_transfo_l.tex bicat_nat_transfo_r.tex
 
 clean:
 	rm -f *.log *.aux
-	rm -f $(STRIDTEX)
+	rm -f $(STRIDPDF)
 
 distclean: clean
 	rm -f stridman.pdf
 
-%.tex: %.strid strid.conf
+bicat_nat_transfo_l.tex: bicat_nat_transfo_l.strid
 	$(STRID) $<
+
+bicat_nat_transfo_r.tex: bicat_nat_transfo_r.strid
+	$(STRID) $<
+
+%.pdf: %.strid strid.conf
+	$(STRID) --pdf $<
 
 %.pdf: %.tex
 	pdflatex $<
