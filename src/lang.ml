@@ -275,7 +275,6 @@ object (self)
   method get_label_decorations pos =
     let c = Array.map (Vect.add pos) self#connections in
       match self#kind with
-        | "text" -> []
         | "region" ->
             let r = new Wire.rectangle pos c.(0) in
               r#add_attr "style" "dashed";
@@ -297,17 +296,30 @@ object (self)
                    if self#kind <> "operad" then
                      (* Do we have a label? *)
                      ignore (List.assoc "l" options)
-                   else
-                     ()
                  in
                  let shape =
                    deffound
                      (if self#kind = "operad" then
                         (* The default shape for operads is a triangle. *)
                         "triangle"
+                      else if self#kind = "text" then
+                        "none"
                       else
                         "ellipse")
                      (fun () -> self#get_attr "l" "s")
+                 in
+                 let pos =
+                   if self#kind = "text" then
+                     (
+                       let px, py = pos in
+                       let pxt, pyt =
+                         if Array.length c >= 1 then c.(0) else 0., 0.
+                       in
+                       let p = (px +. pxt) /. 2., (py +. pyt) /. 2. in
+                         p
+                     )
+                   else
+                     pos
                  in
                    match shape with
                      | "r"
