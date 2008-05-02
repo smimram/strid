@@ -20,7 +20,7 @@ bicat_nat_transfo_r.tex: bicat_nat_transfo_r.strid
 	$(STRID) $<
 
 %.pdf: %.strid strid.conf
-	$(STRID) --pdf $<
+	$(STRID) --pdf --latex-preamble "\\usepackage{stridman}" $<
 
 %.pdf: %.tex
 	pdflatex $<
