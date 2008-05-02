@@ -1,0 +1,7 @@
+matrix {
+\\
+&operad(d)[l,t=#$!$#,c=lightgray]&&
+operad(d)[l,t=#$?$#,c=lightgray]&\\
+\\
+&&arc(ul,ur)&\\
+}
