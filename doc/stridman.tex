@@ -259,10 +259,20 @@ For example,
 can be typeset by
 \verbatiminput{bang_maybe_cut.strid}
 
-Here, the \texttt{s} parameter is the shape (currently, only \texttt{ellipse}
-and \texttt{triangle} are available), the \texttt{d} parameter is the direction
-of the triangle and the \texttt{c} parameter specifies the color of the
-triangle.
+Here, the \texttt{s} parameter is the \emph{shape}, the \texttt{d} parameter is
+the \emph{direction} of the triangle (here it is pointing down) and the
+\texttt{c} parameter specifies the \emph{color} of the triangle. There are
+shortcuts for the shapes, for example you can type \texttt{s=t} instead of
+\texttt{s=triangle}, which is more concise but less readable.
+
+There is a particular case where the direction of the triangle can be guessed
+and you don't need to specify the direction of the triangle: when there is only
+one output port. The \texttt{operad} operator does precisely this.
+\[
+\cpdfinput{operad.pdf}
+\]
+can be typeset by
+\verbatiminput{operad.strid}
 
 \subsubsection{Rectangles: \texttt{rectangle} / \texttt{r}}
 \[
