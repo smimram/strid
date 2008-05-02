@@ -247,7 +247,9 @@ object (self)
                 in
                   ans := pl::!ans
               done;
-              let pl = Wire.new_polyline [pos; c.(i)]
+              let dir = Vect.normalize (Vect.sub c.(i) pos) in
+              (* The output of an operad starts from the end of the triangle. *)
+              let pl = Wire.new_polyline [List.hd (triangle_points pos dir height width); c.(i)]
               in
                 ans := pl::!ans;
                 !ans
