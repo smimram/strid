@@ -1,0 +1,7 @@
+matrix {
+text(d)[l,t=#$\N$#]&&text(d)[l,t=#$\N$#]\\
+\\
+&mult(ul,ur,d)[l,t=#$+$#]&\\
+\\
+&text(u)[l,t=#$\N$#]&\\
+}
