@@ -18,10 +18,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *)
 
+let newline = Str.regexp "\n"
+
 let debug s = () (* Printf.printf "[DD] %s\n%!" s *)
 let info = Printf.printf "[II] %s\n%!"
 let warning = Printf.printf "[WW] %s\n%!"
-let error e = Printf.printf "[EE] %s\n%!" e; exit 1
+let error e = Printf.printf "[EE] %s\n%!" (Str.global_replace newline "\n     " e); exit 1
 
 (** Do [f], returning a default value if [Not_found] is raised. *)
 let deffound v f =

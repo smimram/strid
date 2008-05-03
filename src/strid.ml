@@ -214,7 +214,10 @@ let _ =
                  let fname_out_dir = Filename.dirname fname_out in
                  let fname_out_chopped = Filename.chop_extension fname_out in
                  let fname_out_pdf = fname_out_chopped ^ ".pdf" in
-                   assert ((Sys.command (Printf.sprintf "pdflatex -halt-on-error -output-directory '%s' '%s' > /dev/null" fname_out_dir fname_out)) = 0);
-                   assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux'" fname_out fname_out_chopped fname_out_chopped)) = 0);
+                   if
+                     (Sys.command (Printf.sprintf "pdflatex -halt-on-error -output-directory '%s' '%s' > /dev/null" fname_out_dir fname_out)) <> 0
+                   then
+                     Common.error (Printf.sprintf "Error while compiling %s.\nThe error is likely to be indicated at the end of %s.log.\n(forgotten macro definition?)" fname_out fname_out_chopped);
+                   assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux' strid.latex.log" fname_out fname_out_chopped fname_out_chopped)) = 0);
                    Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
     ) !file_in
