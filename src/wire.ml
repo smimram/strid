@@ -124,7 +124,9 @@ object (self)
                   Graphics.moveto (fst s2) (snd s2);
                   Graphics.lineto (fst head) (snd head);
                   ""
-            | _ -> assert false
+            | Pstricks ->
+                Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)\n" (fst s1) (snd s1) (fst head) (snd head) ^
+                Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)\n" (fst s2) (snd s2) (fst head) (snd head)
       )
     else
       ""
@@ -459,7 +461,8 @@ object (self)
         | Tikz ->
             let color = if color = "" then "" else "fill=" ^ color in
               Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);\n" (if color = "" then "" else "fill") style color x1 y1 x2 y2
-        | Pstricks -> assert false
+        | Pstricks ->
+            Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)" x1 y1 x1 y2 x2 y2 x2 y1 x1 y1
         | Graphics ->
             let x1, y1 = graphics_scale (x1, y1) in
             let x2, y2 = graphics_scale (x2, y2) in
