@@ -24,6 +24,7 @@ let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref []
 let file_out = ref ""
 let pdf_output = ref false
+let ps_output = ref false
 let dump_conf = ref false
 let out_kind = ref Wire.Tikz
 let graphics_refresh = ref false
@@ -89,6 +90,7 @@ let _ =
     [
       "--dump-conf", Arg.Set dump_conf, ("\t\t\tDump configuration file in " ^ Conf.fname);
       "--pdf", Arg.Set pdf_output, "\t\t\tGenerate a pdf file";
+      "--ps", Arg.Set ps_output, "\t\t\t\tGenerate a postscript file";
       "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\t\tUse Graphics output";
       "--latex-full", Arg.Set full_tex, "\t\t\tFull LaTeX file";
       "--latex-no-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
@@ -187,6 +189,8 @@ let _ =
                    Common.error (Printf.sprintf "Invalid input file name: %s.\n" fname_in)
              in
              let fo = open_out fname_out in
+               if !ps_output then
+                 pdf_output := true;
                if !full_tex || !pdf_output then
                  (
                    output_string fo "\\documentclass{article}\n";
@@ -210,14 +214,25 @@ let _ =
                  output_string fo "\\end{document}\n";
                close_out fo;
                Common.info (Printf.sprintf "Successfully generated %s." fname_out);
-               if !pdf_output then
-                 let fname_out_dir = Filename.dirname fname_out in
-                 let fname_out_chopped = Filename.chop_extension fname_out in
-                 let fname_out_pdf = fname_out_chopped ^ ".pdf" in
-                   if
-                     (Sys.command (Printf.sprintf "pdflatex -halt-on-error -output-directory '%s' '%s' > /dev/null" fname_out_dir fname_out)) <> 0
-                   then
-                     Common.error (Printf.sprintf "Error while compiling %s.\nThe error is likely to be indicated at the end of %s.log.\n(forgotten macro definition?)" fname_out fname_out_chopped);
-                   assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux' strid.latex.log" fname_out fname_out_chopped fname_out_chopped)) = 0);
-                   Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
+               let fname_out_dir = Filename.dirname fname_out in
+               let fname_out_chopped = Filename.chop_extension fname_out in
+               let fname_out_pdf = fname_out_chopped ^ ".pdf" in
+                 if !pdf_output then
+                   (
+                     if
+                       (Sys.command (Printf.sprintf "pdflatex -halt-on-error -output-directory '%s' '%s' > /dev/null" fname_out_dir fname_out)) <> 0
+                     then
+                       Common.error (Printf.sprintf "Error while compiling %s.\nThe error is likely to be indicated at the end of %s.log.\n(forgotten macro definition?)" fname_out fname_out_chopped);
+                     assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux' strid.latex.log" fname_out fname_out_chopped fname_out_chopped)) = 0);
+                     Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
+                   );
+                 (* TODO: improve this... *)
+                 if !ps_output then
+                   let fname_out_ps = fname_out_chopped ^ ".ps" in
+                     assert (Sys.command (Printf.sprintf "echo \"%%!PS-Adobe-3.0\" > '%s'" fname_out_ps) = 0);
+                     assert (Sys.command (Printf.sprintf "echo -n \"%%%%BoundingBox: \" >> '%s'" fname_out_ps) = 0);
+                     assert (Sys.command (Printf.sprintf "echo \"`cat '%s' | grep -a MediaBox | sed 's/\\/MediaBox \\[\\(.*\\)\\]/\\1/'`\" >> '%s'" fname_out_pdf fname_out_ps) = 0);
+                     assert (Sys.command (Printf.sprintf "pdftops '%s' - | grep -v \"PS-Adobe-3.0\" | grep -v \"Produced by xpdf\" | grep -v \"DocumentMedia\" | grep -v \"translate\" >> '%s'" fname_out_pdf fname_out_ps) = 0);
+                     Sys.remove fname_out_pdf;
+                     Common.info (Printf.sprintf "Successfully generated %s." fname_out_ps)
     ) !file_in
