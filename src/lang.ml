@@ -205,6 +205,12 @@ object (self)
             in
               on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
               [l]
+        | "antipode" ->
+            let l1 = Wire.new_polyline [c.(0); pos] in
+            let l2 = Wire.new_polyline [pos; c.(1)] in
+              on_some (fun t -> l1#add_attr_float "a" t; l2#add_attr_float "a" t) self#get_arrow;
+              l1#append l2;
+              [l1]
         | "adj" ->
             let l = Wire.new_polyline [c.(0); pos; c.(1)] in
               on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
@@ -279,6 +285,7 @@ object (self)
             let r = new Wire.rectangle pos c.(0) in
               r#add_attr "style" "dashed";
               [r]
+        | "antipode"
         | "unit" when not (self#has_attr "l") ->
             [new Wire.ellipse pos (0.14, 0.14)]
         | "vbox" ->
