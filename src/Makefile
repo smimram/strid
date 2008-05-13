@@ -5,6 +5,8 @@ LIBS=str unix graphics
 
 all: nc
 
+debug: dnc
+
 test: all
 	./strid --full-tex test.strid
 	pdflatex test.tex > /dev/null

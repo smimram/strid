@@ -206,11 +206,14 @@ object (self)
               on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
               [l]
         | "antipode" ->
-            let l1 = Wire.new_polyline [c.(0); pos] in
-            let l2 = Wire.new_polyline [pos; c.(1)] in
-              on_some (fun t -> l1#add_attr_float "a" t; l2#add_attr_float "a" t) self#get_arrow;
-              l1#append l2;
-              [l1]
+            if Array.length c <= 1 then
+              []
+            else
+              let l1 = Wire.new_polyline [c.(0); pos] in
+              let l2 = Wire.new_polyline [pos; c.(1)] in
+                on_some (fun t -> l1#add_attr_float "a" t; l2#add_attr_float "a" t) self#get_arrow;
+                l1#append l2;
+                [l1]
         | "adj" ->
             let l = Wire.new_polyline [c.(0); pos; c.(1)] in
               on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
