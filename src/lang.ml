@@ -425,10 +425,34 @@ let matrix_of_ir ir =
           matrix.(height - 1 - i) <- tmp
       done
   in
+  let hmirror () =
+    let height = Array.length matrix in
+    let width = Array.fold_left (fun n a -> max n (Array.length a)) 0 matrix in
+      Array.iter
+        (fun l ->
+           Array.iter
+             (function
+                | Some b ->
+                    b#set_connections (Array.map (fun (x,y) -> -.x,y) b#connections)
+                | None -> ()
+             ) l
+        ) matrix;
+      for i = 0 to height - 1 do
+        let m = matrix.(i) in
+        let m = Array.init width (fun j -> if j < Array.length m then m.(j) else None) in
+          for j = 0 to (width - 1) / 2 do
+            let tmp = m.(j) in
+              m.(j) <- m.(width - 1 - j);
+              m.(width - 1 - j) <- tmp
+          done;
+          matrix.(i) <- m
+      done
+  in
     List.iter
       (function
          | "vmirror" -> vmirror ()
-         | _ -> ()
+         | "hmirror" -> hmirror ()
+         | m -> error (Printf.sprintf "Unknown matrix modifier: %s." m)
       ) ir.ir_options;
     matrix
 
