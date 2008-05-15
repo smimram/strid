@@ -30,6 +30,7 @@ let out_kind = ref Wire.Tikz
 let graphics_refresh = ref false
 let full_tex = ref false
 let latex_preamble = ref ""
+let conf = ref Conf.fname
 
 let get_pos d i j =
   (i*10, j*10)
@@ -88,6 +89,7 @@ let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 let _ =
   Arg.parse
     [
+      "--config", Arg.Set_string conf, "\t\t\tUse a specific configuration file";
       "--dump-conf", Arg.Set dump_conf, ("\t\t\tDump configuration file in " ^ Conf.fname);
       "--pdf", Arg.Set pdf_output, "\t\t\tGenerate a pdf file";
       "--ps", Arg.Set ps_output, "\t\t\t\tGenerate a postscript file";
@@ -104,23 +106,23 @@ let _ =
   if !full_tex then Conf.set_bool "no_tex_environment" false;
   if !dump_conf then
     (
-      if Conf.exists Conf.fname then
+      if Conf.exists !conf then
         (
-          Conf.read Conf.fname;
-          Conf.save Conf.fname;
-          Common.info (Printf.sprintf "Configuration file %s updated." Conf.fname)
+          Conf.read !conf;
+          Conf.save !conf;
+          Common.info (Printf.sprintf "Configuration file %s updated." !conf)
         )
       else
         (
-          Conf.save Conf.fname;
-          Common.info (Printf.sprintf "Configuration file saved in %s." Conf.fname)
+          Conf.save !conf;
+          Common.info (Printf.sprintf "Configuration file saved in %s." !conf)
         );
       exit 0
     );
-  if Conf.exists Conf.fname then
+  if Conf.exists !conf then
     (
-      Conf.read Conf.fname;
-      Common.info (Printf.sprintf "Read configuration file %s." Conf.fname)
+      Conf.read! conf;
+      Common.info (Printf.sprintf "Read configuration file %s." !conf)
     );
   if !file_in = [] then
     (
