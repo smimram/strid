@@ -516,7 +516,8 @@ object (self)
             Printf.sprintf "\\rput(%.2f,%.2f){%s}\n" x y text
         | Graphics ->
             let x, y = graphics_scale (x, y) in
-              Graphics.moveto x y;
+            let dx, dy = Graphics.text_size text in
+              Graphics.moveto (x - dx / 2) (y - dy / 2);
               Graphics.draw_string text;
               ""
 end
