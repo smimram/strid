@@ -235,6 +235,17 @@ object (self)
                 ) c
             in
               Array.to_list u
+        | "hbox" ->
+            let _, py = pos in
+            let u =
+              Array.map
+                (fun (x,y) ->
+                   let l = Wire.new_polyline [x,y; x,py+.y*.epsilon] in
+                     on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+                     l
+                ) c
+            in
+              Array.to_list u
         | "operad" ->
             let i = Array.length c - 1 in
             let px, py = pos in
@@ -297,6 +308,14 @@ object (self)
             let px, py = pos in
             let y, y' = Array.fold_left (fun (y,y') (_,cy) -> min y cy, max y' cy) (py,py) c in
             let r = new Wire.rectangle (px-.dx,y-.dy) (px+.dx,y'+.dy) in
+              r#add_attr "color" (self#get_attr "l" ~d:"white" "s");
+              [r]
+        | "hbox" ->
+            let dx = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_width") "w") /. 2. in
+            let dy = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_height") "h") /. 2. in
+            let px, py = pos in
+            let x, x' = Array.fold_left (fun (x,x') (cx,_) -> min x cx, max x' cx) (px,px) c in
+            let r = new Wire.rectangle (x-.dx,py-.dy) (x'+.dx,py+.dy) in
               r#add_attr "color" (self#get_attr "l" ~d:"white" "s");
               [r]
         | _ ->
