@@ -229,7 +229,7 @@ object (self)
             let u =
               Array.map
                 (fun (x,y) ->
-                   let l = Wire.new_polyline [x,y; px+.x*.epsilon,y] in
+                   let l = Wire.new_polyline [x,y; px+.(x+.2.)*.epsilon,y] in
                      on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
                      l
                 ) c
@@ -240,7 +240,7 @@ object (self)
             let u =
               Array.map
                 (fun (x,y) ->
-                   let l = Wire.new_polyline [x,y; x,py+.y*.epsilon] in
+                   let l = Wire.new_polyline [x,y; x,py+.(y+.2.)*.epsilon] in
                      on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
                      l
                 ) c
