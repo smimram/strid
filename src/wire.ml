@@ -471,6 +471,8 @@ object (self)
         | Graphics ->
             let x1, y1 = graphics_scale (x1, y1) in
             let x2, y2 = graphics_scale (x2, y2) in
+            let x1, x2 = min x1 x2, max x1 x2 in
+            let y1, y2 = min y1 y2, max y1 y2 in
               if color <> "" then
                 (
                   Graphics.set_color Graphics.white;
