@@ -548,7 +548,7 @@ let process_matrix kind m =
            Graphics.open_graph "";
            Graphics.resize_window (max w (Graphics.size_x ())) (max h (Graphics.size_y ()));
            Graphics.set_color (Graphics.rgb 200 200 200);
-           Graphics.draw_poly_line [|0, h; h, w; w, 0|];
+           Graphics.draw_poly_line [|0, h; w, h; w, 0|];
            (* Graphics.draw_rect 0 0 w h; *)
            Graphics.set_color Graphics.black;
            Graphics.set_window_title "Strid";
