@@ -297,7 +297,7 @@ object (self)
       match self#kind with
         | "region" ->
             let r = new Wire.rectangle pos c.(0) in
-              r#add_attr "style" "dashed";
+              r#add_attr "style" (self#get_attr "l" ~d:"dashed" "b"); (* border line *)
               [r]
         | "antipode"
         | "unit" when not (self#has_attr "l") ->
