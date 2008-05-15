@@ -33,7 +33,7 @@ end
 type dir = Left | Right | Up | Down
 
 (** A line of the matrix. *)
-type line = box option list
+type line = box list list
 
 (** Intermediate representation of the matrix. *)
 type ir_matrix =
@@ -43,7 +43,7 @@ type ir_matrix =
     }
 
 (** Abstract representation of a matrix. *)
-type matrix = box option array array
+type matrix = box list array array
 
 (** Get a matrix from the intermediate representation. *)
 val matrix_of_ir : ir_matrix -> matrix

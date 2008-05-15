@@ -52,10 +52,13 @@ matrix_lines:
 ;
 
 line:
-    | box NEWCOL line { (Some $1)::$3 }
-    | NEWCOL line { None::$2 }
-    | box NEWLINE { [Some $1] }
-    | NEWLINE { [None] }
+    | boxes NEWCOL line { $1::$3 }
+    | boxes NEWLINE { [$1] }
+;
+
+boxes:
+    | box boxes { $1::$2 }
+    | { [] }
 ;
 
 box:

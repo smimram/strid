@@ -414,13 +414,13 @@ object (self)
               )
 end
 
-type line = box option list
+type line = box list list
 type ir_matrix =
     {
       ir_options : string list;
       ir_lines : line list;
     }
-type matrix = box option array array
+type matrix = box list array array
 type dir = Left | Right | Up | Down
 
 let matrix_of_ir ir =
@@ -432,10 +432,11 @@ let matrix_of_ir ir =
       Array.iter
         (fun l ->
            Array.iter
-             (function
-                | Some b ->
+             (fun b ->
+                List.iter
+                  (fun b ->
                     b#set_connections (Array.map (fun (x,y) -> x,-.y) b#connections)
-                | None -> ()
+                  ) b
              ) l
         ) matrix;
       for i = 0 to (height - 1) / 2 do
@@ -450,15 +451,16 @@ let matrix_of_ir ir =
       Array.iter
         (fun l ->
            Array.iter
-             (function
-                | Some b ->
+             (fun b ->
+                List.iter
+                  (fun b ->
                     b#set_connections (Array.map (fun (x,y) -> -.x,y) b#connections)
-                | None -> ()
+                  ) b
              ) l
         ) matrix;
       for i = 0 to height - 1 do
         let m = matrix.(i) in
-        let m = Array.init width (fun j -> if j < Array.length m then m.(j) else None) in
+        let m = Array.init width (fun j -> if j < Array.length m then m.(j) else []) in
           for j = 0 to (width - 1) / 2 do
             let tmp = m.(j) in
               m.(j) <- m.(width - 1 - j);
@@ -504,13 +506,13 @@ let process_matrix kind m =
   let ldeco = ref [] in
   let texts = ref [] in
   let add_box pos b =
-    match b with
-      | None -> ()
-      | Some b ->
-          debug (Printf.sprintf "New %s box." b#kind);
-          plines := !plines@b#get_plines pos;
-          ldeco := !ldeco@b#get_label_decorations pos;
-          texts := !texts@b#get_texts pos
+    List.iter
+      (fun b ->
+         debug (Printf.sprintf "New %s box." b#kind);
+         plines := !plines@b#get_plines pos;
+         ldeco := !ldeco@b#get_label_decorations pos;
+         texts := !texts@b#get_texts pos
+      ) b
   in
   let height = Array.length m - 1 in
   let width = ref 0 in
