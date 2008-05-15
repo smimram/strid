@@ -444,7 +444,12 @@ object (self)
         | Graphics ->
             let x, y = graphics_scale (x, y) in
             let xr, yr = graphics_scale (xr, yr) in
-              Graphics.draw_ellipse x y xr yr;
+            let bw = deffound "" (fun () -> self#get_attr "border width") in
+              Graphics.set_color Graphics.white;
+              Graphics.fill_ellipse x y xr yr;
+              Graphics.set_color Graphics.black;
+              if bw <> "0" then
+                Graphics.draw_ellipse x y xr yr;
               ""
 end
 
