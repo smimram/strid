@@ -76,7 +76,7 @@ let ortho_point center point dir dir2 =
   let (qx,qy) = dir2 in
   let (dx,dy) =
     begin
-      if ((dx = 0.) && (dy = 0.))
+      if true (* ((dx = 0.) && (dy = 0.)) *)
       then (qx-.px,qy-.py)
       else (dx,dy);
     end;
