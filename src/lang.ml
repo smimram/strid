@@ -414,6 +414,34 @@ object (self)
               )
 end
 
+exception Invalid_box of string
+
+let make_box kind connections options =
+  let arity = List.length connections in
+  let arity_ok =
+    match kind with
+      | "mult" -> arity = 3
+      | "arc" -> arity = 2
+      | "sym" -> arity = 4
+      | "braid" -> arity = 4
+      | "line" -> arity <= 2
+      | "antipode" -> arity <= 2
+      | "adj" -> arity = 2
+      | "unit" -> arity = 1
+      | "text" -> arity = 1
+      | "vbox" | "hbox" -> true
+      | "region" -> arity <= 2
+      | "operad" -> arity >= 1
+      | k when Str.string_match re_box k 0 ->
+          let i = int_of_string (Str.matched_group 1 k) in
+          let o = int_of_string (Str.matched_group 2 k) in
+            arity = i + o
+      | _ -> raise (Invalid_box (Printf.sprintf "%s is not a valid box type." kind))
+  in
+    if not arity_ok then
+      raise (Invalid_box (Printf.sprintf "%s boxes cannot have %d arguments." kind arity));
+    new box kind connections options
+
 type line = box list list
 type ir_matrix =
     {

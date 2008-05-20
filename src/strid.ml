@@ -81,6 +81,19 @@ let parse_file f =
                 failwith err
               else
                 Common.error err
+        | Invalid_box e ->
+            let pos = (Lexing.lexeme_end_p lexbuf) in
+            let err =
+              Printf.sprintf "Error at word \"%s\", line %d, character %d: %s"
+                (Lexing.lexeme lexbuf)
+                pos.Lexing.pos_lnum
+                (pos.Lexing.pos_cnum - pos.Lexing.pos_bol)
+                e
+            in
+              if !out_kind = Wire.Graphics then
+                failwith err
+              else
+                Common.error err
   in
     matrix_of_ir ir
 

@@ -5,6 +5,8 @@ type opt = string * (string * string) list
   * direction. *)
 val reldir_of_string : string -> float * float
 
+exception Invalid_box of string
+
 (** [box name dirs opts] creates a new object representing an operation of kind
   * [name] with [dirs] as relative positions for inputs and outputs and [opt] as
   * options. *)
@@ -28,6 +30,8 @@ object
   (** Set the connexions. *)
   method set_connections : Wire.reldir array -> unit
 end
+
+val make_box : string -> Wire.reldir list -> opt list -> box
 
 (** A relative direction. *)
 type dir = Left | Right | Up | Down

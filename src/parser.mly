@@ -62,7 +62,7 @@ boxes:
 ;
 
 box:
-    | STRING LPAR directions RPAR options { new box $1 $3 $5 }
+    | STRING LPAR directions RPAR options { make_box $1 $3 $5 }
 ;
 
 directions:
