@@ -417,18 +417,18 @@ object (self)
       match outkind with
         | Tikz ->
             let color = if color = "" then "white" else color in
-            let color = "fill=" ^ color in
+            let fcolor = "fill=" ^ color in
             let bw =
               deffound ""
                 (fun () ->
                    let bw = self#get_attr "border width" in
                      if bw = "0" then
-                       ",white"
+                       "," ^ color
                      else
                        ",line width = " ^ bw ^ "pt"
                 )
             in
-              Printf.sprintf "\\filldraw[%s%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" color bw x y xr yr
+              Printf.sprintf "\\filldraw[%s%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" fcolor bw x y xr yr
         | Pstricks ->
             let bw =
               deffound ""
