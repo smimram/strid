@@ -30,6 +30,7 @@ let out_kind = ref Wire.Tikz
 let graphics_refresh = ref false
 let full_tex = ref false
 let latex_preamble = ref ""
+let latex_postamble = ref ""
 let conf = ref Conf.fname
 
 let get_pos d i j =
@@ -110,6 +111,7 @@ let _ =
       "--latex-full", Arg.Set full_tex, "\t\t\tFull LaTeX file";
       "--latex-no-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
       "--latex-preamble", Arg.Set_string latex_preamble, "\t\tLaTeX preamble";
+      "--latex-postamble", Arg.Set_string latex_postamble, "\t\tLaTeX postamble";
       "-o", Arg.Set_string file_out, "\t\t\t\tOutput file";
       "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\t\tScale the output";
       "-t", Arg.String (fun s -> out_kind := kind_of_string s), "\t\t\t\tOutput type"
@@ -222,7 +224,7 @@ let _ =
                             "\\usepackage{pstricks}\n"
                         | Wire.Graphics -> ""
                      );
-                   output_string fo (!latex_preamble ^ "\n\\begin{document}\n\\pagestyle{empty}\n");
+                   output_string fo (!latex_preamble ^ "\n\\begin{document}\n\\pagestyle{empty}\n" ^ !latex_postamble ^ "\n");
                  );
                output_string fo pst;
                if !full_tex || !pdf_output then
