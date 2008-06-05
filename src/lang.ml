@@ -270,8 +270,7 @@ object (self)
                 in
                   ans := pl::!ans
               done;
-              let pl = Wire.new_polyline [List.hd (triangle_points pos dir height width); c.(i)]
-              in
+              let pl = Wire.new_polyline [List.hd tp; c.(i)] in
                 ans := pl::!ans;
                 !ans
         | k when Str.string_match re_box k 0 ->
