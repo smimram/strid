@@ -24,6 +24,8 @@ let epsilon = 1000. *. epsilon_float
 
 let pi = 4. *. atan 1.
 
+let marie_number = (sqrt 5. -. 1.) /. 2.
+
 let iffound f =
   try f () with Not_found -> ()
 
@@ -94,10 +96,12 @@ let triangle_points pos dir height width =
   let px, py = pos in
   let dx, dy = dir in
   let ox, oy = Vect.orthogonal dir in
-  let r = height /. 2. in
+  let coeff =  marie_number in
+  let r = height *. coeff in
+  let r' = height *. (1. -. coeff) in
   let up = px +. r *. dx, py +. r *. dy in
-  let left = px -. r *. dx +. width /. 2. *. ox, py -. r *. dy +. width /. 2. *. oy in
-  let right = px -. r *. dx -. width /. 2. *. ox, py -. r *. dy -. width /. 2. *. oy in
+  let left = px -. r' *. dx +. width /. 2. *. ox, py -. r' *. dy +. width /. 2. *. oy in
+  let right = px -. r' *. dx -. width /. 2. *. ox, py -. r' *. dy -. width /. 2. *. oy in
     [up; left; right; up]
 
 let middle p q =
@@ -185,7 +189,7 @@ object (self)
             let p1 = Wire.new_polyline [c.(1); circle_position pos c.(1)] in
             let l = new Wire.line (circle_position pos c.(1)) (circle_position pos c.(2)) in
             let p2 = Wire.new_polyline [circle_position pos c.(2); c.(2)] in
-            (* let q = Wire.new_polyline [c.(0); pos; c.(3)] in *)
+              (* let q = Wire.new_polyline [c.(0); pos; c.(3)] in *)
             let q =
               if Conf.get_bool "drive_braids" then
                 Wire.new_polyline [c.(0); circle_position pos c.(0); circle_position pos c.(3); c.(3)]
@@ -198,10 +202,10 @@ object (self)
               [p1; q]
         | "line" ->
             let l = Wire.new_polyline
-                      (if Array.length c >= 2 then
-                         [c.(0); pos; c.(1)]
-                       else
-                         [pos; c.(0)])
+              (if Array.length c >= 2 then
+                 [c.(0); pos; c.(1)]
+               else
+                 [pos; c.(0)])
             in
               on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
               [l]
@@ -248,27 +252,24 @@ object (self)
               Array.to_list u
         | "operad" ->
             let i = Array.length c - 1 in
-            let px, py = pos in
             let ans = ref [] in
             let height = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height") "h" in
             let width = self#get_attr_float "l" ~d:(Conf.get_float "label_triangle_height" *. 2. /. sqrt 3.) "w" in
-            let dx,dy = Vect.normalize (Vect.sub c.(i) pos) in
-            let ox,oy = Vect.normalize (orthogonal c.(i) pos) in
+            let dir = Vect.normalize (Vect.sub c.(i) pos) in
+            let tp = triangle_points pos dir height width in
+            let right_x, right_y = List.hd (List.tl tp) in
+            let left_x, left_y = List.hd (List.tl (List.tl tp)) in
               for n = 0 to i - 1 do
                 let pl =
                   Wire.new_polyline
                     [
                       c.(n);
-                      px +. ox *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
-                      -. dx *. height /. 2.,
-                      py +. oy *. width *. ((float_of_int n +. 1.) /. (float_of_int i +. 1.)  -. 1. /. 2.)
-                      -. dy *. height /. 2.
+                      left_x +. (float_of_int n +. 1.) /. (float_of_int i +. 1.) *. (right_x -. left_x),
+                      left_y +. (float_of_int n +. 1.) /. (float_of_int i +. 1.) *. (right_y -. left_y)
                     ]
                 in
                   ans := pl::!ans
               done;
-              let dir = Vect.normalize (Vect.sub c.(i) pos) in
-              (* The output of an operad starts from the end of the triangle. *)
               let pl = Wire.new_polyline [List.hd (triangle_points pos dir height width); c.(i)]
               in
                 ans := pl::!ans;
