@@ -38,6 +38,12 @@ let graphics_scale (x,y) =
     int_of_float (x *. gs *. xs),
     int_of_float (y *. gs *. ys)
 
+let graphics_color_of_string ?(d=Graphics.black) c =
+  match c with
+    | "white" -> Graphics.white
+    | "black" -> Graphics.black
+    | _ -> d
+
 let compl_arrow t =
   let sign = float_sign t in
   let t = abs_float t in
@@ -445,7 +451,7 @@ object (self)
             let x, y = graphics_scale (x, y) in
             let xr, yr = graphics_scale (xr, yr) in
             let bw = deffound "" (fun () -> self#get_attr "border width") in
-              Graphics.set_color Graphics.white;
+              Graphics.set_color (graphics_color_of_string ~d:Graphics.white color);
               Graphics.fill_ellipse x y xr yr;
               Graphics.set_color Graphics.black;
               if bw <> "0" then
