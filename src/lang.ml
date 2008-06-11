@@ -143,6 +143,13 @@ object (self)
     with
       | Not_found -> false
 
+  method private has_subattr name subname =
+    try
+      ignore (self#get_attr name subname);
+      true
+    with
+      | Not_found -> false
+
   method kind = kind
 
   val mutable connections = Array.of_list connections
@@ -300,8 +307,10 @@ object (self)
               r#add_attr "style" (self#get_attr "l" ~d:"dashed" "b"); (* border line *)
               [r]
         | "antipode"
-        | "unit" when not (self#has_attr "l") ->
-            [new Wire.ellipse pos (0.14, 0.14)]
+        | "unit" when not (self#has_subattr "l" "t") ->
+            let e = new Wire.ellipse pos (0.14, 0.14) in
+              iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));
+              [e]
         | "vbox" ->
             let dx = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_width") "w") /. 2. in
             let dy = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_height") "h") /. 2. in
