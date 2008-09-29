@@ -308,7 +308,15 @@ object (self)
             let r = new Wire.rectangle pos c.(0) in
               r#add_attr "style" (self#get_attr "l" ~d:"dashed" "b"); (* border line *)
               [r]
-        | "antipode"
+        | "antipode" ->
+            let e = new Wire.ellipse pos (0.14, 0.14) in
+              (
+                try
+                  e#add_attr "color" (self#get_attr "l" "c")
+                with
+                  | Not_found -> e#add_attr "color" (Conf.get "antipode_color")
+              );
+              [e]
         | "unit" when not (self#has_subattr "l" "t") ->
             let e = new Wire.ellipse pos (0.14, 0.14) in
               iffound (fun () -> e#add_attr "color" (self#get_attr "l" "c"));

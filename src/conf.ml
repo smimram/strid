@@ -21,6 +21,7 @@
 let fname = "strid.conf"
 
 let default_conf = [
+  "antipode_color", "white";
   "arrow_height", "0.2";
   "arrow_length", "0.2";
   "drive_braids", "false";
