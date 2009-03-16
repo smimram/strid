@@ -42,6 +42,7 @@ let graphics_color_of_string ?(d=Graphics.black) c =
   match c with
     | "white" -> Graphics.white
     | "black" -> Graphics.black
+    | "red" -> Graphics.red
     | _ -> d
 
 let compl_arrow t =
@@ -264,6 +265,7 @@ object (self)
     let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+          let color = deffound "" (fun () -> self#get_attr "color") in
           (* let points = remove_consecutive_dups points in *)
           match points with
             | (x1,y1)::(x2,y2)::[] ->
@@ -280,14 +282,17 @@ object (self)
                   (
                     match outkind with
                       | Tikz ->
-                          Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" x1 y1 x2 y2
+                          let color = if color = "" then "" else "color=" ^ color in
+                            Printf.sprintf "\\draw[%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color x1 y1 x2 y2
                       | Pstricks ->
                           Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
                       | Graphics ->
                           let x1, y1 = graphics_scale (x1, y1) in
                           let x2, y2 = graphics_scale (x2, y2) in
+                            Graphics.set_color (graphics_color_of_string color);
                             Graphics.moveto x1 y1;
                             Graphics.lineto x2 y2;
+                            Graphics.set_color Graphics.black;
                             ""
                   ) ^ arrows
             | _::[] | [] -> failwith "Drawing empty line."

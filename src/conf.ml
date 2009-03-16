@@ -35,6 +35,7 @@ let default_conf = [
   "line_width", "0.5pt";
   "no_tex_environment", "false";
   "scaling_factor", "1.0";
+  "show_grid", "false";
   "small_circle_ray", "2.0";
   "xscale", "1.0";
   "yscale", "1.0";

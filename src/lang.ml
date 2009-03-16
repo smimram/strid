@@ -570,6 +570,20 @@ let process_matrix kind m =
           add_box (float_of_int j, float_of_int (height - i)) m.(i).(j)
         done
     done;
+    if Conf.get_bool "show_grid" then
+      (
+        for i = 0 to !width do
+          for j = 0 to height do
+            let i = float i in
+            let j = float j in
+            let wh = Wire.new_polyline [i-.0.1,j; i+.0.1,j] in
+            let wv = Wire.new_polyline [i,j-.0.1; i,j+.0.1] in
+              wh#add_attr "color" "red";
+              wv#add_attr "color" "red";
+              plines := wh :: wv :: !plines
+          done
+        done
+      );
     out :=
     (match kind with
        | Wire.Tikz ->

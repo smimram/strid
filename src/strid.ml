@@ -102,20 +102,23 @@ let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 
 let _ =
   Arg.parse
-    [
-      "--config", Arg.Set_string conf, "\t\t\tUse a specific configuration file";
-      "--dump-conf", Arg.Set dump_conf, ("\t\t\tDump configuration file in " ^ Conf.fname);
-      "--pdf", Arg.Set pdf_output, "\t\t\tGenerate a pdf file";
-      "--ps", Arg.Set ps_output, "\t\t\t\tGenerate a postscript file";
-      "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), "\t\t\t\tUse Graphics output";
-      "--latex-full", Arg.Set full_tex, "\t\t\tFull LaTeX file";
-      "--latex-no-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), "\tDon't output LaTeX environment";
-      "--latex-preamble", Arg.Set_string latex_preamble, "\t\tLaTeX preamble";
-      "--latex-postamble", Arg.Set_string latex_postamble, "\t\tLaTeX postamble";
-      "-o", Arg.Set_string file_out, "\t\t\t\tOutput file";
-      "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), "\t\t\tScale the output";
-      "-t", Arg.String (fun s -> out_kind := kind_of_string s), "\t\t\t\tOutput type"
-    ]
+    (Arg.align
+       [
+         "--config", Arg.Set_string conf, " Use a specific configuration file";
+         "--dump-conf", Arg.Set dump_conf, (" Dump configuration file in " ^ Conf.fname);
+         "--pdf", Arg.Set pdf_output, " Generate a pdf file";
+         "--ps", Arg.Set ps_output, " Generate a postscript file";
+         "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), " Use Graphics output";
+         "--latex-full", Arg.Set full_tex, " Full LaTeX file";
+         "--latex-no-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), " Don't output LaTeX environment";
+         "--latex-preamble", Arg.Set_string latex_preamble, " LaTeX preamble";
+         "--latex-postamble", Arg.Set_string latex_postamble, " LaTeX postamble";
+         "-o", Arg.Set_string file_out, " Output file";
+         "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), " Scale the output";
+         "--show-grid", Arg.Unit (fun () -> Conf.set_bool "show_grid" true), " Show grid points";
+         "-t", Arg.String (fun s -> out_kind := kind_of_string s), " Output type"
+       ]
+    )
     (fun s -> file_in := s::!file_in)
     usage;
   if !full_tex then Conf.set_bool "no_tex_environment" false;
