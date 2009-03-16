@@ -210,7 +210,7 @@ object (self)
         | "line" ->
             let l = Wire.new_polyline
               (if Array.length c >= 2 then
-                 [c.(0); pos; c.(1)]
+                 [c.(0); pos]@(List.tl (Array.to_list c))
                else
                  [pos; c.(0)])
             in
@@ -443,7 +443,7 @@ let make_box kind connections options =
       | "arc" -> arity = 2
       | "sym" -> arity = 4
       | "braid" -> arity = 4
-      | "line" -> arity <= 2
+      | "line" -> true (* arity <= 2 *)
       | "antipode" -> arity <= 2
       | "adj" -> arity = 2
       | "unit" -> arity = 1
