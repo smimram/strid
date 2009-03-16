@@ -215,6 +215,7 @@ object (self)
                  [pos; c.(0)])
             in
               on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              iffound (fun () -> l#add_attr_float "width" (self#get_attr_float "w" "w")); (* wire width *)
               [l]
         | "antipode" ->
             if Array.length c <= 1 then

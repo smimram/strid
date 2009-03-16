@@ -258,6 +258,9 @@ object (self)
   method private arrows =
     self#get_attrs_float "a"
 
+  method private tikz_width =
+    deffound "" (fun () -> Printf.sprintf "line width=%.2fpt" ((self#get_attr_float "width") *. 0.4))
+
   (** Get the code for drawing the polyline. *)
   method draw outkind =
     let resolution = ref 20 in (* number of generated points between two lines *)
@@ -265,7 +268,7 @@ object (self)
     let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-          let color = deffound "" (fun () -> self#get_attr "color") in
+        let color = deffound "" (fun () -> self#get_attr "color") in
           (* let points = remove_consecutive_dups points in *)
           match points with
             | (x1,y1)::(x2,y2)::[] ->
@@ -283,7 +286,7 @@ object (self)
                     match outkind with
                       | Tikz ->
                           let color = if color = "" then "" else "color=" ^ color in
-                            Printf.sprintf "\\draw[%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color x1 y1 x2 y2
+                            Printf.sprintf "\\draw[%s,%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color self#tikz_width x1 y1 x2 y2
                       | Pstricks ->
                           Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
                       | Graphics ->
@@ -342,7 +345,7 @@ object (self)
                                   ans := !ans ^
                                   (match outkind with
                                      | Tikz ->
-                                         Printf.sprintf "\\draw (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                         Printf.sprintf "\\draw[%s] (%.2f,%.2f)" self#tikz_width (fst !plast) (snd !plast)
                                      | Pstricks ->
                                          Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
                                      | Graphics ->
@@ -385,7 +388,7 @@ object (self)
                           let fstpt = (List.hd lines)#src in
                             match outkind with
                               | Tikz ->
-                                  Printf.sprintf "\\draw (%.2f,%.2f)" (fst fstpt) (snd fstpt) ^
+                                  Printf.sprintf "\\draw[%s] (%.2f,%.2f)" self#tikz_width (fst fstpt) (snd fstpt) ^
                                   List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
                                   ";\n"
                               | Pstricks ->
