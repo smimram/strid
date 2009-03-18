@@ -101,6 +101,11 @@ let parse_file f =
 let usage = "strid -- A string diagrams generator\nusage: strid [options] file"
 
 let _ =
+  if Conf.exists !conf then
+    (
+      Conf.read! conf;
+      Common.info (Printf.sprintf "Read configuration file %s." !conf)
+    );
   Arg.parse
     (Arg.align
        [
@@ -136,11 +141,6 @@ let _ =
           Common.info (Printf.sprintf "Configuration file saved in %s." !conf)
         );
       exit 0
-    );
-  if Conf.exists !conf then
-    (
-      Conf.read! conf;
-      Common.info (Printf.sprintf "Read configuration file %s." !conf)
     );
   if !file_in = [] then
     (
