@@ -291,12 +291,14 @@ object (self)
                 if c.(n) <> pos then
                   let pl = Wire.new_polyline [c.(n); (*circle_position pos c.(n);*) px +. (float_of_int (n + 1)) *. epsilon, py]
                   in
+                    List.iter (fun t -> pl#add_attr_float "a" t) self#get_arrows;
                     ans := pl::!ans
               done;
               for n = i to i + o - 1 do
                 if c.(n) <> pos then
                   let pl = Wire.new_polyline [px +. (float_of_int (n + 1)) *. epsilon, py; (*circle_position pos c.(n);*) c.(n)]
                   in
+                    List.iter (fun t -> pl#add_attr_float "a" t) self#get_arrows;
                     ans := pl::!ans
               done;
               !ans
