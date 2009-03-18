@@ -261,6 +261,10 @@ object (self)
   method private tikz_width =
     deffound "" (fun () -> Printf.sprintf "line width=%.2fpt" ((self#get_attr_float "width") *. 0.4))
 
+  method private graphics_width =
+    let w = deffound 1 (fun () -> int_of_float (self#get_attr_float "width" +. 0.5)) in
+      Graphics.set_line_width w
+
   (** Get the code for drawing the polyline. *)
   method draw outkind =
     let resolution = ref 20 in (* number of generated points between two lines *)
@@ -292,10 +296,12 @@ object (self)
                       | Graphics ->
                           let x1, y1 = graphics_scale (x1, y1) in
                           let x2, y2 = graphics_scale (x2, y2) in
+                            self#graphics_width;
                             Graphics.set_color (graphics_color_of_string color);
                             Graphics.moveto x1 y1;
                             Graphics.lineto x2 y2;
                             Graphics.set_color Graphics.black;
+                            Graphics.set_line_width 1;
                             ""
                   ) ^ arrows
             | _::[] | [] -> failwith "Drawing empty line."

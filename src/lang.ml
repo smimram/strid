@@ -614,6 +614,7 @@ let process_matrix kind m =
            let w, h = Wire.graphics_scale (w, h) in
            Graphics.open_graph "";
            Graphics.resize_window (max w (Graphics.size_x ())) (max h (Graphics.size_y ()));
+           Graphics.set_line_width 1;
            Graphics.set_color (Graphics.rgb 200 200 200);
            Graphics.draw_poly_line [|0, h; w, h; w, 0|];
            (* Graphics.draw_rect 0 0 w h; *)
