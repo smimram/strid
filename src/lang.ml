@@ -122,16 +122,17 @@ object (self)
               | None -> raise Not_found
           )
 
-  method private get_arrow =
-    if self#has_attr "a" then
-      (
-        let dir = self#get_attr "a" ~d:"f" "d" in
-        let dir = if dir = "f" then 1. else if dir = "b" then -1. else error "Direction of arrows should be either 'f' or 'b'." in
-        let t = dir *. (self#get_attr_float "a" ~d:0.5 "t") in
-          Some t
-      )
-    else
-      None
+  method private get_arrows =
+    let arrows = may_map (fun (n, o) -> if n = "a" then Some o else None) options in
+    let ans = ref [] in
+      List.iter
+        (fun o ->
+           let dir = may_assoc "f" "d" o in
+           let dir = if dir = "f" then 1. else if dir = "b" then -1. else error "Direction of arrows should be either 'f' or 'b'." in
+           let t = dir *. (float_of_string (may_assoc "0.5" "t" o)) in
+             ans := t :: !ans
+        ) arrows;
+      !ans
 
   method private get_attr_float name ?d subname =
     (* TODO: don't use strings for floats *)
@@ -165,12 +166,12 @@ object (self)
             let i = Wire.new_polyline [pos; c.(2)] in
             let u = Wire.new_polyline [c.(0); ortho_point pos c.(2) c.(0) c.(1); pos] in
             let u' = Wire.new_polyline [c.(1); ortho_point pos c.(2) c.(1) c.(0); pos] in
-              on_some
+              List.iter
                 (fun t ->
                    u#add_attr_float "a" t;
                    u'#add_attr_float "a" t;
                    i#add_attr_float "a" (Wire.compl_arrow t)
-                ) self#get_arrow;
+                ) self#get_arrows;
               u#append (u'#rev);
               [i; u]
         | "arc" ->
@@ -182,13 +183,13 @@ object (self)
             let p' = Wire.new_polyline [pos; c.(3)] in
             let q = Wire.new_polyline [c.(1); pos] in
             let q' = Wire.new_polyline [pos; c.(2)] in
-              on_some
+              List.iter
                 (fun t ->
                    p#add_attr_float "a" t;
                    p'#add_attr_float "a" (Wire.compl_arrow t);
                    q#add_attr_float "a" t;
                    q'#add_attr_float "a" (Wire.compl_arrow t);
-                ) self#get_arrow;
+                ) self#get_arrows;
               p#append p';
               q#append q';
               [p; q]
@@ -214,7 +215,7 @@ object (self)
                else
                  [pos; c.(0)])
             in
-              on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
               iffound (fun () -> l#add_attr_float "width" (self#get_attr_float "w" "w")); (* wire width *)
               [l]
         | "antipode" ->
@@ -223,16 +224,16 @@ object (self)
             else
               let l1 = Wire.new_polyline [c.(0); pos] in
               let l2 = Wire.new_polyline [pos; c.(1)] in
-                on_some (fun t -> l1#add_attr_float "a" t; l2#add_attr_float "a" t) self#get_arrow;
+                List.iter (fun t -> l1#add_attr_float "a" t; l2#add_attr_float "a" t) self#get_arrows;
                 l1#append l2;
                 [l1]
         | "adj" ->
             let l = Wire.new_polyline [c.(0); pos; c.(1)] in
-              on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
               [l]
         | "unit" ->
             let l = Wire.new_polyline [pos; c.(0)] in
-              on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+              List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
               [l]
         | "text" -> []
         | "region" -> []
@@ -242,7 +243,7 @@ object (self)
               Array.map
                 (fun (x,y) ->
                    let l = Wire.new_polyline [x,y; px+.(x+.2.)*.epsilon,y] in
-                     on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+                     List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
                      l
                 ) c
             in
@@ -253,7 +254,7 @@ object (self)
               Array.map
                 (fun (x,y) ->
                    let l = Wire.new_polyline [x,y; x,py+.(y+.2.)*.epsilon] in
-                     on_some (fun t -> l#add_attr_float "a" t) self#get_arrow;
+                     List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
                      l
                 ) c
             in

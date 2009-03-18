@@ -78,6 +78,12 @@ let rec map_by_2 f = function
   | x::y::t -> (f x y)::(map_by_2 f (y::t))
   | _ -> []
 
+let may_assoc default x l =
+  try
+    List.assoc x l
+  with
+    | Not_found -> default
+
 let float_sign x = if x < 0. then -1. else 1.
 
 let float_approx x y = abs_float (y -. x) <= 10. *. epsilon_float
