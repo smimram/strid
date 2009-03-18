@@ -2,6 +2,6 @@
 * choosing which inputs have arrows.
 * explain --latex-preamble in stridman.
 * add doc for strid.conf.
-* multiple arrows on one line with adjustable orientation.
 * holes on lines.
 * line thickness adjustable for single lines.
+* arrows for mboxn.
