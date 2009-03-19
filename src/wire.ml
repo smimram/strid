@@ -159,7 +159,7 @@ let sp () =
 
 class polyline line =
 object (self)
-  inherit wire
+  inherit wire as super
 
   val mutable lines = ([line] : line list)
 
@@ -356,7 +356,9 @@ object (self)
                                          Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
                                      | Graphics ->
                                          let x, y = graphics_scale !plast in
+                                           self#graphics_width;
                                            Graphics.moveto x y;
+                                           Graphics.set_line_width 1;
                                            ""
                                   );
                                   for i = 0 to !resolution - 1 do
