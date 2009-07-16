@@ -157,11 +157,13 @@ end
 let sp () =
   if !showpoints then "[showpoints=true]" else ""
 
-class polyline line =
+class polyline ?(connects=true) line =
 object (self)
   inherit wire as super
 
   val mutable lines = ([line] : line list)
+
+  method connects = connects
 
   method lines = lines
 
@@ -415,7 +417,7 @@ object (self)
 end
 
 (** Create a new polyline, given a list of points. *)
-let new_polyline l =
+let new_polyline ?(connects=true) l =
   let rec aux pl = function
     | p::q::t ->
         pl#append_line (new line p q);
@@ -424,8 +426,11 @@ let new_polyline l =
     | _ -> pl
   in
     match l with
-      | p::q::t -> aux (new polyline (new line p q)) (q::t)
+      | p::q::t -> aux (new polyline ~connects (new line p q)) (q::t)
       | _ -> failwith "Trying to create an empty polyline."
+
+let new_curve = new_polyline ~connects:false
+let new_polyline l = new_polyline l
 
 class ellipse position radius =
 object (self)

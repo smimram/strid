@@ -208,8 +208,10 @@ object (self)
               p1#append_line l;
               p1#append p2;
               [p1; q]
-        | "line" ->
-            let l = Wire.new_polyline
+        | "line"
+        | "curve" as k ->
+            let l =
+              (if k = "line" then Wire.new_polyline else Wire.new_curve)
               (if Array.length c >= 2 then
                  [c.(0); pos]@(List.tl (Array.to_list c))
                else
@@ -448,6 +450,7 @@ let make_box kind connections options =
       | "sym" -> arity = 4
       | "braid" -> arity = 4
       | "line" -> true (* arity <= 2 *)
+      | "curve" -> true
       | "antipode" -> arity <= 2
       | "adj" -> arity = 2
       | "unit" -> arity = 1
@@ -532,16 +535,16 @@ let rec join_plines (plines:Wire.polyline list) =
   let eq = float_approx2 in
   let rec find cur = function
     | [] -> []
-    | h::t when eq cur#dst h#src ->
+    | h::t when h#connects && eq cur#dst h#src ->
         cur#append h;
         find cur t
-    | h::t when eq cur#src h#dst ->
+    | h::t when h#connects && eq cur#src h#dst ->
         cur#prepend h;
         find cur t
-    | h::t when eq cur#dst h#dst ->
+    | h::t when h#connects && eq cur#dst h#dst ->
         cur#append (h#rev);
         find cur t
-    | h::t when eq cur#src h#src ->
+    | h::t when h#connects && eq cur#src h#src ->
         cur#prepend (h#rev);
         find cur t
     | h::t ->
@@ -549,7 +552,14 @@ let rec join_plines (plines:Wire.polyline list) =
   in
     match plines with
       | [] -> []
-      | h::t -> let tl = find h (join_plines t) in h::tl
+      | h::t ->
+          let tl =
+            if h#connects then
+              find h (join_plines t)
+            else
+              join_plines t
+          in
+            h::tl
 
 let process_matrix kind m =
   let out = ref "" in

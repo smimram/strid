@@ -74,9 +74,12 @@ object
 end
 
 (** A sequence of joined lines. *)
-class polyline : line ->
+class polyline : ?connects:bool -> line ->
 object ('a)
   inherit wire
+
+  (** Should it be connected to other lines? *)
+  method connects : bool
 
   (** Source. *)
   method src : dir
@@ -101,6 +104,9 @@ object ('a)
 end
 
 val new_polyline : dir list -> polyline
+
+(** Similar to polylines but does not connect to other lines. *)
+val new_curve : dir list -> polyline
 
 (** An ellipse. *)
 class ellipse : dir -> dir ->
