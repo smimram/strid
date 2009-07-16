@@ -1,4 +1,7 @@
 matrix {
+curve(,d,dr,r)&line(,dr)\\
+\\
+\\
 line(r)&\\
 &&sym(ul,dl,ur,dr)[a,d=b]&\\
 &line(2rd)&&\\
