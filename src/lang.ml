@@ -151,7 +151,11 @@ object (self)
     with
       | Not_found -> false
 
+  val mutable kind = kind
+
   method kind = kind
+
+  method set_kind k = kind <- k
 
   val mutable connections = Array.of_list connections
 
@@ -490,7 +494,7 @@ let matrix_of_ir ir =
              (fun b ->
                 List.iter
                   (fun b ->
-                    b#set_connections (Array.map (fun (x,y) -> x,-.y) b#connections)
+                     b#set_connections (Array.map (fun (x,y) -> x,-.y) b#connections)
                   ) b
              ) l
         ) !matrix;
@@ -509,7 +513,7 @@ let matrix_of_ir ir =
              (fun b ->
                 List.iter
                   (fun b ->
-                    b#set_connections (Array.map (fun (x,y) -> -.x,y) b#connections)
+                     b#set_connections (Array.map (fun (x,y) -> -.x,y) b#connections)
                   ) b
              ) l
         ) !matrix;
@@ -533,7 +537,11 @@ let matrix_of_ir ir =
              (fun b ->
                 List.iter
                   (fun b ->
-                    b#set_connections (Array.map (fun (x,y) -> y,-.x) b#connections)
+                     if b#kind = "vbox" then
+                       b#set_kind "hbox"
+                     else if b#kind = "hbox" then
+                       b#set_kind "vbox";
+                     b#set_connections (Array.map (fun (x,y) -> y,-.x) b#connections)
                   ) b
              ) l
         ) !matrix;

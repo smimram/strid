@@ -24,6 +24,8 @@ object
   (** Get the kind of the box. *)
   method kind : string
 
+  method set_kind : string -> unit
+
   (** Get the connections. *)
   method connections : Wire.reldir array
 
