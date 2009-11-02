@@ -481,8 +481,9 @@ let matrix_of_ir ir =
   let matrix =
     Array.map (fun l -> Array.of_list l) (Array.of_list ir.ir_lines)
   in
+  let matrix = ref matrix in
   let vmirror () =
-    let height = Array.length matrix in
+    let height = Array.length !matrix in
       Array.iter
         (fun l ->
            Array.iter
@@ -492,16 +493,16 @@ let matrix_of_ir ir =
                     b#set_connections (Array.map (fun (x,y) -> x,-.y) b#connections)
                   ) b
              ) l
-        ) matrix;
+        ) !matrix;
       for i = 0 to (height - 1) / 2 do
-        let tmp = matrix.(i) in
-          matrix.(i) <- matrix.(height - 1 - i);
-          matrix.(height - 1 - i) <- tmp
+        let tmp = !matrix.(i) in
+          !matrix.(i) <- !matrix.(height - 1 - i);
+          !matrix.(height - 1 - i) <- tmp
       done
   in
   let hmirror () =
-    let height = Array.length matrix in
-    let width = Array.fold_left (fun n a -> max n (Array.length a)) 0 matrix in
+    let height = Array.length !matrix in
+    let width = Array.fold_left (fun n a -> max n (Array.length a)) 0 !matrix in
       Array.iter
         (fun l ->
            Array.iter
@@ -511,25 +512,54 @@ let matrix_of_ir ir =
                     b#set_connections (Array.map (fun (x,y) -> -.x,y) b#connections)
                   ) b
              ) l
-        ) matrix;
+        ) !matrix;
       for i = 0 to height - 1 do
-        let m = matrix.(i) in
+        let m = !matrix.(i) in
         let m = Array.init width (fun j -> if j < Array.length m then m.(j) else []) in
           for j = 0 to (width - 1) / 2 do
             let tmp = m.(j) in
               m.(j) <- m.(width - 1 - j);
               m.(width - 1 - j) <- tmp
           done;
-          matrix.(i) <- m
+          !matrix.(i) <- m
       done
+  in
+  let rotate () =
+    let height = Array.length !matrix in
+    let width = Array.fold_left (fun n a -> max n (Array.length a)) 0 !matrix in
+      Array.iter
+        (fun l ->
+           Array.iter
+             (fun b ->
+                List.iter
+                  (fun b ->
+                    b#set_connections (Array.map (fun (x,y) -> y,-.x) b#connections)
+                  ) b
+             ) l
+        ) !matrix;
+      matrix :=
+      Array.init width
+        (fun i ->
+           Array.init height
+             (fun j ->
+                let i, j = height-1-j, i in
+                let m = !matrix.(i) in
+                  if j < Array.length m then
+                    m.(j)
+                  else
+                    []
+             )
+        )
   in
     List.iter
       (function
          | "vmirror" -> vmirror ()
          | "hmirror" -> hmirror ()
+         | "rotate" -> rotate ()
+         | "antirotate" -> rotate (); rotate (); rotate ()
          | m -> error (Printf.sprintf "Unknown matrix modifier: %s." m)
       ) ir.ir_options;
-    matrix
+    !matrix
 
 let rec join_plines (plines:Wire.polyline list) =
   let eq = float_approx2 in
