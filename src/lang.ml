@@ -559,12 +559,16 @@ let matrix_of_ir ir =
              )
         )
   in
+  let re_scale = Str.regexp "scale=\\([0-9\\.]*\\)" in
     List.iter
       (function
          | "vmirror" -> vmirror ()
          | "hmirror" -> hmirror ()
          | "rotate" -> rotate ()
          | "antirotate" -> rotate (); rotate (); rotate ()
+         | m when Str.string_match re_scale m 0 ->
+             let s = float_of_string (Str.matched_group 1 m) in
+               Conf.set_float "scaling_factor" (s *. (Conf.get_float "scaling_factor"))
          | m -> error (Printf.sprintf "Unknown matrix modifier: %s." m)
       ) ir.ir_options;
     !matrix
