@@ -8,18 +8,18 @@ all: nc
 debug: dnc
 
 test: all
-	./strid --full-tex test.strid
+	./strid --latex-full test.strid
 	pdflatex test.tex > /dev/null
 #	cat test.tex
 
 tikz: all
-	./strid --full-tex -t tikz test.strid
+	./strid --latex-full -t tikz test.strid
 	latex test.tex
 	dvips test.dvi
 	cat test.tex
 
 %.tex: %.strid
-	./strid --full-tex $<
+	./strid --latex-full $<
 
 %.ps: %.tex
 	latex $<

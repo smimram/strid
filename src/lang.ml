@@ -54,25 +54,26 @@ let reldir_of_string s =
     with Not_found -> !xans, !yans
 
 let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
-let re_square = Str.regexp "square \\(\\([0-9]*[uldr]\\)*\\)"
+let re_square = Str.regexp "square\\(\\([0-9]*[uldr]\\)*\\)"
 let dir_of_square s =
   let ans = ref [] in
   let n = ref 0 in
-    for i = 0 to Array.length s - 1 do
-      (
-        match s.(i) with
-          | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ->
-              n := 10 * !n + (int_of_char s.(i) - int_of_char '0')
-          | 'u' | 'r' | 'd' | 'l' ->
-              let m = if !n = 0 then 1 else !n in
-                for i = 0 to m - 1 do
-                  ans := s.(i) :: !ans
-                done;
-                n := 0
-          | _ -> assert false
-      );
+    for i = 0 to String.length s - 1 do
+      match s.[i] with
+        | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ->
+            n := 10 * !n + int_of_char s.[i] - int_of_char '0'
+        | 'u' | 'r' | 'd' | 'l' ->
+            let m = if !n = 0 then 1 else !n in
+              for j = 0 to m - 1 do
+                ans := s.[i] :: !ans
+              done;
+              n := 0
+        | _ -> assert false
     done;
     List.rev !ans
+let dir_of_square k =
+  assert (Str.string_match re_square k 0);
+  dir_of_square (Str.matched_group 1 k)
 let ndir_of_square l =
   let ans = Array.make 4 0 in
     List.iter
@@ -343,7 +344,24 @@ object (self)
               !ans
         | k when Str.string_match re_square k 0 ->
             let px, py = pos in
+            let dir = dir_of_square k in
             let ans = ref [] in
+            let e = ref 0 in (* epsilon perturbation *)
+              List.iter2
+                (fun (x,y) dir ->
+                   incr e;
+                   let x', y' =
+                     match dir with
+                       | 'u' | 'd' ->
+                           x, py +. (float !e) *. epsilon
+                       | 'l' | 'r' ->
+                           px +. (float !e) *. epsilon, y
+                       | _ -> assert false
+                   in
+                   let l = Wire.new_polyline [x, y; x', y'] in
+                     List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
+                     ans := l :: !ans
+                ) (Array.to_list c) dir;
               !ans
         | k ->
             error (Printf.sprintf "Don't know lines for %s box." k)
@@ -384,6 +402,29 @@ object (self)
             let r = new Wire.rectangle (x-.dx,py-.dy) (x'+.dx,py+.dy) in
               r#add_attr "color" (self#get_attr "l" ~d:"white" "s");
               [r]
+        | k when Str.string_match re_square k 0 ->
+            let dx = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_width") "w") /. 2. in
+            let dy = (self#get_attr_float "l" ~d:(Conf.get_float "label_rectangle_height") "h") /. 2. in
+            let px, py = pos in
+            let dir = dir_of_square k in
+            let v = ref (py,py) in
+            let h = ref (px,px) in
+              List.iter2
+                (fun (x,y) dir ->
+                   match dir with
+                     | 'd' | 'u' ->
+                         let hl, hr = !h in
+                           h := (min x hl, max x hr)
+                     | 'l' | 'r' ->
+                         let vd, vu = !v in
+                           v := (min y vd, max y vu)
+                     | _ -> assert false
+                ) (Array.to_list c) dir;
+              let vd, vu = !v in
+              let hl, hr = !h in
+              let r = new Wire.rectangle (hl-.dx,vd-.dy) (hr+.dx,vu+.dy) in
+                r#add_attr "color" (self#get_attr "l" ~d:"white" "s");
+                [r]
         | _ ->
             deffound []
               (fun () ->
@@ -503,6 +544,8 @@ let make_box kind connections options =
           let i = int_of_string (Str.matched_group 1 k) in
           let o = int_of_string (Str.matched_group 2 k) in
             arity = i + o
+      | k when Str.string_match re_square k 0 ->
+          arity = List.length (dir_of_square k)
       | _ -> raise (Invalid_box (Printf.sprintf "%s is not a valid box type." kind))
   in
     if not arity_ok then
