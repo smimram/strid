@@ -54,6 +54,39 @@ let reldir_of_string s =
     with Not_found -> !xans, !yans
 
 let re_box = Str.regexp "\\([0-9]+\\)box\\([0-9]+\\)"
+let re_square = Str.regexp "square \\(\\([0-9]*[uldr]\\)*\\)"
+let dir_of_square s =
+  let ans = ref [] in
+  let n = ref 0 in
+    for i = 0 to Array.length s - 1 do
+      (
+        match s.(i) with
+          | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ->
+              n := 10 * !n + (int_of_char s.(i) - int_of_char '0')
+          | 'u' | 'r' | 'd' | 'l' ->
+              let m = if !n = 0 then 1 else !n in
+                for i = 0 to m - 1 do
+                  ans := s.(i) :: !ans
+                done;
+                n := 0
+          | _ -> assert false
+      );
+    done;
+    List.rev !ans
+let ndir_of_square l =
+  let ans = Array.make 4 0 in
+    List.iter
+      (function
+         | 'u' ->
+             ans.(0) <- ans.(0) + 1
+         | 'r' ->
+             ans.(1) <- ans.(1) + 1
+         | 'd' ->
+             ans.(2) <- ans.(2) + 1
+         | 'l' ->
+             ans.(3) <- ans.(3) + 1
+         | _ -> assert false
+      ) l
 
 let circle_position center point =
   let (px,py) = center in
@@ -307,6 +340,10 @@ object (self)
                     List.iter (fun t -> pl#add_attr_float "a" t) self#get_arrows;
                     ans := pl::!ans
               done;
+              !ans
+        | k when Str.string_match re_square k 0 ->
+            let px, py = pos in
+            let ans = ref [] in
               !ans
         | k ->
             error (Printf.sprintf "Don't know lines for %s box." k)
