@@ -43,9 +43,12 @@ matrix_options:
     | { [] }
 
 matrix_opts:
-    | STRING COMMA matrix_opts { $1::$3 }
-    | STRING { [$1] }
-    | STRING EQ STRING { [$1 ^ "=" ^ $3] }
+    | matrix_opt { [$1] }
+    | matrix_opt COMMA matrix_opts { $1::$3 }
+
+matrix_opt:
+    | STRING { $1 }
+    | STRING EQ STRING { $1 ^ "=" ^ $3 }
 
 matrix_lines:
     | line matrix_lines { $1::$2 }
