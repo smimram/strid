@@ -275,6 +275,7 @@ object (self)
       if lines = [] then "" else
         let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
         let color = deffound "" (fun () -> self#get_attr "color") in
+        let style = deffound "" (fun () -> self#get_attr "style") in
           (* let points = remove_consecutive_dups points in *)
           match points with
             | (x1,y1)::(x2,y2)::[] ->
@@ -292,7 +293,7 @@ object (self)
                     match outkind with
                       | Tikz ->
                           let color = if color = "" then "" else "color=" ^ color in
-                            Printf.sprintf "\\draw[%s,%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color self#tikz_width x1 y1 x2 y2
+                            Printf.sprintf "\\draw[%s,%s,%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color self#tikz_width style x1 y1 x2 y2
                       | Pstricks ->
                           Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
                       | Graphics ->

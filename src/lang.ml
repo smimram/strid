@@ -257,6 +257,8 @@ object (self)
             in
               List.iter (fun t -> l#add_attr_float "a" t) self#get_arrows;
               iffound (fun () -> l#add_attr_float "width" (self#get_attr_float "w" "w")); (* wire width *)
+              iffound (fun () -> l#add_attr "color" (self#get_attr "w" "c")); (* color *)
+              iffound (fun () -> l#add_attr "style" (self#get_attr "w" "s")); (* style *)
               [l]
         | "antipode" ->
             if Array.length c <= 1 then
@@ -370,7 +372,8 @@ object (self)
     let c = Array.map (Vect.add pos) self#connections in
       match self#kind with
         | "region" ->
-            let r = new Wire.rectangle pos c.(0) in
+            let p0, p1 = if Array.length c >= 2 then c.(0), c.(1) else pos, c.(0) in
+            let r = new Wire.rectangle p0 p1 in
               r#add_attr "style" (self#get_attr "l" ~d:"dashed" "b"); (* border line *)
               [r]
         | "antipode" ->
