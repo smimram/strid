@@ -727,7 +727,8 @@ let process_matrix kind m =
     (match kind with
        | Wire.Tikz ->
            let params =
-             (if (Conf.get_float "xscale") = 1. then [] else [Printf.sprintf "xscale=%.02f" (Conf.get_float "xscale")])
+             (if Conf.get_bool "center_vertically" then ["baseline=(current bounding box.center)"] else [])
+             @(if (Conf.get_float "xscale") = 1. then [] else [Printf.sprintf "xscale=%.02f" (Conf.get_float "xscale")])
              @(if (Conf.get_float "yscale") = 1. then [] else [Printf.sprintf "yscale=%.02f" (Conf.get_float "yscale")])
              @(if (Conf.get_float "scaling_factor") = 1. then [] else [Printf.sprintf "scale=%.02f" (Conf.get_float "scaling_factor")])
              @(if (Conf.get_string "line_width") = "0.5pt" then [] else [Printf.sprintf "line width=%s" (Conf.get_string "line_width")])

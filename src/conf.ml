@@ -24,6 +24,7 @@ let default_conf = [
   "antipode_color", "white";
   "arrow_height", "0.2";
   "arrow_length", "0.2";
+  "center_vertically", "true";
   "drive_braids", "false";
   "graphics_scale", "50.";
   "interpolation", "cspline";
