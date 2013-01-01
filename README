@@ -14,6 +14,12 @@ in the directory where the sources are extracted to compile strid. And then
 
 to install it on you system.
 
+Development version
+-------------------
+The development version can be obtained by typing
+
+        git checkout https://github.com/smimram/strid.git
+
 Licence
 -------
 This program is distributed under the GNU GPL licence. See the COPYING file for
