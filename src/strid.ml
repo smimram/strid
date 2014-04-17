@@ -23,6 +23,7 @@ open Lang
 let re_file_in = Str.regexp "\\(.*\\)\\.strid"
 let file_in = ref []
 let file_out = ref ""
+let xelatex = ref false
 let pdf_output = ref false
 let ps_output = ref false
 let dump_conf = ref false
@@ -121,7 +122,8 @@ let _ =
          "-o", Arg.Set_string file_out, " Output file";
          "--scale", Arg.Float (fun f -> Conf.set_float "scaling_factor" f), " Scale the output";
          "--show-grid", Arg.Unit (fun () -> Conf.set_bool "show_grid" true), " Show grid points";
-         "-t", Arg.String (fun s -> out_kind := kind_of_string s), " Output type"
+         "-t", Arg.String (fun s -> out_kind := kind_of_string s), " Output type";
+         "--xelatex", Arg.Set xelatex, " Use XeLaTeX";
        ]
     )
     (fun s -> file_in := s::!file_in)
@@ -237,10 +239,11 @@ let _ =
                let fname_out_dir = Filename.dirname fname_out in
                let fname_out_chopped = Filename.chop_extension fname_out in
                let fname_out_pdf = fname_out_chopped ^ ".pdf" in
+               let pdflatex = if !xelatex then "xelatex" else "pdflatex" in
                  if !pdf_output then
                    (
                      if
-                       (Sys.command (Printf.sprintf "pdflatex -halt-on-error -output-directory '%s' '%s' > /dev/null" fname_out_dir fname_out)) <> 0
+                       (Sys.command (Printf.sprintf "%s -halt-on-error -output-directory '%s' '%s' > /dev/null" pdflatex fname_out_dir fname_out)) <> 0
                      then
                        Common.error (Printf.sprintf "Error while compiling %s.\nThe error is likely to be indicated at the end of %s.log.\n(forgotten macro definition?)" fname_out fname_out_chopped);
                      assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux' strid.latex.log" fname_out fname_out_chopped fname_out_chopped)) = 0);
