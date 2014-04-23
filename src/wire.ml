@@ -43,6 +43,8 @@ let graphics_color_of_string ?(d=Graphics.black) c =
     | "white" -> Graphics.white
     | "black" -> Graphics.black
     | "red" -> Graphics.red
+    | "green" -> Graphics.green
+    | "blue" -> Graphics.blue
     | _ -> d
 
 let compl_arrow t =
