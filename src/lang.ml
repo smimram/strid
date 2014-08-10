@@ -643,6 +643,8 @@ let matrix_of_ir ir =
         )
   in
   let re_scale = Str.regexp "scale=\\([0-9\\.]*\\)" in
+  let re_xscale = Str.regexp "xscale=\\([0-9\\.]*\\)" in
+  let re_yscale = Str.regexp "yscale=\\([0-9\\.]*\\)" in
     List.iter
       (function
          | "vmirror" -> vmirror ()
@@ -652,6 +654,12 @@ let matrix_of_ir ir =
          | m when Str.string_match re_scale m 0 ->
              let s = float_of_string (Str.matched_group 1 m) in
                Conf.set_float "scaling_factor" (s *. (Conf.get_float "scaling_factor"))
+         | m when Str.string_match re_xscale m 0 ->
+             let s = float_of_string (Str.matched_group 1 m) in
+               Conf.set_float "xscale" (s *. (Conf.get_float "xscale"))
+         | m when Str.string_match re_yscale m 0 ->
+             let s = float_of_string (Str.matched_group 1 m) in
+               Conf.set_float "yscale" (s *. (Conf.get_float "yscale"))
          | m -> error (Printf.sprintf "Unknown matrix modifier: %s." m)
       ) ir.ir_options;
     !matrix
