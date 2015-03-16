@@ -2,6 +2,7 @@ SOURCES=common.ml vect.ml conf.ml cubic_spline.ml spline.ml wire.mli wire.ml ter
 RESULT=strid
 OCAMLYACC=ocamlyacc
 LIBS=str unix graphics
+ANNOTATE=true
 
 all: nc
 
