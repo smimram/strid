@@ -162,6 +162,8 @@ let _ =
                  if !reload then
                    (
                      try
+                       Conf.reset ();
+                       if Conf.exists !conf then Conf.read !conf;
                        let m = parse_file fname_in in
                          Graphics.auto_synchronize false;
                          Graphics.clear_graph ();

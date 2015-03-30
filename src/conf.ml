@@ -45,8 +45,10 @@ let default_conf = [
 
 let conf = Hashtbl.create 100
 
-let () =
+let reset () =
   List.iter (fun (n,v) -> Hashtbl.add conf n v) default_conf
+
+let () = reset ()
 
 let get =
   Hashtbl.find conf
