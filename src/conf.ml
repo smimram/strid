@@ -59,14 +59,14 @@ let get_float n =
   try
     float_of_string (get n)
   with
-    | _ -> Common.error (Printf.sprintf "Invalid configuration value for %s: %s" n (get n))
+  | _ -> Common.error (Printf.sprintf "Invalid configuration value for %s: %s" n (get n))
 
 let get_bool n =
   let v = get n in
-    if v = "true" then true
-    else if v = "false" then false
-    else
-      Common.error (Printf.sprintf "Invalid configuration value for %s: %s" n v)
+  if v = "true" then true
+  else if v = "false" then false
+  else
+    Common.error (Printf.sprintf "Invalid configuration value for %s: %s" n v)
 
 let set n v =
   Hashtbl.replace conf n v
@@ -79,35 +79,35 @@ let set_float n v =
 
 let save fname =
   let oc = open_out fname in
-    Hashtbl.iter
-      (fun n v ->
-         output_string oc (Printf.sprintf "%s = %s\n" n v)
-      ) conf;
-    close_out oc
+  Hashtbl.iter
+    (fun n v ->
+     output_string oc (Printf.sprintf "%s = %s\n" n v)
+    ) conf;
+  close_out oc
 
 let exists fname =
   try
     ignore (Unix.stat fname);
     true
   with
-    | _ -> false
+  | _ -> false
 
 let re_conf = Str.regexp "^\\([^ =]+\\)[ ]*=[ ]*\\(.*\\)$"
 
 let read fname =
   let ic = open_in fname in
   let n = ref 0 in
-    try
-      while true do
-        let l = input_line ic in
-          if not (Str.string_match re_conf l 0) then
-            (
-              Printf.eprintf "Configuration file %s, line %d is invalid:\n%s\n%!" fname !n l;
-              exit 1
-            );
-          set (Str.matched_group 1 l) (Str.matched_group 2 l);
-          incr n
-      done
-    with
-      | End_of_file ->
-          close_in ic
+  try
+    while true do
+      let l = input_line ic in
+      if not (Str.string_match re_conf l 0) then
+        (
+          Printf.eprintf "Configuration file %s, line %d is invalid:\n%s\n%!" fname !n l;
+          exit 1
+        );
+      set (Str.matched_group 1 l) (Str.matched_group 2 l);
+      incr n
+    done
+  with
+  | End_of_file ->
+     close_in ic

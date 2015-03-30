@@ -23,7 +23,7 @@ let newline = Str.regexp "\n"
 let debug s = () (* Printf.printf "[DD] %s\n%!" s *)
 let info = Printf.printf "[II] %s\n%!"
 let warning = Printf.printf "[WW] %s\n%!"
-let error e = Printf.printf "[EE] %s\n%!" (Str.global_replace newline "\n     " e); exit 1
+let error e = Printf.printf "[EE] %s\n%!" (Str.global_replace newline "\n     " e); exit 1
 
 (** Do [f], returning a default value if [Not_found] is raised. *)
 let deffound v f =
@@ -35,7 +35,7 @@ let iffound = deffound ()
 let length p1 p2 =
   let x1, y1 = p1 in
   let x2, y2 = p2 in
-    sqrt ((x2-.x1) *. (x2-.x1) +. (y2-.y1) *. (y2-.y1))
+  sqrt ((x2-.x1) *. (x2-.x1) +. (y2-.y1) *. (y2-.y1))
 
 (* Remove duplicate coordinates. *)
 let rec remove_consecutive_dups = function
@@ -45,8 +45,8 @@ let rec remove_consecutive_dups = function
 
 let queue_of_list l =
   let ans = Queue.create () in
-    List.iter (fun x -> Queue.push x ans) l;
-    ans
+  List.iter (fun x -> Queue.push x ans) l;
+  ans
 
 let rec list_last = function
   | [] -> raise Not_found
@@ -67,11 +67,11 @@ let on_some f = function
 
 let rec may_map f = function
   | h::t ->
-      (
-        match f h with
-          | Some x -> x::(may_map f t)
-          | None -> may_map f t
-      )
+     (
+       match f h with
+       | Some x -> x::(may_map f t)
+       | None -> may_map f t
+     )
   | [] -> []
 
 let rec map_by_2 f = function
@@ -82,7 +82,7 @@ let may_assoc default x l =
   try
     List.assoc x l
   with
-    | Not_found -> default
+  | Not_found -> default
 
 let float_sign x = if x < 0. then -1. else 1.
 

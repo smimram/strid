@@ -3,7 +3,7 @@ let norm (x,y) =
 
 let normalize (x,y) =
   let n = norm (x,y) in
-    (x /. n, y /. n)
+  (x /. n, y /. n)
 
 let orthogonal (x,y) =
   if y = 0. then

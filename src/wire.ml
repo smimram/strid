@@ -32,25 +32,25 @@ let graphics_scale (x,y) =
   let xs, ys = Conf.get_float "xscale", Conf.get_float "yscale" in
   let xs, ys =
     let s = Conf.get_float "scaling_factor" in
-      xs *. s, ys *. s
+    xs *. s, ys *. s
   in
   let gs = Conf.get_float "graphics_scale" in
-    int_of_float (x *. gs *. xs),
-    int_of_float (y *. gs *. ys)
+  int_of_float (x *. gs *. xs),
+  int_of_float (y *. gs *. ys)
 
 let graphics_color_of_string ?(d=Graphics.black) c =
   match c with
-    | "white" -> Graphics.white
-    | "black" -> Graphics.black
-    | "red" -> Graphics.red
-    | "green" -> Graphics.green
-    | "blue" -> Graphics.blue
-    | _ -> d
+  | "white" -> Graphics.white
+  | "black" -> Graphics.black
+  | "red" -> Graphics.red
+  | "green" -> Graphics.green
+  | "blue" -> Graphics.blue
+  | _ -> d
 
 let compl_arrow t =
   let sign = float_sign t in
   let t = abs_float t in
-    sign *. (1. -. t)
+  sign *. (1. -. t)
 
 class virtual wire =
 object (self)
@@ -80,7 +80,7 @@ object (self)
       ignore (self#get_attr name);
       true
     with
-      | Not_found -> false
+    | Not_found -> false
 
   method get_attr name =
     List.assoc name attrs
@@ -98,7 +98,7 @@ object (self)
     try
       self#get_attr name
     with
-      | Not_found -> default
+    | Not_found -> default
 end
 
 class line (src:dir) (dst:dir) =
@@ -120,22 +120,22 @@ object (self)
         let base = head -@ ((sign *. (Conf.get_float "arrow_length")) *@ nsupport) in
         let o = (Conf.get_float "arrow_height" /. 2.) *@ (Vect.orthogonal nsupport) in
         let s1, s2 = base +@ o, base -@ o in
-          match outkind with
-            | Tikz ->
-                Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s1) (snd s1) (fst head) (snd head) ^
-                Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s2) (snd s2) (fst head) (snd head)
-            | Graphics ->
-                let s1 = graphics_scale s1 in
-                let s2 = graphics_scale s2 in
-                let head = graphics_scale head in
-                  Graphics.moveto (fst s1) (snd s1);
-                  Graphics.lineto (fst head) (snd head);
-                  Graphics.moveto (fst s2) (snd s2);
-                  Graphics.lineto (fst head) (snd head);
-                  ""
-            | Pstricks ->
-                Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)\n" (fst s1) (snd s1) (fst head) (snd head) ^
-                Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)\n" (fst s2) (snd s2) (fst head) (snd head)
+        match outkind with
+        | Tikz ->
+           Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s1) (snd s1) (fst head) (snd head) ^
+             Printf.sprintf "\\draw (%.2f,%.2f) -- (%.2f,%.2f);\n" (fst s2) (snd s2) (fst head) (snd head)
+        | Graphics ->
+           let s1 = graphics_scale s1 in
+           let s2 = graphics_scale s2 in
+           let head = graphics_scale head in
+           Graphics.moveto (fst s1) (snd s1);
+           Graphics.lineto (fst head) (snd head);
+           Graphics.moveto (fst s2) (snd s2);
+           Graphics.lineto (fst head) (snd head);
+           ""
+        | Pstricks ->
+           Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)\n" (fst s1) (snd s1) (fst head) (snd head) ^
+             Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)\n" (fst s2) (snd s2) (fst head) (snd head)
       )
     else
       ""
@@ -152,8 +152,8 @@ object (self)
 
   method rev =
     let tmp = src in
-      src <- dst;
-      dst <- tmp
+    src <- dst;
+    dst <- tmp
 end
 
 let sp () =
@@ -175,16 +175,16 @@ object (self)
 
   method rev =
     let a = self#get_attrs_float "a" in
-      self#del_attr "a";
-      List.iter
-        (fun t ->
-           let sign = float_sign t in
-           let t = abs_float t in
-             self#add_attr_float "a" (-1. *. sign *. (1. -. t))
-        ) a;
-      lines <- List.rev lines;
-      List.iter (fun l -> l#rev) lines;
-      self
+    self#del_attr "a";
+    List.iter
+      (fun t ->
+       let sign = float_sign t in
+       let t = abs_float t in
+       self#add_attr_float "a" (-1. *. sign *. (1. -. t))
+      ) a;
+    lines <- List.rev lines;
+    List.iter (fun l -> l#rev) lines;
+    self
 
   method length =
     List.fold_left (+.) 0. (List.map (fun l -> l#length) self#lines)
@@ -203,22 +203,22 @@ object (self)
     let p_a = pl#get_attrs_float "a" in
     let p_l = pl#length in
     let l = s_l +. p_l in
-      self#del_attr "a";
-      List.iter
-        (fun t ->
-           let sign = float_sign t in
-           let t = abs_float t in
-           let t = t *. (s_l /. l) in
-             self#add_attr_float "a" (sign *. t)
-        ) s_a;
-      List.iter
-        (fun t ->
-           let sign = float_sign t in
-           let t = abs_float t in
-           let t = s_l /. l +. t *. (p_l /. l) in
-             self#add_attr_float "a" (sign *. t)
-        ) p_a;
-      lines <- lines@(pl#lines)
+    self#del_attr "a";
+    List.iter
+      (fun t ->
+       let sign = float_sign t in
+       let t = abs_float t in
+       let t = t *. (s_l /. l) in
+       self#add_attr_float "a" (sign *. t)
+      ) s_a;
+    List.iter
+      (fun t ->
+       let sign = float_sign t in
+       let t = abs_float t in
+       let t = s_l /. l +. t *. (p_l /. l) in
+       self#add_attr_float "a" (sign *. t)
+      ) p_a;
+    lines <- lines@(pl#lines)
 
   (** Put a polyline before. *)
   method prepend (pl:polyline) =
@@ -228,36 +228,36 @@ object (self)
     let p_a = pl#get_attrs_float "a" in
     let p_l = pl#length in
     let l = s_l +. p_l in
-      self#del_attr "a";
-      List.iter
-        (fun t ->
-           let sign = float_sign t in
-           let t = abs_float t in
-           let t = t *. (p_l /. l) in
-             self#add_attr_float "a" (sign *. t)
-        ) p_a;
-      List.iter
-        (fun t ->
-           let sign = float_sign t in
-           let t = abs_float t in
-           let t = p_l /. l +. t *. (s_l /. l) in
-             self#add_attr_float "a" (sign *. t)
-        ) s_a;
-      lines <- (pl#lines)@lines
+    self#del_attr "a";
+    List.iter
+      (fun t ->
+       let sign = float_sign t in
+       let t = abs_float t in
+       let t = t *. (p_l /. l) in
+       self#add_attr_float "a" (sign *. t)
+      ) p_a;
+    List.iter
+      (fun t ->
+       let sign = float_sign t in
+       let t = abs_float t in
+       let t = p_l /. l +. t *. (s_l /. l) in
+       self#add_attr_float "a" (sign *. t)
+      ) s_a;
+    lines <- (pl#lines)@lines
 
   (** Split into contiguous lines with same attributes. *)
   method private split_attrs =
     let rec aux la pl = function
       (* TODO: we want a less precise equality here *)
       | h::t when h#get_attrs = la ->
-          pl#append_line h;
-          aux la pl t
+         pl#append_line h;
+         aux la pl t
       | h::t -> pl::(aux h#get_attrs (new polyline h) t)
       | [] -> [pl]
     in
-      match lines with
-        | h::t -> aux h#get_attrs (new polyline h) t
-        | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
+    match lines with
+    | h::t -> aux h#get_attrs (new polyline h) t
+    | [] -> (* this case should not happen *) failwith "Splitting empty polyline."
 
   method private arrows =
     self#get_attrs_float "a"
@@ -267,170 +267,170 @@ object (self)
 
   method private graphics_width =
     let w = deffound 1 (fun () -> int_of_float (self#get_attr_float "width" +. 0.5)) in
-      Graphics.set_line_width w
+    Graphics.set_line_width w
 
   (** Get the code for drawing the polyline. *)
   method draw outkind =
     let resolution = ref 20 in (* number of generated points between two lines *)
     (* Remove trivial lines. *)
     let lines = List.rev (List.fold_left (fun ans l -> if l#src = l#dst then ans else (l::ans)) [] lines) in
-      if lines = [] then "" else
-        let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
-        let color = deffound "" (fun () -> self#get_attr "color") in
-        let style = deffound "" (fun () -> self#get_attr "style") in
-          (* let points = remove_consecutive_dups points in *)
-          match points with
-            | (x1,y1)::(x2,y2)::[] ->
-                let arrows =
-                  let ans = ref "" in
-                    List.iter
-                      (fun t ->
-                         let l = new line (x1,y1) (x2,y2) in
-                           l#add_attr_float "a" t;
-                           ans := !ans ^ l#draw_arrow outkind
-                      ) self#arrows;
-                    !ans
-                in
+    if lines = [] then "" else
+      let points = (List.hd lines)#src::(List.map (fun l -> l#dst) lines) in
+      let color = deffound "" (fun () -> self#get_attr "color") in
+      let style = deffound "" (fun () -> self#get_attr "style") in
+      (* let points = remove_consecutive_dups points in *)
+      match points with
+      | (x1,y1)::(x2,y2)::[] ->
+         let arrows =
+           let ans = ref "" in
+           List.iter
+             (fun t ->
+              let l = new line (x1,y1) (x2,y2) in
+              l#add_attr_float "a" t;
+              ans := !ans ^ l#draw_arrow outkind
+             ) self#arrows;
+           !ans
+         in
+         (
+           match outkind with
+           | Tikz ->
+              let color = if color = "" then "" else "color=" ^ color in
+              Printf.sprintf "\\draw[%s,%s,%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color self#tikz_width style x1 y1 x2 y2
+           | Pstricks ->
+              Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
+           | Graphics ->
+              let x1, y1 = graphics_scale (x1, y1) in
+              let x2, y2 = graphics_scale (x2, y2) in
+              self#graphics_width;
+              Graphics.set_color (graphics_color_of_string color);
+              Graphics.moveto x1 y1;
+              Graphics.lineto x2 y2;
+              Graphics.set_color Graphics.black;
+              Graphics.set_line_width 1;
+              ""
+         ) ^ arrows
+      | _::[] | [] -> failwith "Drawing empty line."
+      | points ->
+         (
+           match Conf.get_string "interpolation" with
+           | "cspline" ->
+              let periodic = List.hd points = list_last points in
+              let spl = Spline.compute ~periodic !resolution points in
+              let spl = List.map snd spl in
+              let arrows =
+                let spln = map_by_2 Vect.distance spl in
+                let norm = List.fold_left (+.) 0. spln in
+                let spln = Array.of_list spln in
+                let spl = Array.of_list spl in
+                let ans = ref "" in
+                List.iter
+                  (fun t ->
+                   let sign = float_sign t in
+                   let t = abs_float t in
+                   let n, nlen =
+                     let n = ref 0 in
+                     let len = ref 0. in
+                     while !len <= norm *. t && !n < Array.length spln - 1 do
+                       len := !len +. spln.(!n);
+                       incr n
+                     done;
+                     !n - 1, !len -. spln.(!n)
+                   in
+                   let t = t -. nlen /. norm in
+                   (* Sometimes we get very small negative values... *)
+                   let t = if t <= 0. then epsilon_float else t in
+                   let l = new line spl.(n) spl.(n+1) in
+                   l#add_attr_float "a" (sign *. t);
+                   ans := !ans ^ l#draw_arrow outkind
+                  ) self#arrows;
+                !ans
+              in
+              let spl = queue_of_list spl in
+              let lines = queue_of_list lines in
+              let plast = ref (Queue.pop spl) in
+              let ans = ref "" in
+              while Queue.length spl <> 0 do
+                let l = Queue.pop lines in
+                if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
                   (
-                    match outkind with
-                      | Tikz ->
-                          let color = if color = "" then "" else "color=" ^ color in
-                            Printf.sprintf "\\draw[%s,%s,%s] (%.2f,%.2f) -- (%.2f,%.2f);\n" color self#tikz_width style x1 y1 x2 y2
-                      | Pstricks ->
-                          Printf.sprintf "\\psline%s(%.2f,%.2f)(%.2f,%.2f)\n" (sp ()) x1 y1 x2 y2
-                      | Graphics ->
-                          let x1, y1 = graphics_scale (x1, y1) in
-                          let x2, y2 = graphics_scale (x2, y2) in
-                            self#graphics_width;
-                            Graphics.set_color (graphics_color_of_string color);
-                            Graphics.moveto x1 y1;
-                            Graphics.lineto x2 y2;
-                            Graphics.set_color Graphics.black;
-                            Graphics.set_line_width 1;
-                            ""
-                  ) ^ arrows
-            | _::[] | [] -> failwith "Drawing empty line."
-            | points ->
-                (
-                  match Conf.get_string "interpolation" with
-                    | "cspline" ->
-                        let periodic = List.hd points = list_last points in
-                        let spl = Spline.compute ~periodic !resolution points in
-                        let spl = List.map snd spl in
-                        let arrows =
-                          let spln = map_by_2 Vect.distance spl in
-                          let norm = List.fold_left (+.) 0. spln in
-                          let spln = Array.of_list spln in
-                          let spl = Array.of_list spl in
-                          let ans = ref "" in
-                            List.iter
-                              (fun t ->
-                                 let sign = float_sign t in
-                                 let t = abs_float t in
-                                 let n, nlen =
-                                   let n = ref 0 in
-                                   let len = ref 0. in
-                                     while !len <= norm *. t && !n < Array.length spln - 1 do
-                                       len := !len +. spln.(!n);
-                                       incr n
-                                     done;
-                                     !n - 1, !len -. spln.(!n)
-                                 in
-                                 let t = t -. nlen /. norm in
-                                 (* Sometimes we get very small negative values... *)
-                                 let t = if t <= 0. then epsilon_float else t in
-                                 let l = new line spl.(n) spl.(n+1) in
-                                   l#add_attr_float "a" (sign *. t);
-                                   ans := !ans ^ l#draw_arrow outkind
-                              ) self#arrows;
-                            !ans
-                        in
-                        let spl = queue_of_list spl in
-                        let lines = queue_of_list lines in
-                        let plast = ref (Queue.pop spl) in
-                        let ans = ref "" in
-                          while Queue.length spl <> 0 do
-                            let l = Queue.pop lines in
-                              if deffound 1. (fun () -> float_of_string (l#get_attr "opacity")) <> 0. then
-                                (
-                                  ans := !ans ^
-                                  (match outkind with
-                                     | Tikz ->
-                                         Printf.sprintf "\\draw[%s] (%.2f,%.2f)" self#tikz_width (fst !plast) (snd !plast)
-                                     | Pstricks ->
-                                         Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
-                                     | Graphics ->
-                                         let x, y = graphics_scale !plast in
-                                           self#graphics_width;
-                                           Graphics.moveto x y;
-                                           Graphics.set_line_width 1;
-                                           ""
-                                  );
-                                  for i = 0 to !resolution - 1 do
-                                    plast := Queue.pop spl;
-                                    ans := !ans ^
-                                    (match outkind with
-                                       | Tikz ->
-                                           (* TODO: use "-- cycle" when periodic *)
-                                           Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
-                                       | Pstricks ->
-                                           Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
-                                       | Graphics ->
-                                           let x, y = graphics_scale !plast in
-                                             Graphics.lineto x y;
-                                             ""
-                                    )
-                                  done;
-                                  (match outkind with
-                                     | Tikz ->
-                                         ans := !ans ^ ";"
-                                     | _ -> ()
-                                  );
-                                  ans := !ans ^ "\n"
-                                )
-                              else
-                                (
-                                  for i = 0 to !resolution - 1 do
-                                    plast := Queue.pop spl
-                                  done
-                                )
-                          done;
-                          !ans ^ arrows
-                    | "linear" ->
-                        (
-                          let fstpt = (List.hd lines)#src in
-                            match outkind with
+                    ans := !ans ^
+                             (match outkind with
                               | Tikz ->
-                                  Printf.sprintf "\\draw[%s] (%.2f,%.2f)" self#tikz_width (fst fstpt) (snd fstpt) ^
-                                  List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
-                                  ";\n"
+                                 Printf.sprintf "\\draw[%s] (%.2f,%.2f)" self#tikz_width (fst !plast) (snd !plast)
                               | Pstricks ->
-                                  Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
-                                  List.fold_left (fun s l -> let x,y = l#dst in
-                                  Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines ^ "\n"
+                                 Printf.sprintf "\\psline%s(%.2f,%.2f)" (sp ()) (fst !plast) (snd !plast)
                               | Graphics ->
-                                  let x, y = graphics_scale fstpt in
-                                    Graphics.moveto x y;
-                                    List.iter (fun l -> let x, y = graphics_scale l#dst in Graphics.lineto x y) lines;
-                                    ""
-                        )
-                    | s ->
-                        failwith "Unkown interpolation type: " ^ s ^ "."
-                )
+                                 let x, y = graphics_scale !plast in
+                                 self#graphics_width;
+                                 Graphics.moveto x y;
+                                 Graphics.set_line_width 1;
+                                 ""
+                             );
+                    for i = 0 to !resolution - 1 do
+                      plast := Queue.pop spl;
+                      ans := !ans ^
+                               (match outkind with
+                                | Tikz ->
+                                   (* TODO: use "-- cycle" when periodic *)
+                                   Printf.sprintf " -- (%.2f,%.2f)" (fst !plast) (snd !plast)
+                                | Pstricks ->
+                                   Printf.sprintf "(%.2f,%.2f)" (fst !plast) (snd !plast)
+                                | Graphics ->
+                                   let x, y = graphics_scale !plast in
+                                   Graphics.lineto x y;
+                                   ""
+                               )
+                    done;
+                    (match outkind with
+                     | Tikz ->
+                        ans := !ans ^ ";"
+                     | _ -> ()
+                    );
+                    ans := !ans ^ "\n"
+                  )
+                else
+                  (
+                    for i = 0 to !resolution - 1 do
+                      plast := Queue.pop spl
+                    done
+                  )
+              done;
+              !ans ^ arrows
+           | "linear" ->
+              (
+                let fstpt = (List.hd lines)#src in
+                match outkind with
+                | Tikz ->
+                   Printf.sprintf "\\draw[%s] (%.2f,%.2f)" self#tikz_width (fst fstpt) (snd fstpt) ^
+                     List.fold_left (fun s l -> let x,y = l#dst in Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" lines ^
+                       ";\n"
+                | Pstricks ->
+                   Printf.sprintf "\\plsline%s(%.2f,%.2f)" (sp ()) (fst fstpt) (snd fstpt) ^
+                     List.fold_left (fun s l -> let x,y = l#dst in
+                                                Printf.sprintf "%s(%.2f,%.2f)" s x y) "" lines ^ "\n"
+                | Graphics ->
+                   let x, y = graphics_scale fstpt in
+                   Graphics.moveto x y;
+                   List.iter (fun l -> let x, y = graphics_scale l#dst in Graphics.lineto x y) lines;
+                   ""
+              )
+           | s ->
+              failwith "Unkown interpolation type: " ^ s ^ "."
+         )
 end
 
 (** Create a new polyline, given a list of points. *)
 let new_polyline ?(connects=true) l =
   let rec aux pl = function
     | p::q::t ->
-        pl#append_line (new line p q);
-        ignore (aux pl (q::t));
-        pl
+       pl#append_line (new line p q);
+       ignore (aux pl (q::t));
+       pl
     | _ -> pl
   in
-    match l with
-      | p::q::t -> aux (new polyline ~connects (new line p q)) (q::t)
-      | _ -> failwith "Trying to create an empty polyline."
+  match l with
+  | p::q::t -> aux (new polyline ~connects (new line p q)) (q::t)
+  | _ -> failwith "Trying to create an empty polyline."
 
 let new_curve = new_polyline ~connects:false
 let new_polyline l = new_polyline l
@@ -444,43 +444,45 @@ object (self)
     let xr, yr = radius in
     (* let style = deffound "" (fun () -> self#get_attr "style") in *)
     let color = deffound "" (fun () -> self#get_attr "color") in
-      match outkind with
-        | Tikz ->
-            let color = if color = "" then "white" else color in
-            let fcolor = "fill=" ^ color in
-            let bw =
-              deffound ""
-                (fun () ->
-                   let bw = self#get_attr "border width" in
-                     if bw = "0" then
-                       "," ^ color
-                     else
-                       ",line width = " ^ bw ^ "pt"
-                )
-            in
-              Printf.sprintf "\\filldraw[%s%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" fcolor bw x y xr yr
-        | Pstricks ->
-            let bw =
-              deffound ""
-                (fun () ->
-                   let bw = self#get_attr "border width" in
-                     if bw = "0" then
-                       ",linestyle=none"
-                     else
-                       ",linewidth=" ^ bw
-                )
-            in
-              Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)\n" bw x y xr yr
-        | Graphics ->
-            let x, y = graphics_scale (x, y) in
-            let xr, yr = graphics_scale (xr, yr) in
-            let bw = deffound "" (fun () -> self#get_attr "border width") in
-              Graphics.set_color (graphics_color_of_string ~d:Graphics.white color);
-              Graphics.fill_ellipse x y xr yr;
-              Graphics.set_color Graphics.black;
-              if bw <> "0" then
-                Graphics.draw_ellipse x y xr yr;
-              ""
+    match outkind with
+    | Tikz ->
+       let color = if color = "" then "white" else color in
+       let fcolor = "fill=" ^ color in
+       let bw =
+         deffound
+           ""
+           (fun () ->
+            let bw = self#get_attr "border width" in
+            if bw = "0" then
+              "," ^ color
+            else
+              ",line width = " ^ bw ^ "pt"
+           )
+       in
+       Printf.sprintf "\\filldraw[%s%s] (%.2f,%.2f) ellipse (%.2fcm and %.2fcm);\n" fcolor bw x y xr yr
+    | Pstricks ->
+       let bw =
+         deffound
+           ""
+           (fun () ->
+            let bw = self#get_attr "border width" in
+            if bw = "0" then
+              ",linestyle=none"
+            else
+              ",linewidth=" ^ bw
+           )
+       in
+       Printf.sprintf "\\psellipse[fillstyle=solid%s](%.2f,%.2f)(%.2f,%.2f)\n" bw x y xr yr
+    | Graphics ->
+       let x, y = graphics_scale (x, y) in
+       let xr, yr = graphics_scale (xr, yr) in
+       let bw = deffound "" (fun () -> self#get_attr "border width") in
+       Graphics.set_color (graphics_color_of_string ~d:Graphics.white color);
+       Graphics.fill_ellipse x y xr yr;
+       Graphics.set_color Graphics.black;
+       if bw <> "0" then
+         Graphics.draw_ellipse x y xr yr;
+       ""
 end
 
 class rectangle corner1 corner2 =
@@ -492,25 +494,25 @@ object (self)
     let x2, y2 = corner2 in
     let style = deffound "" (fun () -> self#get_attr "style") in
     let color = deffound "" (fun () -> self#get_attr "color") in
-      match outkind with
-        | Tikz ->
-            let color = if color = "" then "" else "fill=" ^ color in
-              Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);\n" (if color = "" then "" else "fill") style color x1 y1 x2 y2
-        | Pstricks ->
-            Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)" x1 y1 x1 y2 x2 y2 x2 y1 x1 y1
-        | Graphics ->
-            let x1, y1 = graphics_scale (x1, y1) in
-            let x2, y2 = graphics_scale (x2, y2) in
-            let x1, x2 = min x1 x2, max x1 x2 in
-            let y1, y2 = min y1 y2, max y1 y2 in
-              if color <> "" then
-                (
-                  Graphics.set_color Graphics.white;
-                  Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1);
-                  Graphics.set_color Graphics.black;
-                );
-              Graphics.draw_rect x1 y1 (x2 - x1) (y2 - y1);
-              ""
+    match outkind with
+    | Tikz ->
+       let color = if color = "" then "" else "fill=" ^ color in
+       Printf.sprintf "\\%sdraw[%s,%s] (%.2f,%.2f) rectangle (%.2f,%.2f);\n" (if color = "" then "" else "fill") style color x1 y1 x2 y2
+    | Pstricks ->
+       Printf.sprintf "\\psline(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)(%.2f,%.2f)" x1 y1 x1 y2 x2 y2 x2 y1 x1 y1
+    | Graphics ->
+       let x1, y1 = graphics_scale (x1, y1) in
+       let x2, y2 = graphics_scale (x2, y2) in
+       let x1, x2 = min x1 x2, max x1 x2 in
+       let y1, y2 = min y1 y2, max y1 y2 in
+       if color <> "" then
+         (
+           Graphics.set_color Graphics.white;
+           Graphics.fill_rect x1 y1 (x2 - x1) (y2 - y1);
+           Graphics.set_color Graphics.black;
+         );
+       Graphics.draw_rect x1 y1 (x2 - x1) (y2 - y1);
+       ""
 end
 
 class polygon points =
@@ -519,20 +521,20 @@ object (self)
 
   method draw outkind =
     match outkind with
-      | Tikz ->
-          let color = deffound "white" (fun () -> self#get_attr "color") in
-          let x1, y1 = List.hd points in
-            (* TODO: use -- cycle *)
-            Printf.sprintf "\\filldraw[fill=%s] (%.2f, %.2f) %s;\n" color x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
-      | Pstricks -> assert false
-      | Graphics ->
-          let points = List.map graphics_scale points in
-          let points = Array.of_list points in
-            Graphics.set_color Graphics.white;
-            Graphics.fill_poly points;
-            Graphics.set_color Graphics.black;
-            Graphics.draw_poly points;
-            ""
+    | Tikz ->
+       let color = deffound "white" (fun () -> self#get_attr "color") in
+       let x1, y1 = List.hd points in
+       (* TODO: use -- cycle *)
+       Printf.sprintf "\\filldraw[fill=%s] (%.2f, %.2f) %s;\n" color x1 y1 (List.fold_left (fun s (x,y) -> Printf.sprintf "%s -- (%.2f,%.2f)" s x y) "" (List.tl points))
+    | Pstricks -> assert false
+    | Graphics ->
+       let points = List.map graphics_scale points in
+       let points = Array.of_list points in
+       Graphics.set_color Graphics.white;
+       Graphics.fill_poly points;
+       Graphics.set_color Graphics.black;
+       Graphics.draw_poly points;
+       ""
 end
 
 class text position text =
@@ -541,15 +543,15 @@ object (self)
 
   method draw outkind =
     let x, y = position in
-      match outkind with
-        | Tikz ->
-            Printf.sprintf "\\draw (%.2f,%.2f) node{%s};\n" x y text
-        | Pstricks ->
-            Printf.sprintf "\\rput(%.2f,%.2f){%s}\n" x y text
-        | Graphics ->
-            let x, y = graphics_scale (x, y) in
-            let dx, dy = Graphics.text_size text in
-              Graphics.moveto (x - dx / 2) (y - dy / 2);
-              Graphics.draw_string text;
-              ""
+    match outkind with
+    | Tikz ->
+       Printf.sprintf "\\draw (%.2f,%.2f) node{%s};\n" x y text
+    | Pstricks ->
+       Printf.sprintf "\\rput(%.2f,%.2f){%s}\n" x y text
+    | Graphics ->
+       let x, y = graphics_scale (x, y) in
+       let dx, dy = Graphics.text_size text in
+       Graphics.moveto (x - dx / 2) (y - dy / 2);
+       Graphics.draw_string text;
+       ""
 end
