@@ -38,6 +38,7 @@ let default_conf = [
   "scaling_factor", "1.0";
   "show_grid", "false";
   "small_circle_ray", "2.0";
+  "tikz_options", "";
   "xscale", "1.0";
   "yscale", "1.0";
 ]
@@ -89,7 +90,7 @@ let exists fname =
   with
     | _ -> false
 
-let re_conf = Str.regexp "^\\([^ =]+\\)[ ]*=[ ]*\\([^=]+\\)"
+let re_conf = Str.regexp "^\\([^ =]+\\)[ ]*=[ ]*\\(.*\\)$"
 
 let read fname =
   let ic = open_in fname in

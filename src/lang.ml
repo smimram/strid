@@ -743,6 +743,10 @@ let process_matrix kind m =
            in
            let params = String.concat "," params in
            let params = if params = "," then "" else "[" ^ params ^ "]" in
+           let params =
+             let opts = Conf.get_string "tikz_options" in
+             params ^ if opts = "" then "" else "," ^ opts
+           in
              (if Conf.get_bool "no_tex_environment" then
                 ""
               else
