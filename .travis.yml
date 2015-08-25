@@ -6,4 +6,4 @@ addons:
     - ocaml-nox
     - ocaml-findlib
 
-script: ./bootstrap && ./configure && make
+script: make
