@@ -3,7 +3,7 @@ sudo: false
 addons:
   apt:
     packages:
-    - ocaml-nox
+    - ocaml
     - ocaml-findlib
 
 script: make
