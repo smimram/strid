@@ -1,4 +1,4 @@
-STRID=../src/strid
+STRID=../../src/strid
 STRIDFILES=$(wildcard *.strid)
 STRIDPDF=$(STRIDFILES:.strid=.pdf)
 
