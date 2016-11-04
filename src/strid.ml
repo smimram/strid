@@ -30,6 +30,7 @@ let dump_conf = ref false
 let out_kind = ref Wire.Tikz
 let graphics_refresh = ref false
 let full_tex = ref false
+let standalone_tex = ref false
 let latex_preamble = ref ""
 let latex_postamble = ref ""
 let conf = ref Conf.fname
@@ -119,6 +120,7 @@ let () =
          "--ps", Arg.Set ps_output, " Generate a postscript file";
          "-g", Arg.Unit (fun () -> out_kind := Wire.Graphics; graphics_refresh := true), " Use Graphics output";
          "--latex-full", Arg.Set full_tex, " Full LaTeX file";
+         "--latex-standalone", Arg.Set standalone_tex, " LaTeX file with standalone class.";
          "--latex-no-environment", Arg.Unit (fun () -> Conf.set_bool "no_tex_environment" true), " Don't output LaTeX environment";
          "--latex-preamble", Arg.Set_string latex_preamble, " LaTeX preamble";
          "--latex-postamble", Arg.Set_string latex_postamble, " LaTeX postamble";
@@ -218,9 +220,12 @@ let () =
         let fo = open_out fname_out in
         if !ps_output then
           pdf_output := true;
-        if !full_tex || !pdf_output then
+        if !full_tex || !standalone_tex || !pdf_output then
           (
-            output_string fo "\\documentclass{article}\n";
+            if !standalone_tex then
+              output_string fo "\\documentclass[tikz]{standalone}\n"
+            else
+              output_string fo "\\documentclass{article}\n";
             output_string fo
                           (match !out_kind with
                            | Wire.Tikz ->
@@ -237,16 +242,16 @@ let () =
             output_string fo (!latex_preamble ^ "\n\\begin{document}\n\\pagestyle{empty}\n" ^ !latex_postamble ^ "\n");
           );
         output_string fo pst;
-        if !full_tex || !pdf_output then
+        if !full_tex || !standalone_tex || !pdf_output then
           output_string fo "\\end{document}\n";
         close_out fo;
         Common.info (Printf.sprintf "Successfully generated %s." fname_out);
         let fname_out_dir = Filename.dirname fname_out in
         let fname_out_chopped = Filename.chop_extension fname_out in
         let fname_out_pdf = fname_out_chopped ^ ".pdf" in
-        let pdflatex = if !xelatex then "xelatex" else "pdflatex" in
         if !pdf_output then
           (
+            let pdflatex = if !xelatex then "xelatex" else "pdflatex" in
             if
               (Sys.command (Printf.sprintf "%s -halt-on-error -output-directory '%s' '%s' > /dev/null" pdflatex fname_out_dir fname_out)) <> 0
             then
