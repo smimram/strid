@@ -6,11 +6,11 @@ Installation
 ------------
 To build strid you only need [OCaml](http://caml.inria.fr). Simply type
 
-   make
+    make
 
 in the directory where the sources are extracted to compile strid. And then
 
-   make install
+    make install
 
 to install it on you system.
 
@@ -18,7 +18,7 @@ Development version
 -------------------
 The development version can be obtained by typing
 
-   git clone https://github.com/smimram/strid.git
+    git clone https://github.com/smimram/strid.git
 
 Licence
 -------
