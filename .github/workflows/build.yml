@@ -12,3 +12,4 @@ jobs:
     - name: Install OCaml
       run: sudo apt-get install ocaml-nox
     - name: Build
+      run: make
