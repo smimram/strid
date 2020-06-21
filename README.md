@@ -16,6 +16,11 @@ make install
 ```
 to install it on you system.
 
+Documentation
+-------------
+
+The documentation is [available online](docs/manual/stridman.pdf).
+
 Development version
 -------------------
 
