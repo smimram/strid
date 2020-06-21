@@ -2,8 +2,9 @@ PROG = strid
 DISTFILES = COPYING CHANGES README TODO Makefile strid.1 src/Makefile src/OCamlMakefile src/*.ml src/*.mli src/*.mll src/*.mly doc/stridman.tex doc/stridman.pdf doc/Makefile doc/*.strid doc/strid.conf
 VERSION = $(shell cat VERSION)
 
-BINDIR=$(DESTDIR)/usr/local/bin
-MANDIR=$(DESTDIR)/usr/local/share/man/man1
+PREFIX=/usr/local
+BINDIR=$(PREFIX)/bin
+MANDIR=$(PREFIX)/share/man/man1
 
 all:
 	make -C src $@
