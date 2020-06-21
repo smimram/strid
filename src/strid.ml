@@ -50,11 +50,11 @@ let parse_file f =
   let sin =
     let fi = open_in f in
     let flen = in_channel_length fi in
-    let buf = String.create flen in
+    let buf = Bytes.create flen in
     really_input fi buf 0 flen;
     Common.debug (Printf.sprintf "Read %d bytes." flen);
     close_in fi;
-    buf
+    Bytes.to_string buf
   in
   let ir =
     let lexbuf = Lexing.from_string sin in
