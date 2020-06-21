@@ -11,7 +11,8 @@ install: [
   [make "install" "PREFIX=%{prefix}%"]
 ]
 depends: [
-  "ocaml" {>= "4.08.0"}
+  "ocaml"
+  "graphics"
 ]
 bug-reports: "https://github.com/smimram/strid/issues"
 dev-repo: "git+https://github.com/smimram/strid.git"
