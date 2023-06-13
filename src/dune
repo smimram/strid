@@ -1,0 +1,11 @@
+(ocamllex (modules lexer))
+(menhir (modules parser))
+
+(executable
+ (name strid)
+ (libraries str unix graphics)
+)
+
+(rule
+ (alias runtest)
+ (action (run ./strid.exe test.strid)))
