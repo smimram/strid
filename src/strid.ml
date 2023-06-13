@@ -254,7 +254,13 @@ let () =
             if
               (Sys.command (Printf.sprintf "%s -halt-on-error -output-directory '%s' '%s' > /dev/null" pdflatex fname_out_dir fname_out)) <> 0
             then
-              Common.error (Printf.sprintf "Error while compiling %s.\nThe error is likely to be indicated at the end of %s.log.\n(forgotten macro definition?)" fname_out fname_out_chopped);
+              Common.error
+                (Printf.sprintf
+                   "Error while compiling %s.\nThe error is likely to be indicated at the end of %s.log:\n\n%s\n"
+                   fname_out
+                   fname_out_chopped
+                   (try let ic = open_in_bin (fname_out_chopped^".log") in really_input_string ic (in_channel_length ic) with _ -> "[could not read contents]")
+                );
             assert ((Sys.command (Printf.sprintf "rm -f '%s' '%s.log' '%s.aux' strid.latex.log" fname_out fname_out_chopped fname_out_chopped)) = 0);
             Common.info (Printf.sprintf "Successfully generated %s." fname_out_pdf)
           );
