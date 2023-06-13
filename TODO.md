@@ -1,0 +1,5 @@
+- styles for lines (thickness, dashed, etc.).
+- choosing which inputs have arrows.
+- explain --latex-preamble in stridman.
+- add doc for strid.conf.
+- holes on lines.
