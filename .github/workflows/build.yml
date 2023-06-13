@@ -18,7 +18,7 @@ jobs:
       run: opam exec -- dune runtest
     - name: Build documentation
       run: |
-        sudo apt-get install -y texlive texlive-pictures texlive-lang-french preview-latex-style
+        sudo apt-get install -y texlive texlive-pictures texlive-latex-extra texlive-lang-french preview-latex-style
         eval $(opam env) && make -C docs website
     - name: Deploy documentation
       uses: peaceiris/actions-gh-pages@v3
