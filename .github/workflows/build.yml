@@ -18,7 +18,7 @@ jobs:
       run: opam exec -- dune runtest
     - name: Build documentation
       run: |
-        sudo apt-get install -y texlive
+        sudo apt-get install -y texlive texlive-pictures
         eval $(opam env) && make -C docs website
     - name: Deploy documentation
       uses: peaceiris/actions-gh-pages@v3
