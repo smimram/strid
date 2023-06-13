@@ -20,6 +20,7 @@ jobs:
       run: |
         sudo apt-get install -y texlive texlive-pictures texlive-latex-extra texlive-lang-french preview-latex-style
         eval $(opam env) && make -C docs website
+        ls public
     - name: Deploy documentation
       uses: peaceiris/actions-gh-pages@v3
       with:
