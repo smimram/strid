@@ -20,7 +20,7 @@
 
 let newline = Str.regexp "\n"
 
-let debug s = () (* Printf.printf "[DD] %s\n%!" s *)
+let debug _s = () (* Printf.printf "[DD] %s\n%!" s *)
 let info = Printf.printf "[II] %s\n%!"
 let warning = Printf.printf "[WW] %s\n%!"
 let error e = Printf.printf "[EE] %s\n%!" (Str.global_replace newline "\n     " e); exit 1

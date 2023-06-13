@@ -79,11 +79,11 @@ let rec interpolation_rec steps point_list courbe =
      match q with
      | [] ->
         (time,pos)::interpolation_rec steps q courbe
-     | h2::q2 ->
-        let time2, pos12 = h2 in
+     | h2::_q2 ->
+        let time2, _pos12 = h2 in
         let t = ref time in
         let partial_list = ref [] in
-        for i = 1 to steps do
+        for _ = 1 to steps do
           partial_list := !partial_list@[(!t,Cubic_spline.eval courbe !t)];
           t := !t +. (time2-.time) /. (float_of_int steps);
         done;
@@ -104,10 +104,10 @@ let rec split_function_rec proj coordinates t =
   | h1::q ->
      match q with
      | [] -> (t, proj h1)::(split_function_rec proj q t)
-     | h2::q2 -> (t, proj h1)::(split_function_rec proj q (t +. length h1 h2))
+     | h2::_q2 -> (t, proj h1)::(split_function_rec proj q (t +. length h1 h2))
 
-(** Compute the interpolation given an initial z coefficient, a number of steps and the
-  * points. *)
+(** Compute the interpolation given an initial z coefficient, a number of steps
+    and the points. *)
 let compute ?(periodic = false) steps points =
   let interpolation_x = interpolation periodic steps (split_function_rec fst points 0.) in
   let interpolation_y = interpolation periodic steps (split_function_rec snd points 0.) in

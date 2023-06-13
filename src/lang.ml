@@ -22,8 +22,6 @@ open Common
 
 let epsilon = 1000. *. epsilon_float
 
-let pi = 4. *. atan 1.
-
 let marie_number = (sqrt 5. -. 1.) /. 2.
 
 let iffound f =
@@ -64,7 +62,7 @@ let dir_of_square s =
             n := 10 * !n + int_of_char s.[i] - int_of_char '0'
         | 'u' | 'r' | 'd' | 'l' ->
             let m = if !n = 0 then 1 else !n in
-              for j = 0 to m - 1 do
+              for _ = 0 to m - 1 do
                 ans := s.[i] :: !ans
               done;
               n := 0
@@ -74,6 +72,7 @@ let dir_of_square s =
 let dir_of_square k =
   assert (Str.string_match re_square k 0);
   dir_of_square (Str.matched_group 1 k)
+(*
 let ndir_of_square l =
   let ans = Array.make 4 0 in
     List.iter
@@ -88,6 +87,7 @@ let ndir_of_square l =
              ans.(3) <- ans.(3) + 1
          | _ -> assert false
       ) l
+*)
 
 let circle_position center point =
   let (px,py) = center in
@@ -138,10 +138,12 @@ let triangle_points pos dir height width =
   let right = px -. r' *. dx -. width /. 2. *. ox, py -. r' *. dy -. width /. 2. *. oy in
     [up; left; right; up]
 
+(*
 let middle p q =
   let xs, ys = p in
   let xt, yt = q in
     (xt -. xs) /. 2. , (yt -. ys) /. 2.
+*)
 
 class box (kind:string) (connections:Wire.reldir list) (options:opt list) =
 object (self)

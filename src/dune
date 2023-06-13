@@ -1,3 +1,7 @@
+(ocamllex (modules lexer))
+(menhir (modules parser))
+
 (executable
  (name strid)
+ (libraries str unix graphics)
 )

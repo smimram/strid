@@ -7,6 +7,7 @@
 (bug_reports "https://github.com/smimram/strid/issues")
 
 (generate_opam_files true)
+(using menhir 2.0)
 
 (package
  (name strid)

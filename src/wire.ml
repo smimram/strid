@@ -73,7 +73,7 @@ object (self)
     self#add_attr name (string_of_float value)
 
   method del_attr name =
-    attrs <- List.filter (fun (n, v) -> n <> name) attrs
+    attrs <- List.filter (fun (n, _v) -> n <> name) attrs
 
   method has_attr name =
     try
@@ -161,7 +161,7 @@ let sp () =
 
 class polyline ?(connects=true) line =
 object (self)
-  inherit wire as super
+  inherit wire
 
   val mutable lines = ([line] : line list)
 
@@ -366,7 +366,7 @@ object (self)
                                  Graphics.set_line_width 1;
                                  ""
                              );
-                    for i = 0 to !resolution - 1 do
+                    for _ = 0 to !resolution - 1 do
                       plast := Queue.pop spl;
                       ans := !ans ^
                                (match outkind with
@@ -390,7 +390,7 @@ object (self)
                   )
                 else
                   (
-                    for i = 0 to !resolution - 1 do
+                    for _ = 0 to !resolution - 1 do
                       plast := Queue.pop spl
                     done
                   )
@@ -538,7 +538,7 @@ object (self)
 end
 
 class text position text =
-object (self)
+object
   inherit wire
 
   method draw outkind =

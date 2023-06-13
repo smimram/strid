@@ -35,9 +35,6 @@ let latex_preamble = ref ""
 let latex_postamble = ref ""
 let conf = ref Conf.fname
 
-let get_pos d i j =
-  (i*10, j*10)
-
 let kind_of_string = function
   | "pstricks" -> Wire.Pstricks
   | "tikz" -> Wire.Tikz
@@ -61,6 +58,7 @@ let parse_file f =
     try
       Parser.defs Lexer.token lexbuf
     with
+    (*
     | Failure "lexing: empty token" ->
        let pos = (Lexing.lexeme_end_p lexbuf) in
        let err =
@@ -73,6 +71,7 @@ let parse_file f =
          failwith err
        else
          Common.error err
+    *)
     | Parsing.Parse_error ->
        let pos = (Lexing.lexeme_end_p lexbuf) in
        let err =
