@@ -12,6 +12,7 @@
 (package
  (name strid)
  (depends
+   menhir
    graphics
  )
  (synopsis "String diagram generator for LaTeX")
