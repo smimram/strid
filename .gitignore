@@ -1,7 +1,2 @@
-*.annot
-*.cmi
-*.cmx
-*.o
+_build
 *~
-._d
-._ncdi
