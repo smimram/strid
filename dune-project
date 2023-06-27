@@ -1,4 +1,5 @@
 (lang dune 2.0)
+(version 0.2.0)
 (name strid)
 (license GPL-2.0)
 (authors "Samuel Mimram <smimram@gmail.com>")
