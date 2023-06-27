@@ -2,7 +2,7 @@
 (menhir (modules parser))
 
 (executable
- (name strid)
+ (public_name strid)
  (libraries str unix graphics)
 )
 
