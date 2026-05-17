@@ -23,7 +23,7 @@
 %}
 
 %token NEWCOL NEWLINE LBRACK RBRACK LPAR RPAR EQ COMMA EOF LACC RACC
-%token LET MATRIX INCLUDE
+%token MATRIX
 %token <string> STRING
 
 %start defs

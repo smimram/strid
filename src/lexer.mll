@@ -36,8 +36,6 @@ let space = ' ' | '\t' | '\r'
 let newline = '\n'
 
 rule token = parse
-  | "let" { LET }
-  | "include" { INCLUDE }
   | "matrix" { MATRIX }
   | "%"[^'\n']* { token lexbuf }
   | "&" { NEWCOL}
