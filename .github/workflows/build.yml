@@ -16,6 +16,10 @@ jobs:
       run: |
         sudo apt-get install -y texlive texlive-pictures texlive-latex-extra texlive-lang-french preview-latex-style
         eval $(opam env) && make -C docs website
+    - name: Upload website artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: _site
   deploy:
     needs: build
     permissions:
