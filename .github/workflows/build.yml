@@ -5,24 +5,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
-    - name: Setup OCaml
-      uses: ocaml/setup-ocaml@v2
-      with:
-        ocaml-compiler: 5.0.0
-    - name: Install dependencies
-      run: opam install . --deps-only --with-test
+      uses: actions/checkout@v6
+    - name: Install packages
+      run: sudo apt-get install -y ocaml ocaml-dune ocaml-odoc menhir
     - name: Build
-      run: opam exec -- dune build
+      run: dune build
     - name: Test
-      run: opam exec -- dune runtest
+      run: dune runtest
     - name: Build documentation
       run: |
         sudo apt-get install -y texlive texlive-pictures texlive-latex-extra texlive-lang-french preview-latex-style
         eval $(opam env) && make -C docs website
         ls public
-    - name: Deploy documentation
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy website
+        id: deployment
+        uses: actions/deploy-pages@v4
