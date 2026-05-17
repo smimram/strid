@@ -10,12 +10,13 @@ license: "GPL-2.0"
 homepage: "http://smimram.github.io/strid/"
 bug-reports: "https://github.com/smimram/strid/issues"
 depends: [
-  "dune" {>= "2.0"}
-  "menhir"
+  "dune" {>= "3.14"}
+  "menhir" {>= "20180523"}
   "graphics"
+  "odoc" {with-doc}
 ]
 build: [
-  ["dune" "subst"] {pinned}
+  ["dune" "subst"] {dev}
   [
     "dune"
     "build"

@@ -1,4 +1,4 @@
-(lang dune 2.0)
+(lang dune 3.14)
 (version 0.2.0)
 (name strid)
 (license GPL-2.0)
