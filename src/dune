@@ -8,4 +8,6 @@
 
 (rule
  (alias runtest)
- (action (run ./strid.exe test.strid)))
+ (deps test.strid)
+ (action (run ./strid.exe test.strid))
+)
