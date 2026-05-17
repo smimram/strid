@@ -53,3 +53,7 @@ rule token = parse
   | space+ { token lexbuf }
   | newline { on_newline lexbuf; token lexbuf }
   | eof { EOF }
+
+(* Local Variables: *)
+(* mode: tuareg *)
+(* End: *)
