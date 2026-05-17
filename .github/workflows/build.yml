@@ -7,7 +7,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v6
     - name: Install packages
-      run: sudo apt-get install -y ocaml ocaml-dune ocaml-odoc menhir libgraphics-ocaml-dev
+      run: sudo apt-get install -y ocaml ocaml-dune ocaml-odoc menhir libgraphics-ocaml-dev libx11-dev
     - name: Build
       run: dune build
     - name: Test
