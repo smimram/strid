@@ -6,7 +6,7 @@ description:
   "Strid is a tool to generate string diagrams for inclusion in LaTeX documents."
 maintainer: ["Samuel Mimram <smimram@gmail.com>"]
 authors: ["Samuel Mimram <smimram@gmail.com>"]
-license: "GPL-2.0"
+license: "GPL-2.0-or-later"
 homepage: "http://smimram.github.io/strid/"
 bug-reports: "https://github.com/smimram/strid/issues"
 depends: [

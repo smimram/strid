@@ -1,7 +1,7 @@
 (lang dune 3.14)
 (version 0.2.0)
 (name strid)
-(license GPL-2.0)
+(license GPL-2.0-or-later)
 (authors "Samuel Mimram <smimram@gmail.com>")
 (maintainers "Samuel Mimram <smimram@gmail.com>")
 (homepage "http://smimram.github.io/strid/")
